@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Sensitive info properties file
+/src/main/resources/sensitive-info.properties
