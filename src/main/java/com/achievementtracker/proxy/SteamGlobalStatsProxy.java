@@ -15,6 +15,6 @@ public interface SteamGlobalStatsProxy {
     @GetMapping("${app.list.endpoint}" + "/")
     AppListResponse fetchAllApps();
 
-    @GetMapping("${game.schema.endpoint}" + "/?key=${steam.api.key}&appid={appId}")
+    @GetMapping("${game.schema.endpoint}" + "/?key=${steam.api.key}&appid={appId}") // this endpoint requires an api key
     GameSchemaResponse fetchSchemaByAppId(@RequestParam("appid") int appId);   // appid is the same as gameid
 }
