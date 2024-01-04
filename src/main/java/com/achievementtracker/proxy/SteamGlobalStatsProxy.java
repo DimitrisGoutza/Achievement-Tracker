@@ -11,7 +11,6 @@ public interface SteamGlobalStatsProxy {
     @GetMapping("${global.achievement.stats.endpoint}" + "/?gameid={gameId}&format=json")
     AchievementResponse fetchAchievementStatsByGameId(@RequestParam("gameid") int gameId);
 
-    @GetMapping("${game.list.endpoint}" + "/")
-    AppListResponse fetchAllGames();
-
+    @GetMapping("${app.list.endpoint}" + "/")
+    AppListResponse fetchAllApps();
 }
