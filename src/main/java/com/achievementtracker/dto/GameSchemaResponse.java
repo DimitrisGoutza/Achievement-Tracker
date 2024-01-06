@@ -2,6 +2,7 @@ package com.achievementtracker.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
 import java.util.Map;
 
 public class GameSchemaResponse {
@@ -55,13 +56,13 @@ public class GameSchemaResponse {
 
         public static class AvailableGameStats {
             @JsonProperty("achievements")
-            private Map<String, AchievementDetail> achievements;
+            private List<AchievementDetail> achievements;
 
-            public Map<String, AchievementDetail> getAchievements() {
+            public List<AchievementDetail> getAchievements() {
                 return achievements;
             }
 
-            public void setAchievements(Map<String, AchievementDetail> achievements) {
+            public void setAchievements(List<AchievementDetail> achievements) {
                 this.achievements = achievements;
             }
 
@@ -73,8 +74,10 @@ public class GameSchemaResponse {
             }
 
             public static class AchievementDetail {
-                @JsonProperty("displayName")
+                @JsonProperty("name")
                 private String name;
+                @JsonProperty("displayName")
+                private String displayName;
                 @JsonProperty("hidden")
                 private int hidden;
                 @JsonProperty("description")
@@ -90,6 +93,14 @@ public class GameSchemaResponse {
 
                 public void setName(String name) {
                     this.name = name;
+                }
+
+                public String getDisplayName() {
+                    return displayName;
+                }
+
+                public void setDisplayName(String displayName) {
+                    this.displayName = displayName;
                 }
 
                 public int getHidden() {
@@ -128,6 +139,7 @@ public class GameSchemaResponse {
                 public String toString() {
                     return "AchievementDetail{" +
                             "name='" + name + '\'' +
+                            ", displayName='" + displayName + '\'' +
                             ", hidden=" + hidden +
                             ", description='" + description + '\'' +
                             ", iconUrl='" + iconUrl + '\'' +
