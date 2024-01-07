@@ -3,32 +3,31 @@ package com.achievementtracker.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.Map;
 
 public class GameSchemaResponse {
     @JsonProperty("game")
-    private Game game;
+    private GameDetails gameDetails;
 
-    public Game getGame() {
-        return game;
+    public GameDetails getGameDetails() {
+        return gameDetails;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGameDetails(GameDetails gameDetails) {
+        this.gameDetails = gameDetails;
     }
 
     @Override
     public String toString() {
         return "GameSchemaResponse{" +
-                "game=" + game +
+                "gameDetails=" + gameDetails +
                 '}';
     }
 
-    public static class Game {
+    public static class GameDetails {
         @JsonProperty("gameName")
         private String name;
         @JsonProperty("availableGameStats")
-        private AvailableGameStats availableGameStats;
+        private GameStats stats;
 
         public String getName() {
             return name;
@@ -38,23 +37,23 @@ public class GameSchemaResponse {
             this.name = name;
         }
 
-        public AvailableGameStats getAvailableGameStats() {
-            return availableGameStats;
+        public GameStats getStats() {
+            return stats;
         }
 
-        public void setAvailableGameStats(AvailableGameStats availableGameStats) {
-            this.availableGameStats = availableGameStats;
+        public void setStats(GameStats stats) {
+            this.stats = stats;
         }
 
         @Override
         public String toString() {
-            return "Game{" +
+            return "GameDetails{" +
                     "name='" + name + '\'' +
-                    ", availableGameStats=" + availableGameStats +
+                    ", stats=" + stats +
                     '}';
         }
 
-        public static class AvailableGameStats {
+        public static class GameStats {
             @JsonProperty("achievements")
             private List<AchievementDetail> achievements;
 
@@ -68,7 +67,7 @@ public class GameSchemaResponse {
 
             @Override
             public String toString() {
-                return "AvailableGameStats{" +
+                return "GameStats{" +
                         "achievements=" + achievements +
                         '}';
             }

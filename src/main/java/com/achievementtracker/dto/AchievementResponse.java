@@ -25,24 +25,24 @@ public class AchievementResponse {
 
     public static class AchievementPercentages {
         @JsonProperty("achievements")
-        List<Achievement> achievements;
+        List<AchievementDetails> achievementDetails;
 
-        public List<Achievement> getAchievements() {
-            return achievements;
+        public List<AchievementDetails> getAchievementDetails() {
+            return achievementDetails;
         }
 
-        public void setAchievements(List<Achievement> achievements) {
-            this.achievements = achievements;
+        public void setAchievementDetails(List<AchievementDetails> achievementDetails) {
+            this.achievementDetails = achievementDetails;
         }
 
         @Override
         public String toString() {
             return "AchievementPercentages{" +
-                    "achievements=" + achievements +
+                    "achievementDetails=" + achievementDetails +
                     '}';
         }
 
-        public static class Achievement {
+        public static class AchievementDetails {
             @JsonProperty("name")
             private String name;
             @JsonProperty("percent")
@@ -66,7 +66,7 @@ public class AchievementResponse {
 
             @Override
             public String toString() {
-                return "Achievement{" +
+                return "AchievementDetails{" +
                         "name='" + name + '\'' +
                         ", percentage=" + percentage +
                         '}';

@@ -25,24 +25,24 @@ public class AppListResponse {
 
     public static class AppList {
         @JsonProperty("apps")
-        private List<App> apps;
+        private List<AppDetails> appDetails;
 
-        public List<App> getApps() {
-            return apps;
+        public List<AppDetails> getAppDetails() {
+            return appDetails;
         }
 
-        public void setApps(List<App> apps) {
-            this.apps = apps;
+        public void setAppDetails(List<AppDetails> appDetails) {
+            this.appDetails = appDetails;
         }
 
         @Override
         public String toString() {
             return "AppList{" +
-                    "apps=" + apps +
+                    "appDetails=" + appDetails +
                     '}';
         }
 
-        public static class App {
+        public static class AppDetails {
             @JsonProperty("appid")
             private int id;
             @JsonProperty("name")
@@ -66,7 +66,7 @@ public class AppListResponse {
 
             @Override
             public String toString() {
-                return "App{" +
+                return "AppDetails{" +
                         "id=" + id +
                         ", name='" + name + '\'' +
                         '}';
