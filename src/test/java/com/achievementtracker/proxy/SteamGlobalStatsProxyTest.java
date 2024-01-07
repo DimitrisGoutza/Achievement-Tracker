@@ -3,6 +3,7 @@ package com.achievementtracker.proxy;
 import com.achievementtracker.dto.AchievementResponse;
 import com.achievementtracker.dto.AppListResponse;
 import com.achievementtracker.dto.GameSchemaResponse;
+import com.achievementtracker.dto.StoreAppListResponse;
 import com.achievementtracker.model.test.AchievementsPerGame;
 import com.achievementtracker.model.test.SchemaForGame;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,9 +32,9 @@ class SteamGlobalStatsProxyTest {
         // 1st assert : check that we got a response
         assertNotNull(actualData);
 
-        List<String> actualAchievementData = actualData.getAchievementPercentages().getAchievements()
+        List<String> actualAchievementData = actualData.getAchievementPercentages().getAchievementDetails()
                 // make actual List comparable to expected List
-                .stream().map(AchievementResponse.AchievementPercentages.Achievement::getName).limit(3).toList();
+                .stream().map(AchievementResponse.AchievementPercentages.AchievementDetails::getName).limit(3).toList();
 
         List<String> expectedAchievementData = expectedData.getAchievements();
 
@@ -49,7 +51,7 @@ class SteamGlobalStatsProxyTest {
         // 1st assert : check that we got a response
         assertNotNull(actualData);
 
-        String actualName = actualData.getGame().getName();
+        String actualName = actualData.getGameDetails().getName();
 
         String expectedName = expectedData.getName();
 
@@ -65,9 +67,25 @@ class SteamGlobalStatsProxyTest {
         // 1st assert : check that we got a response
         assertNotNull(actualData);
 
-        List<String> actualApps = actualData.getAppList().getApps()
+        List<String> actualApps = actualData.getAppList().getAppDetails()
                 // make actual List comparable
-                .stream().map(AppListResponse.AppList.App::getName).toList();
+                .stream().map(AppListResponse.AppList.AppDetails::getName).toList();
+
+        // 2nd assert : check that the List the API returned has these items
+        assertTrue(actualApps.contains(expectedData));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getExpectedApps")
+    void verifyStoreAppList(String expectedData) {
+        StoreAppListResponse actualData = steamGlobalStatsProxy.fetchAllStoreApps(true, false, 0, 100);
+
+        // 1st assert : check that we got a response
+        assertNotNull(actualData);
+
+        List<String> actualApps = actualData.getResponse().getApps()
+                // make actual List comparable
+                .stream().map(StoreAppListResponse.Response.AppDetails::getName).toList();
 
         // 2nd assert : check that the List the API returned has these items
         assertTrue(actualApps.contains(expectedData));
