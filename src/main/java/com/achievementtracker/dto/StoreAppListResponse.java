@@ -25,7 +25,11 @@ public class StoreAppListResponse {
 
     public static class Response {
         @JsonProperty("apps")
-        List<AppDetails> apps;
+        private List<AppDetails> apps;
+        @JsonProperty("have_more_results")
+        private boolean haveMoreResults;
+        @JsonProperty("last_appid")
+        private int lastAppId;
 
         public List<AppDetails> getApps() {
             return apps;
@@ -35,10 +39,28 @@ public class StoreAppListResponse {
             this.apps = apps;
         }
 
+        public boolean hasMoreResults() {
+            return haveMoreResults;
+        }
+
+        public void setHaveMoreResults(boolean haveMoreResults) {
+            this.haveMoreResults = haveMoreResults;
+        }
+
+        public int getLastAppId() {
+            return lastAppId;
+        }
+
+        public void setLastAppId(int lastAppId) {
+            this.lastAppId = lastAppId;
+        }
+
         @Override
         public String toString() {
             return "Response{" +
                     "apps=" + apps +
+                    ", haveMoreResults=" + haveMoreResults +
+                    ", lastAppId=" + lastAppId +
                     '}';
         }
 
