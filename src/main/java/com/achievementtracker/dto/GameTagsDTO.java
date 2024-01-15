@@ -1,11 +1,12 @@
 package com.achievementtracker.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.achievementtracker.deserializer.GameTagDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Map;
 
-public class GameTagResponse {
-    @JsonProperty("tags")
+@JsonDeserialize(using = GameTagDeserializer.class)
+public class GameTagsDTO {
     private Map<String, Integer> tags;
 
     public Map<String, Integer> getTags() {
@@ -18,7 +19,7 @@ public class GameTagResponse {
 
     @Override
     public String toString() {
-        return "GameTagResponse{" +
+        return "GameTagsDTO{" +
                 "tags=" + tags +
                 '}';
     }

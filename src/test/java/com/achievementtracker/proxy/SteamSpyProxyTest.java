@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.GameTagResponse;
+import com.achievementtracker.dto.GameTagsDTO;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class SteamSpyProxyTest {
@@ -19,7 +20,7 @@ class SteamSpyProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedData")
     void verifyTagsForGame(String expectedData) {
-        GameTagResponse actualData = steamSpyProxy.fetchTagsByGameId(440);
+        GameTagsDTO actualData = steamSpyProxy.fetchTagsByGameId(440);
 
         System.out.println(actualData.getTags());
 
