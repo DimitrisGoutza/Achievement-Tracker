@@ -45,8 +45,10 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
             gameDetailDTO.setTotalAchievements(dataNode.has("achievements") ? dataNode.get("achievements").get("total").intValue() : 0);
             gameDetailDTO.setComingSoon(dataNode.get("release_date").get("coming_soon").booleanValue());
 
-            String releaseDate = dataNode.get("release_date").get("date").textValue();
-            gameDetailDTO.setReleaseDate(LocalDate.parse(releaseDate, dateFormatter));
+            if (!gameDetailDTO.isComingSoon()) {
+                String releaseDate = dataNode.get("release_date").get("date").textValue();
+                gameDetailDTO.setReleaseDate(LocalDate.parse(releaseDate, dateFormatter));
+            }
 
             gameDetailDTO.setBackgroundImageUrl(dataNode.get("background").textValue());
             gameDetailDTO.setBackgroundRawImageUrl(dataNode.get("background_raw").textValue());
