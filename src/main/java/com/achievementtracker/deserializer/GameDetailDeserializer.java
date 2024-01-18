@@ -10,8 +10,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d MMM, yyyy", Locale.ENGLISH);
+
     @Override
     public GameDetailDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode parentNode = jsonParser.getCodec().readTree(jsonParser);
@@ -27,7 +32,7 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
             JsonNode dataNode = appIdNode.get("data");
 
             gameDetailDTO.setName(dataNode.get("name").textValue());
-            gameDetailDTO.setId(dataNode.get("steam_appid").textValue());
+            gameDetailDTO.setId(dataNode.get("steam_appid").intValue());
 
             // about_the_game node contains HTML content, need to sanitize first
             String htmlContent = dataNode.get("about_the_game").textValue();
@@ -39,7 +44,10 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
             gameDetailDTO.setCapsuleSmallImageUrl(dataNode.get("capsule_imagev5").textValue());
             gameDetailDTO.setTotalAchievements(dataNode.has("achievements") ? dataNode.get("achievements").get("total").intValue() : 0);
             gameDetailDTO.setComingSoon(dataNode.get("release_date").get("coming_soon").booleanValue());
-            gameDetailDTO.setReleaseDate(dataNode.get("release_date").get("date").textValue());
+
+            String releaseDate = dataNode.get("release_date").get("date").textValue();
+            gameDetailDTO.setReleaseDate(LocalDate.parse(releaseDate, dateFormatter));
+
             gameDetailDTO.setBackgroundImageUrl(dataNode.get("background").textValue());
             gameDetailDTO.setBackgroundRawImageUrl(dataNode.get("background_raw").textValue());
         }

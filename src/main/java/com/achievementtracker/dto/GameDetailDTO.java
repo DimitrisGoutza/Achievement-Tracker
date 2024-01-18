@@ -3,10 +3,12 @@ package com.achievementtracker.dto;
 import com.achievementtracker.deserializer.GameDetailDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.time.LocalDate;
+
 @JsonDeserialize(using = GameDetailDeserializer.class)
 public class GameDetailDTO {
     private String name;
-    private String id;
+    private int id;
     private String longDescription;
     private String shortDescription;
     private String headerImageUrl;
@@ -14,7 +16,7 @@ public class GameDetailDTO {
     private String capsuleSmallImageUrl;
     private int totalAchievements;
     private boolean comingSoon;
-    private String releaseDate;
+    private LocalDate releaseDate;
     private String backgroundImageUrl;
     private String backgroundRawImageUrl;
 
@@ -26,11 +28,11 @@ public class GameDetailDTO {
         this.name = name;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -90,11 +92,11 @@ public class GameDetailDTO {
         this.comingSoon = comingSoon;
     }
 
-    public String getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
