@@ -12,6 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class StoreAppListDeserializer extends JsonDeserializer<StoreAppListDTO> {
+
+    /* 1) Response that has more results to show:
+    https://api.steampowered.com/IStoreService/GetAppList/v1/?key=36778BC8EA3A4E0D03F55092558DF5F5&include_dlc=false&last_appid=0
+
+    *  2) Response that has no remaining results to show ➡ (hasMoreResults = false, lastAppId = -1):
+    https://api.steampowered.com/IStoreService/GetAppList/v1/?key=36778BC8EA3A4E0D03F55092558DF5F5&include_dlc=false&last_appid=2793700 */
+
     @Override
     public StoreAppListDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode parentNode = jsonParser.getCodec().readTree(jsonParser);
@@ -19,8 +26,13 @@ public class StoreAppListDeserializer extends JsonDeserializer<StoreAppListDTO> 
 
         StoreAppListDTO storeAppListDTO = new StoreAppListDTO();
         List<StoreAppListDTO.StoreAppDTO> apps = new LinkedList<>();
-        storeAppListDTO.setHasMoreResults(responseNode.get("have_more_results").booleanValue());
-        storeAppListDTO.setLastAppId(responseNode.get("last_appid").intValue());
+
+        // Case #2
+        storeAppListDTO.setHasMoreResults(responseNode.has("have_more_results"));
+        storeAppListDTO.setLastAppId(
+                responseNode.has("last_appid") ?
+                        responseNode.get("last_appid").intValue() : -1);
+
 
         JsonNode appListNode = responseNode.get("apps");
         for (JsonNode app : appListNode) {

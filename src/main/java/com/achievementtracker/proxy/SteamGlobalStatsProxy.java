@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.AchievementStatListDTO;
+import com.achievementtracker.dto.AchievementStatsDTO;
 import com.achievementtracker.dto.AppListDTO;
 import com.achievementtracker.dto.GameSchemaDTO;
 import com.achievementtracker.dto.StoreAppListDTO;
@@ -34,5 +34,5 @@ public interface SteamGlobalStatsProxy {
     GameSchemaDTO fetchSchemaByAppId(@RequestParam("appid") int appId);
 
     @GetMapping("${global.achievement.stats.endpoint}" + "/?gameid={gameId}")
-    AchievementStatListDTO fetchAchievementStatsByGameId(@RequestParam("gameid") int gameId); // gameid = appid
+    AchievementStatsDTO fetchAchievementStatsByGameId(@RequestParam("gameid") int gameId); // gameid = appid
 }

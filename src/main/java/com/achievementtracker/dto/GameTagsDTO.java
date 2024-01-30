@@ -3,17 +3,17 @@ package com.achievementtracker.dto;
 import com.achievementtracker.deserializer.GameTagDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.Map;
+import java.util.List;
 
 @JsonDeserialize(using = GameTagDeserializer.class)
 public class GameTagsDTO {
-    private Map<String, Integer> tags;
+    private List<TagDetailsDTO> tags;
 
-    public Map<String, Integer> getTags() {
+    public List<TagDetailsDTO> getTags() {
         return tags;
     }
 
-    public void setTags(Map<String, Integer> tags) {
+    public void setTags(List<TagDetailsDTO> tags) {
         this.tags = tags;
     }
 
@@ -22,5 +22,34 @@ public class GameTagsDTO {
         return "GameTagsDTO{" +
                 "tags=" + tags +
                 '}';
+    }
+
+    public static class TagDetailsDTO {
+        private String name;
+        private int votes;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getVotes() {
+            return votes;
+        }
+
+        public void setVotes(int votes) {
+            this.votes = votes;
+        }
+
+        @Override
+        public String toString() {
+            return "TagDetailsDTO{" +
+                    "name='" + name + '\'' +
+                    ", votes=" + votes +
+                    '}';
+        }
     }
 }

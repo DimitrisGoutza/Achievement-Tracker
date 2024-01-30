@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.AchievementStatListDTO;
+import com.achievementtracker.dto.AchievementStatsDTO;
 import com.achievementtracker.dto.AppListDTO;
 import com.achievementtracker.dto.GameSchemaDTO;
 import com.achievementtracker.dto.StoreAppListDTO;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,17 +25,15 @@ class SteamGlobalStatsProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedAchievements")
     void verifyAchievementDataPerGame(String expectedData) {
-        AchievementStatListDTO actualData = steamGlobalStatsProxy.fetchAchievementStatsByGameId(440);
+        AchievementStatsDTO actualData = steamGlobalStatsProxy.fetchAchievementStatsByGameId(440);
 
         // 1st assert : check that we got a response
         assertNotNull(actualData);
 
-        List<String> actualAchievementData = actualData.getAchievementStats()
-                // make List comparable
-                .stream().map(AchievementStatListDTO.AchievementStatsDTO::getName).toList();
+        Map<String, Double> actualAchievementData = actualData.getAchievements();
 
         // 2nd assert : check that the API returned the correct achievements
-        assertTrue(actualAchievementData.contains(expectedData));
+        assertTrue(actualAchievementData.containsKey(expectedData));
     }
 
     @ParameterizedTest

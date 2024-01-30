@@ -12,6 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AppListDeserializer extends JsonDeserializer<AppListDTO> {
+
+    /* Response:
+    https://api.steampowered.com/ISteamApps/GetAppList/v2/
+    */
+
     @Override
     public AppListDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode parentNode = jsonParser.getCodec().readTree(jsonParser);
