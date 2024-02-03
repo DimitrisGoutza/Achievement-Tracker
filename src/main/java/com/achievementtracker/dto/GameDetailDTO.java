@@ -7,25 +7,25 @@ import java.time.LocalDate;
 
 @JsonDeserialize(using = GameDetailDeserializer.class)
 public class GameDetailDTO {
-    private String name;
+    private String title;
     private Long id;
     private String longDescription;
     private String shortDescription;
     private String headerImageUrl;
     private String capsuleImageUrl;
     private String capsuleSmallImageUrl;
-    private int totalAchievements;
+    private Integer totalAchievements;
     private boolean comingSoon;
     private LocalDate releaseDate;
     private String backgroundImageUrl;
     private String backgroundRawImageUrl;
 
     public String getName() {
-        return name;
+        return title;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.title = name;
     }
 
     public Long getId() {
@@ -76,11 +76,11 @@ public class GameDetailDTO {
         this.capsuleSmallImageUrl = capsuleSmallImageUrl;
     }
 
-    public int getTotalAchievements() {
+    public Integer getTotalAchievements() {
         return totalAchievements;
     }
 
-    public void setTotalAchievements(int totalAchievements) {
+    public void setTotalAchievements(Integer totalAchievements) {
         this.totalAchievements = totalAchievements;
     }
 
@@ -119,7 +119,7 @@ public class GameDetailDTO {
     @Override
     public String toString() {
         return "GameDetailDTO{" +
-                "name='" + name + '\'' +
+                "name='" + title + '\'' +
                 ", id='" + id + '\'' +
                 ", longDescription='" + longDescription + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +

@@ -25,7 +25,7 @@ class SteamGlobalStatsProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedAchievements")
     void verifyAchievementDataPerGame(String expectedData) {
-        AchievementStatsDTO actualData = steamGlobalStatsProxy.fetchAchievementStatsByGameId(440);
+        AchievementStatsDTO actualData = steamGlobalStatsProxy.fetchAchievementStatsByGameId(440L);
 
         // 1st assert : check that we got a response
         assertNotNull(actualData);
@@ -39,7 +39,7 @@ class SteamGlobalStatsProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedAchievements")
     void verifySchemaForGame(String expectedData) {
-        GameSchemaDTO actualData = steamGlobalStatsProxy.fetchSchemaByAppId(440);
+        GameSchemaDTO actualData = steamGlobalStatsProxy.fetchSchemaByAppId(440L);
 
         // 1st assert : check that we got a response
         assertNotNull(actualData);
@@ -71,7 +71,7 @@ class SteamGlobalStatsProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedStoreApps")
     void verifyStoreAppList(String expectedData) {
-        StoreAppListDTO actualData = steamGlobalStatsProxy.fetchAllStoreApps(true, false, 0, 1000);
+        StoreAppListDTO actualData = steamGlobalStatsProxy.fetchAllStoreApps(true, false, 0L, 1000);
 
         // 1st assert : check that we got a response
         assertNotNull(actualData);

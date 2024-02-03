@@ -21,7 +21,7 @@ class SteamSpyProxyTest {
     @ParameterizedTest
     @MethodSource("getExpectedData")
     void verifyTagsForGame(String expectedData) {
-        GameTagsDTO actualData = steamSpyProxy.fetchTagsByGameId(440);
+        GameTagsDTO actualData = steamSpyProxy.fetchTagsByGameId(440L);
 
         System.out.println(actualData.getTags());
 

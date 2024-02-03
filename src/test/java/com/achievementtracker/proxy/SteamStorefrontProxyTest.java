@@ -15,7 +15,7 @@ class SteamStorefrontProxyTest {
 
     @Test
     void verifyDetailsForGame() {
-        GameDetailDTO actualData = steamStorefrontProxy.fetchDetailsByGameId(440);
+        GameDetailDTO actualData = steamStorefrontProxy.fetchDetailsByGameId(440L);
 
         // 1st assert : check that we got a response
         assertNotNull(actualData);

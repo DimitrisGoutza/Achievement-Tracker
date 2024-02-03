@@ -22,7 +22,7 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
     /* 1) Response with a valid app that has achievements:
     https://store.steampowered.com/api/appdetails?appids=440&l=en
 
-    *  2) Response with a valid app that doesn't have achievements ➡ (totalAchievements = 0):
+    *  2) Response with a valid app that doesn't have achievements ➡ (totalAchievements = null):
     https://store.steampowered.com/api/appdetails?appids=10&l=en
 
     *  3) Response with a valid app that has an empty ("") release date ➡ (comingSoon = true/false, releaseDate = null):
@@ -64,7 +64,7 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
             gameDetailDTO.setTotalAchievements(
                     // Case #2
                     dataNode.has("achievements") ?
-                        dataNode.get("achievements").get("total").intValue() : 0
+                        dataNode.get("achievements").get("total").intValue() : null
             );
 
             boolean comingSoon = dataNode.get("release_date").get("coming_soon").booleanValue();
