@@ -1,46 +1,36 @@
-DROP SCHEMA IF EXISTS `achievement_tracker`;
+DROP SCHEMA IF EXISTS `ACHIEVEMENT_TRACKER`;
 
-CREATE SCHEMA `achievement_tracker`;
+CREATE SCHEMA `ACHIEVEMENT_TRACKER`;
 
-use `achievement_tracker`;
+USE `ACHIEVEMENT_TRACKER`;
 
-CREATE TABLE `game_detail` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `short_description` VARCHAR(400) NOT NULL,
-    `long_description` TEXT NOT NULL,
-    `header_image` VARCHAR(100) NOT NULL,
-    `capsule_image` VARCHAR(100) NOT NULL,
-    `capsule_small_image` VARCHAR(100) NOT NULL,
-    `background_image` VARCHAR(100) NOT NULL,
-    `background_raw_image` VARCHAR(100) NOT NULL,
-    `total_achievements` INT NOT NULL,
-    PRIMARY KEY (`id`));
+CREATE TABLE `GAME` (
+    `ID` BIGINT NOT NULL,
+    `TITLE` VARCHAR(200) NOT NULL,
+    `RELEASE_DATE` DATE NULL,
+    `COMING_SOON` TINYINT(1) NOT NULL,
+    `SHORT_DESCRIPTION` TEXT NOT NULL,
+    `LONG_DESCRIPTION` TEXT NOT NULL,
+    `TOTAL_ACHIEVEMENTS` INT NULL,
+    `HEADER_IMAGE` VARCHAR(100) NOT NULL,
+    `CAPSULE_IMAGE` VARCHAR(100) NOT NULL,
+    `CAPSULE_SMALL_IMAGE` VARCHAR(100) NOT NULL,
+    `BACKGROUND_IMAGE` VARCHAR(100) NOT NULL,
+    `BACKGROUND_RAW_IMAGE` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`ID`));
 
-CREATE TABLE `game` (
-    `id` INT NOT NULL,
-    `title` VARCHAR(200) NOT NULL,
-    `release_date` DATE NULL,
-    `coming_soon` TINYINT(1) NOT NULL,
-    `score` DECIMAL(5,2) NOT NULL,
-    `game_detail_id` INT NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_GAME_DETAIL_idx` (`game_detail_id` ASC) VISIBLE,
-    CONSTRAINT `FK_GAME_DETAIL` FOREIGN KEY (`game_detail_id`)
-        REFERENCES `game_detail` (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE);
-
-CREATE TABLE `achievement` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(125) NOT NULL,
-    `display_name` VARCHAR(400) NOT NULL,
-    `description` TEXT NULL,
-    `hidden` TINYINT(1) NOT NULL,
-    `percentage` DECIMAL(5,2) NOT NULL,
-    `icon` VARCHAR(125) NOT NULL,
-    `icon_gray` VARCHAR(125) NOT NULL,
-    `game_id` INT NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FK_GAME_idx` (`game_id` ASC) VISIBLE,
-    CONSTRAINT `FK_GAME` FOREIGN KEY (`game_id`)
-        REFERENCES `game` (`id`)
+CREATE TABLE `ACHIEVEMENT` (
+    `ID` BIGINT NOT NULL AUTO_INCREMENT,
+    `NAME` VARCHAR(125) NOT NULL,
+    `DISPLAY_NAME` TEXT NOT NULL,
+    `DESCRIPTION` TEXT NULL,
+    `HIDDEN` TINYINT(1) NOT NULL,
+    `ICON` VARCHAR(125) NOT NULL,
+    `ICON_GRAY` VARCHAR(125) NOT NULL,
+    `PERCENTAGE` DECIMAL(5,2) NOT NULL,
+    `GAME_ID` BIGINT NOT NULL,
+    PRIMARY KEY (`ID`),
+    INDEX `FK_GAME_IDX` (`GAME_ID` ASC) VISIBLE,
+    CONSTRAINT `FK_GAME` FOREIGN KEY (`GAME_ID`)
+        REFERENCES `GAME` (`ID`)
         ON DELETE CASCADE ON UPDATE CASCADE);
