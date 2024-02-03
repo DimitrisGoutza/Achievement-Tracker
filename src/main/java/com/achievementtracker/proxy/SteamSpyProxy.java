@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SteamSpyProxy {
 
     @GetMapping("/?request=appdetails&appid={appId}")
-    GameTagsDTO fetchTagsByGameId(@RequestParam("appid") int appId);
+    GameTagsDTO fetchTagsByGameId(@RequestParam("appid") Long appId);
 }

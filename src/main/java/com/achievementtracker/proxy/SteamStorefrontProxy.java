@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SteamStorefrontProxy {
 
     @GetMapping("${game.details.endpoint}" + "/?l=en&appids={appId}")
-    GameDetailDTO fetchDetailsByGameId(@RequestParam("appids") int appId);
+    GameDetailDTO fetchDetailsByGameId(@RequestParam("appids") Long appId);
 
 }

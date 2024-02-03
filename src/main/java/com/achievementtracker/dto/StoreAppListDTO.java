@@ -9,7 +9,7 @@ import java.util.List;
 public class StoreAppListDTO {
     private List<StoreAppDTO> storeApps;
     private boolean hasMoreResults;
-    private Integer lastAppId;
+    private Long lastAppId;
 
     public boolean hasMoreResults() {
         return hasMoreResults;
@@ -19,11 +19,11 @@ public class StoreAppListDTO {
         this.hasMoreResults = hasMoreResults;
     }
 
-    public Integer getLastAppId() {
+    public Long getLastAppId() {
         return lastAppId;
     }
 
-    public void setLastAppId(Integer lastAppId) {
+    public void setLastAppId(Long lastAppId) {
         this.lastAppId = lastAppId;
     }
 
@@ -45,14 +45,14 @@ public class StoreAppListDTO {
     }
 
     public static class StoreAppDTO {
-        private Integer id;
+        private Long id;
         private String name;
 
-        public Integer getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(Integer id) {
+        public void setId(Long id) {
             this.id = id;
         }
 

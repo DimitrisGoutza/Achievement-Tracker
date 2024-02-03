@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @JsonDeserialize(using = GameDetailDeserializer.class)
 public class GameDetailDTO {
     private String name;
-    private Integer id;
+    private Long id;
     private String longDescription;
     private String shortDescription;
     private String headerImageUrl;
@@ -28,11 +28,11 @@ public class GameDetailDTO {
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -27,12 +27,12 @@ public interface SteamGlobalStatsProxy {
     StoreAppListDTO fetchAllStoreApps(
             @RequestParam("games") boolean games,
             @RequestParam("dlc") boolean dlc,
-            @RequestParam("lastAppId") int lastAppId,
+            @RequestParam("lastAppId") Long lastAppId,
             @RequestParam("max_results") int maxResults);
 
     @GetMapping("${game.schema.endpoint}" + "/?key=${steam.api.key}&appid={appId}")
-    GameSchemaDTO fetchSchemaByAppId(@RequestParam("appid") int appId);
+    GameSchemaDTO fetchSchemaByAppId(@RequestParam("appid") Long appId);
 
     @GetMapping("${global.achievement.stats.endpoint}" + "/?gameid={gameId}")
-    AchievementStatsDTO fetchAchievementStatsByGameId(@RequestParam("gameid") int gameId); // gameid = appid
+    AchievementStatsDTO fetchAchievementStatsByGameId(@RequestParam("gameid") Long gameId); // gameid = appid
 }
