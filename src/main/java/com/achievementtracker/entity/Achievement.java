@@ -3,129 +3,96 @@ package com.achievementtracker.entity;
 import com.achievementtracker.dto.AchievementStatsDTO;
 import com.achievementtracker.dto.GameSchemaDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.Objects;
 
 @Entity
-@Table(name = "achievement")
+@Table(name = "ACHIEVEMENT")
 public class Achievement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-    @Column(name = "name")
+    @Column(name = "ID")
+    private Long id;
+    @NotNull
+    @Column(name = "NAME")
     private String name;
-    @Column(name = "display_name")
+    @NotNull
+    @Column(name = "DISPLAY_NAME")
     private String displayName;
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
-    @Column(name = "hidden")
+    @NotNull
+    @Column(name = "HIDDEN")
     private boolean hidden;
-    @Column(name = "percentage")
-    private Double percentage;
-    @Column(name = "icon")
+    @NotNull
+    @Column(name = "ICON")
     private String iconURL;
-    @Column(name = "icon_gray")
+    @NotNull
+    @Column(name = "ICON_GRAY")
     private String iconGrayURL;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                          CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "game_id")
+    @NotNull
+    @Column(name = "PERCENTAGE")
+    private Double percentage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "GAME_ID")
     private Game game;
 
-    public Achievement() {
-    }
-
-    public Achievement(Integer id, String name, String displayName, String description, boolean hidden, Double percentage, String iconURL, String iconGrayURL) {
-        this.id = id;
-        this.name = name;
-        this.displayName = displayName;
-        this.description = description;
-        this.hidden = hidden;
-        this.percentage = percentage;
-        this.iconURL = iconURL;
-        this.iconGrayURL = iconGrayURL;
+    protected Achievement() {
     }
 
     public Achievement(GameSchemaDTO.AchievementDetailsDTO achievementDetailsDTO,
-                       AchievementStatsDTO achievementStatsDTO) {
+                       AchievementStatsDTO achievementStatsDTO, Game game) {
         this.name = achievementDetailsDTO.getName();
         this.displayName = achievementDetailsDTO.getDisplayName();
         this.description = achievementDetailsDTO.getDescription();
         this.hidden = achievementDetailsDTO.isHidden();
         this.iconURL = achievementDetailsDTO.getIconUrl();
         this.iconGrayURL = achievementDetailsDTO.getIconGrayUrl();
-
         this.percentage = achievementStatsDTO.getAchievements().get(this.name);
-    }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
-    public Double getPercentage() {
-        return percentage;
+        this.game = game;
     }
 
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
     }
 
-    public String getIconURL() {
-        return iconURL;
+    public Long getId() {
+        return id;
     }
 
-    public void setIconURL(String iconURL) {
-        this.iconURL = iconURL;
+    public String getName() {
+        return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public String getIconURL() {
+        return iconURL;
     }
 
     public String getIconGrayURL() {
         return iconGrayURL;
     }
 
-    public void setIconGrayURL(String iconGrayURL) {
-        this.iconGrayURL = iconGrayURL;
+    public Double getPercentage() {
+        return percentage;
     }
 
     public Game getGame() {
         return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 
     @Override
@@ -136,9 +103,22 @@ public class Achievement {
                 ", displayName='" + displayName + '\'' +
                 ", description='" + description + '\'' +
                 ", hidden=" + hidden +
-                ", percentage=" + percentage +
                 ", iconURL='" + iconURL + '\'' +
                 ", iconGrayURL='" + iconGrayURL + '\'' +
+                ", percentage=" + percentage +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Achievement that = (Achievement) o;
+        return isHidden() == that.isHidden() && Objects.equals(getName(), that.getName()) && Objects.equals(getDisplayName(), that.getDisplayName()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getIconURL(), that.getIconURL()) && Objects.equals(getIconGrayURL(), that.getIconGrayURL()) && Objects.equals(getGame(), that.getGame());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getDisplayName(), getDescription(), isHidden(), getIconURL(), getIconGrayURL(), getGame());
     }
 }

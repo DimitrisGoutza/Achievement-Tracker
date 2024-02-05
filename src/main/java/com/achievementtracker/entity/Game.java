@@ -2,117 +2,129 @@ package com.achievementtracker.entity;
 
 import com.achievementtracker.dto.GameDetailDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "game")
+@Table(name = "GAME")
 public class Game {
     @Id
-    @Column(name = "id")
+    @Column(name = "ID")
     // We make use of the one returned from the Steam API (appid), no need for auto generation
-    private Integer id;
-    @Column(name = "title")
+    private Long id;
+    @NotNull
+    @Column(name = "TITLE")
     private String title;
-    @Column(name = "release_date")
+    @Column(name = "RELEASE_DATE")
     private LocalDate releaseDate;
-    @Column(name = "coming_soon")
+    @NotNull
+    @Column(name = "COMING_SOON")
     private boolean comingSoon;
-    @Column(name = "score")
-    private Double score;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "game_detail_id")
-    private GameDetail gameDetail;
+    @NotNull
+    @Column(name = "SHORT_DESCRIPTION")
+    private String shortDescription;
+    @NotNull
+    @Column(name = "LONG_DESCRIPTION")
+    private String longDescription;
+    @Column(name = "TOTAL_ACHIEVEMENTS")
+    private Integer totalAchievements;
+    @Embedded
+    private Image images;
     @OneToMany(mappedBy = "game",
                cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
-    private List<Achievement> achievements;
+    private Set<Achievement> achievements = new HashSet<>();
+    @Transient
+    private Double score;
 
-    public Game() {
-        achievements = new LinkedList<>();
+    protected Game() {
     }
 
-    public Game(Integer id, String title, LocalDate releaseDate, boolean comingSoon, Double score) {
-        achievements = new LinkedList<>();
-
-        this.id = id;
-        this.title = title;
-        this.releaseDate = releaseDate;
-        this.comingSoon = comingSoon;
-        this.score = score;
-    }
-
-    public Game(GameDetailDTO gameDetailDTO, Double score) {
-        achievements = new LinkedList<>();
-
+    public Game(GameDetailDTO gameDetailDTO) {
         this.id = gameDetailDTO.getId();
         this.title = gameDetailDTO.getName();
         this.releaseDate = gameDetailDTO.getReleaseDate();
         this.comingSoon = gameDetailDTO.isComingSoon();
-        this.score = score;
-    }
+        this.shortDescription = gameDetailDTO.getShortDescription();
+        this.longDescription = gameDetailDTO.getLongDescription();
+        this.totalAchievements = gameDetailDTO.getTotalAchievements();
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDate getReleaseDate() {
-        return releaseDate;
+        this.images = new Image(
+                gameDetailDTO.getHeaderImageUrl(),
+                gameDetailDTO.getCapsuleImageUrl(),
+                gameDetailDTO.getCapsuleSmallImageUrl(),
+                gameDetailDTO.getBackgroundImageUrl(),
+                gameDetailDTO.getBackgroundRawImageUrl()
+        );
     }
 
     public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
-    public boolean isComingSoon() {
-        return comingSoon;
-    }
-
     public void setComingSoon(boolean comingSoon) {
         this.comingSoon = comingSoon;
     }
 
-    public Double getScore() {
-        return score;
+    public void setTotalAchievements(Integer totalAchievements) {
+        this.totalAchievements = totalAchievements;
     }
 
     public void setScore(Double score) {
         this.score = score;
     }
 
-    public GameDetail getGameDetail() {
-        return gameDetail;
+    public Long getId() {
+        return id;
     }
 
-    public void setGameDetail(GameDetail gameDetail) {
-        this.gameDetail = gameDetail;
+    public String getTitle() {
+        return title;
     }
 
-    public List<Achievement> getAchievements() {
+    public LocalDate getReleaseDate() {
+        return releaseDate;
+    }
+
+    public boolean isComingSoon() {
+        return comingSoon;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public Integer getTotalAchievements() {
+        return totalAchievements;
+    }
+
+    public Image getImages() {
+        return images;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public Set<Achievement> getAchievements() {
         return achievements;
     }
 
-    public void setAchievements(List<Achievement> achievements) {
-        this.achievements = achievements;
-    }
-
     public void addAchievement(Achievement achievement) {
-        achievement.setGame(this);
-        achievements.add(achievement);
+        if (achievements == null)
+            achievements = new HashSet<>();
+
+        // Achievement MUST be associated with THIS Game
+        if (achievement.getGame().equals(this))
+            achievements.add(achievement);
     }
 
     @Override
@@ -120,9 +132,26 @@ public class Game {
         return "Game{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", releaseDate='" + releaseDate + '\'' +
+                ", releaseDate=" + releaseDate +
                 ", comingSoon=" + comingSoon +
+                ", shortDescription='" + shortDescription + '\'' +
+                ", longDescription='" + longDescription + '\'' +
+                ", totalAchievements=" + totalAchievements +
+                ", images=" + images +
                 ", score=" + score +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return Objects.equals(getTitle(), game.getTitle()) && Objects.equals(getShortDescription(), game.getShortDescription()) && Objects.equals(getLongDescription(), game.getLongDescription()) && Objects.equals(getImages(), game.getImages()) && Objects.equals(getAchievements(), game.getAchievements());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTitle(), getShortDescription(), getLongDescription(), getImages(), getAchievements());
     }
 }
