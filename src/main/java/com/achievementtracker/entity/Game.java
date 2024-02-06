@@ -147,11 +147,11 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return Objects.equals(getTitle(), game.getTitle()) && Objects.equals(getShortDescription(), game.getShortDescription()) && Objects.equals(getLongDescription(), game.getLongDescription()) && Objects.equals(getImages(), game.getImages()) && Objects.equals(getAchievements(), game.getAchievements());
+        return Objects.equals(title, game.title) && Objects.equals(shortDescription, game.shortDescription) && Objects.equals(longDescription, game.longDescription) && Objects.equals(images, game.images);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTitle(), getShortDescription(), getLongDescription(), getImages(), getAchievements());
+        return Objects.hash(title, shortDescription, longDescription, images);
     }
 }
