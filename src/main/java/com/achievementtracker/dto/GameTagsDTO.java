@@ -26,7 +26,7 @@ public class GameTagsDTO {
 
     public static class TagDetailsDTO {
         private String name;
-        private int votes;
+        private Integer votes;
 
         public String getName() {
             return name;
@@ -36,11 +36,11 @@ public class GameTagsDTO {
             this.name = name;
         }
 
-        public int getVotes() {
+        public Integer getVotes() {
             return votes;
         }
 
-        public void setVotes(int votes) {
+        public void setVotes(Integer votes) {
             this.votes = votes;
         }
 

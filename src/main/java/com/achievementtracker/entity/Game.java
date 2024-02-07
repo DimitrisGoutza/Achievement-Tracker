@@ -38,6 +38,10 @@ public class Game {
                cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
     private Set<Achievement> achievements = new HashSet<>();
+    @OneToMany(mappedBy = "game",
+               cascade = CascadeType.ALL,
+               fetch = FetchType.LAZY)
+    private Set<CategorizedGame> categorizedGames = new HashSet<>();
     @Transient
     private Double score;
 
@@ -116,6 +120,10 @@ public class Game {
 
     public Set<Achievement> getAchievements() {
         return achievements;
+    }
+
+    public Set<CategorizedGame> getCategorizedGames() {
+        return categorizedGames;
     }
 
     public void addAchievement(Achievement achievement) {
