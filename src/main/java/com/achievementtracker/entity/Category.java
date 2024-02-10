@@ -1,6 +1,6 @@
 package com.achievementtracker.entity;
 
-import com.achievementtracker.dto.GameTagsDTO;
+import com.achievementtracker.dto.GameCategoriesDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -29,9 +29,9 @@ public class Category {
 
     protected Category() {}
 
-    public Category(GameTagsDTO.TagDetailsDTO tagDetailsDTO) {
-        this.name = tagDetailsDTO.getName();
-        this.totalVotes = tagDetailsDTO.getVotes();
+    public Category(GameCategoriesDTO.CategoryDetailsDTO categoryDetailsDTO) {
+        this.name = categoryDetailsDTO.getName();
+        this.totalVotes = categoryDetailsDTO.getVotes();
     }
 
     public void setTotalVotes(Integer totalVotes) {

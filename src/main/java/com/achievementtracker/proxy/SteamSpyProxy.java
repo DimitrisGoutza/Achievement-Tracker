@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.GameTagsDTO;
+import com.achievementtracker.dto.GameCategoriesDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SteamSpyProxy {
 
     @GetMapping("/?request=appdetails&appid={appId}")
-    GameTagsDTO fetchTagsByGameId(@RequestParam("appid") Long appId);
+    GameCategoriesDTO fetchCategoriesByGameId(@RequestParam("appid") Long appId);
 }
