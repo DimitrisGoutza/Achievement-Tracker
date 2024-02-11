@@ -23,7 +23,6 @@ public class Category {
     private Integer totalVotes;
     @NotNull
     @OneToMany(mappedBy = "category",
-               cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
     private Set<CategorizedGame> categorizedGames = new HashSet<>();
 

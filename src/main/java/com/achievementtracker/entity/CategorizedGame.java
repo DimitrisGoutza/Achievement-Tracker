@@ -94,4 +94,18 @@ public class CategorizedGame {
                 ", votes=" + votes +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategorizedGame that = (CategorizedGame) o;
+        // IDs are already known since Game & Category are already persisted, so it's fine to use them for comparing
+        return Objects.equals(id, that.id) && Objects.equals(votes, that.votes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, votes);
+    }
 }
