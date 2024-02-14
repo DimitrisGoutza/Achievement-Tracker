@@ -31,7 +31,7 @@ public class Game {
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
     @Column(name = "TOTAL_ACHIEVEMENTS")
-    private Integer totalAchievements;
+    private int totalAchievements;
     @Embedded
     private Image images;
     @OneToMany(mappedBy = "game",
@@ -73,7 +73,7 @@ public class Game {
         this.comingSoon = comingSoon;
     }
 
-    public void setTotalAchievements(Integer totalAchievements) {
+    public void setTotalAchievements(int totalAchievements) {
         this.totalAchievements = totalAchievements;
     }
 
@@ -105,7 +105,7 @@ public class Game {
         return longDescription;
     }
 
-    public Integer getTotalAchievements() {
+    public int getTotalAchievements() {
         return totalAchievements;
     }
 

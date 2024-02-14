@@ -14,7 +14,7 @@ public class GameDetailDTO {
     private String headerImageUrl;
     private String capsuleImageUrl;
     private String capsuleSmallImageUrl;
-    private Integer totalAchievements;
+    private int totalAchievements;
     private boolean comingSoon;
     private LocalDate releaseDate;
     private String backgroundImageUrl;
@@ -76,11 +76,11 @@ public class GameDetailDTO {
         this.capsuleSmallImageUrl = capsuleSmallImageUrl;
     }
 
-    public Integer getTotalAchievements() {
+    public int getTotalAchievements() {
         return totalAchievements;
     }
 
-    public void setTotalAchievements(Integer totalAchievements) {
+    public void setTotalAchievements(int totalAchievements) {
         this.totalAchievements = totalAchievements;
     }
 
