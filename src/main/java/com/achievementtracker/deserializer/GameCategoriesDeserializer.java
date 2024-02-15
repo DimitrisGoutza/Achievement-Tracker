@@ -18,7 +18,10 @@ public class GameCategoriesDeserializer extends JsonDeserializer<GameCategoriesD
     /* 1) Response with a valid app:
     https://steamspy.com/api.php?request=appdetails&appid=440
 
-    *  2) Response with an invalid app:
+    *  2) Response with a valid app that doesn't have tags ➡ (List<categories> = null):
+    https://steamspy.com/api.php?request=appdetails&appid=440
+
+    *  3) Response with an invalid app ➡ (List<categories> = null):
     https://steamspy.com/api.php?request=appdetails&appid=13333 */
 
     @Override

@@ -19,10 +19,13 @@ public class GameSchemaDeserializer extends JsonDeserializer<GameSchemaDTO> {
     *  2) Response with a valid app that has achievements but not their descriptions ➡ (description = null):
     https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=36778BC8EA3A4E0D03F55092558DF5F5&appid=8870
 
-    *  3) Response with a valid app that doesn't have achievements ➡ (List of achievements = null):
+    *  3) Response with a valid app that doesn't have achievements ➡ (achievements = null):
     https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=36778BC8EA3A4E0D03F55092558DF5F5&appid=10
 
-    *  4) Response with an invalid app ➡ (will throw FeignException.BadRequest 400):
+    *  4) Response with a valid app that hasn't released yet ➡ (throws FeignException.Forbidden 403):
+    https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=36778BC8EA3A4E0D03F55092558DF5F5&appid=230210
+
+    *  5) Response with an invalid app ➡ (throws FeignException.BadRequest 400):
     https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/?key=36778BC8EA3A4E0D03F55092558DF5F5&appid=13333 */
 
     @Override
