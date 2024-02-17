@@ -13,9 +13,12 @@ import java.util.Set;
 @Table(name = "GAME")
 public class Game {
     @Id
-    @Column(name = "ID")
-    // We make use of the one returned from the Steam API (appid), no need for auto generation
-    private Long id;
+    // no auto-generation since it is provided by Steam API and is unique
+    @Column(name = "STORE_ID")
+    private Long storeId;
+    @NotNull
+    @Column(name = "STEAM_APP_ID")
+    private Long steamAppId;
     @NotNull
     @Column(name = "TITLE")
     private String title;
@@ -47,9 +50,10 @@ public class Game {
     protected Game() {
     }
 
-    public Game(GameDetailDTO gameDetailDTO) {
-        this.id = gameDetailDTO.getId();
-        this.title = gameDetailDTO.getName();
+    public Game(Long storeId, GameDetailDTO gameDetailDTO) {
+        this.storeId = storeId;
+        this.steamAppId = gameDetailDTO.getSteamAppId();
+        this.title = gameDetailDTO.getTitle();
         this.releaseDate = gameDetailDTO.getReleaseDate();
         this.comingSoon = gameDetailDTO.isComingSoon();
         this.shortDescription = gameDetailDTO.getShortDescription();
@@ -81,8 +85,12 @@ public class Game {
         this.score = score;
     }
 
-    public Long getId() {
-        return id;
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public Long getSteamAppId() {
+        return steamAppId;
     }
 
     public String getTitle() {
@@ -137,7 +145,8 @@ public class Game {
     @Override
     public String toString() {
         return "Game{" +
-                "id=" + id +
+                "storeId=" + storeId +
+                ", steamAppId=" + steamAppId +
                 ", title='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", comingSoon=" + comingSoon +
@@ -154,11 +163,11 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return Objects.equals(title, game.title) && Objects.equals(shortDescription, game.shortDescription) && Objects.equals(longDescription, game.longDescription) && Objects.equals(images, game.images);
+        return Objects.equals(steamAppId, game.steamAppId) && Objects.equals(title, game.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, shortDescription, longDescription, images);
+        return Objects.hash(steamAppId, title);
     }
 }

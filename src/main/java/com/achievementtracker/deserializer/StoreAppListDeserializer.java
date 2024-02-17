@@ -38,7 +38,7 @@ public class StoreAppListDeserializer extends JsonDeserializer<StoreAppListDTO> 
         for (JsonNode app : appListNode) {
             StoreAppListDTO.StoreAppDTO storeAppDTO = new StoreAppListDTO.StoreAppDTO();
 
-            storeAppDTO.setId(app.get("appid").longValue());
+            storeAppDTO.setStoreId(app.get("appid").longValue());
             storeAppDTO.setName(app.get("name").textValue());
 
             apps.add(storeAppDTO);

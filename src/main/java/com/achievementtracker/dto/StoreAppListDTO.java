@@ -45,15 +45,15 @@ public class StoreAppListDTO {
     }
 
     public static class StoreAppDTO {
-        private Long id;
+        private Long storeId;
         private String name;
 
-        public Long getId() {
-            return id;
+        public Long getStoreId() {
+            return storeId;
         }
 
-        public void setId(Long id) {
-            this.id = id;
+        public void setStoreId(Long storeId) {
+            this.storeId = storeId;
         }
 
         public String getName() {
@@ -67,7 +67,7 @@ public class StoreAppListDTO {
         @Override
         public String toString() {
             return "StoreAppDTO{" +
-                    "id=" + id +
+                    "storeId=" + storeId +
                     ", name='" + name + '\'' +
                     '}';
         }

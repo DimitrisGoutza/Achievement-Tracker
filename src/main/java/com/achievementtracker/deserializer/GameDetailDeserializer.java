@@ -50,8 +50,8 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
         if (gameFound) {
             JsonNode dataNode = appIdNode.get("data");
 
-            gameDetailDTO.setName(dataNode.get("name").textValue());
-            gameDetailDTO.setId(dataNode.get("steam_appid").longValue());
+            gameDetailDTO.setTitle(dataNode.get("name").textValue());
+            gameDetailDTO.setSteamAppId(dataNode.get("steam_appid").longValue());
 
             // about_the_game node contains HTML content, need to sanitize first
             String htmlContent = dataNode.get("about_the_game").textValue();

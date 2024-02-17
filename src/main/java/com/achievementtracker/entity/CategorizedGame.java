@@ -61,7 +61,7 @@ public class CategorizedGame {
         this.game = game;
 
         this.id.categoryId = category.getId();
-        this.id.gameId = game.getId();
+        this.id.gameId = game.getStoreId();
 
         category.getCategorizedGames().add(this);
         game.getCategorizedGames().add(this);

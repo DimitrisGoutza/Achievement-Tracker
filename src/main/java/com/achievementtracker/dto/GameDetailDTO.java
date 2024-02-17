@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @JsonDeserialize(using = GameDetailDeserializer.class)
 public class GameDetailDTO {
     private String title;
-    private Long id;
+    private Long steamAppId;
     private String longDescription;
     private String shortDescription;
     private String headerImageUrl;
@@ -20,20 +20,20 @@ public class GameDetailDTO {
     private String backgroundImageUrl;
     private String backgroundRawImageUrl;
 
-    public String getName() {
+    public String getTitle() {
         return title;
     }
 
-    public void setName(String name) {
-        this.title = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSteamAppId() {
+        return steamAppId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setSteamAppId(Long steamAppId) {
+        this.steamAppId = steamAppId;
     }
 
     public String getLongDescription() {
@@ -119,8 +119,8 @@ public class GameDetailDTO {
     @Override
     public String toString() {
         return "GameDetailDTO{" +
-                "name='" + title + '\'' +
-                ", id='" + id + '\'' +
+                "title='" + title + '\'' +
+                ", steamAppId=" + steamAppId +
                 ", longDescription='" + longDescription + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", headerImageUrl='" + headerImageUrl + '\'' +
@@ -128,7 +128,7 @@ public class GameDetailDTO {
                 ", capsuleSmallImageUrl='" + capsuleSmallImageUrl + '\'' +
                 ", totalAchievements=" + totalAchievements +
                 ", comingSoon=" + comingSoon +
-                ", releaseDate='" + releaseDate + '\'' +
+                ", releaseDate=" + releaseDate +
                 ", backgroundImageUrl='" + backgroundImageUrl + '\'' +
                 ", backgroundRawImageUrl='" + backgroundRawImageUrl + '\'' +
                 '}';
