@@ -33,8 +33,6 @@ public class Game {
     @NotNull
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
-    @Column(name = "TOTAL_ACHIEVEMENTS")
-    private int totalAchievements;
     @Embedded
     private Image images;
     @OneToMany(mappedBy = "game",
@@ -58,7 +56,6 @@ public class Game {
         this.comingSoon = gameDetailDTO.isComingSoon();
         this.shortDescription = gameDetailDTO.getShortDescription();
         this.longDescription = gameDetailDTO.getLongDescription();
-        this.totalAchievements = gameDetailDTO.getTotalAchievements();
 
         this.images = new Image(
                 gameDetailDTO.getHeaderImageUrl(),
@@ -75,10 +72,6 @@ public class Game {
 
     public void setComingSoon(boolean comingSoon) {
         this.comingSoon = comingSoon;
-    }
-
-    public void setTotalAchievements(int totalAchievements) {
-        this.totalAchievements = totalAchievements;
     }
 
     public void setScore(Double score) {
@@ -111,10 +104,6 @@ public class Game {
 
     public String getLongDescription() {
         return longDescription;
-    }
-
-    public int getTotalAchievements() {
-        return totalAchievements;
     }
 
     public Image getImages() {
@@ -152,7 +141,6 @@ public class Game {
                 ", comingSoon=" + comingSoon +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", longDescription='" + longDescription + '\'' +
-                ", totalAchievements=" + totalAchievements +
                 ", images=" + images +
                 ", score=" + score +
                 '}';

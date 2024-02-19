@@ -22,17 +22,14 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
     /* 1) Response with a valid app that has achievements:
     https://store.steampowered.com/api/appdetails?appids=440&l=en
 
-    *  2) Response with a valid app that doesn't have achievements ➡ (totalAchievements = 0):
-    https://store.steampowered.com/api/appdetails?appids=10&l=en
-
-    *  3) Response with a valid app that has an empty ("") release date ➡ (comingSoon = true/false, releaseDate = null):
+    *  2) Response with a valid app that has an empty ("") release date ➡ (releaseDate = null):
     https://store.steampowered.com/api/appdetails?appids=11180&l=en
 
-    *  4) Response with a valid app that hasn't released yet but has "Coming soon",
+    *  3) Response with a valid app that hasn't released yet but has "Coming soon",
         instead of a set release date ➡ (comingSoon = true, releaseDate = null):
     https://store.steampowered.com/api/appdetails?appids=1032980&l=en
 
-    *  5) Response with an invalid app ➡ (GameDetailDTO = null):
+    *  4) Response with an invalid app ➡ (GameDetailDTO = null):
     https://store.steampowered.com/api/appdetails?appids=13333&l=en */
 
     @Override
@@ -45,7 +42,7 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
 
         GameDetailDTO gameDetailDTO = new GameDetailDTO();
 
-        // Case #5
+        // Case #4
         boolean gameFound = successNode.booleanValue();
         if (gameFound) {
             JsonNode dataNode = appIdNode.get("data");
@@ -61,21 +58,16 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
             gameDetailDTO.setHeaderImageUrl(dataNode.get("header_image").textValue());
             gameDetailDTO.setCapsuleImageUrl(dataNode.get("capsule_image").textValue());
             gameDetailDTO.setCapsuleSmallImageUrl(dataNode.get("capsule_imagev5").textValue());
-            gameDetailDTO.setTotalAchievements(
-                    // Case #2
-                    dataNode.has("achievements") ?
-                        dataNode.get("achievements").get("total").intValue() : 0
-            );
 
             boolean comingSoon = dataNode.get("release_date").get("coming_soon").booleanValue();
             gameDetailDTO.setComingSoon(comingSoon);
 
-            // Case #3
+            // Case #2
             boolean dateIsPresent = !dataNode.get("release_date").get("date").textValue().isEmpty();
             if (dateIsPresent) {
                 String releaseDate = dataNode.get("release_date").get("date").textValue();
                 gameDetailDTO.setReleaseDate(
-                        // Case #4
+                        // Case #3
                         releaseDate.equals("Coming soon") ?
                             null : parseDate(releaseDate)
                 );

@@ -14,7 +14,6 @@ public class GameDetailDTO {
     private String headerImageUrl;
     private String capsuleImageUrl;
     private String capsuleSmallImageUrl;
-    private int totalAchievements;
     private boolean comingSoon;
     private LocalDate releaseDate;
     private String backgroundImageUrl;
@@ -76,14 +75,6 @@ public class GameDetailDTO {
         this.capsuleSmallImageUrl = capsuleSmallImageUrl;
     }
 
-    public int getTotalAchievements() {
-        return totalAchievements;
-    }
-
-    public void setTotalAchievements(int totalAchievements) {
-        this.totalAchievements = totalAchievements;
-    }
-
     public boolean isComingSoon() {
         return comingSoon;
     }
@@ -126,7 +117,6 @@ public class GameDetailDTO {
                 ", headerImageUrl='" + headerImageUrl + '\'' +
                 ", capsuleImageUrl='" + capsuleImageUrl + '\'' +
                 ", capsuleSmallImageUrl='" + capsuleSmallImageUrl + '\'' +
-                ", totalAchievements=" + totalAchievements +
                 ", comingSoon=" + comingSoon +
                 ", releaseDate=" + releaseDate +
                 ", backgroundImageUrl='" + backgroundImageUrl + '\'' +
