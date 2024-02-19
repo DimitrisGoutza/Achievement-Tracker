@@ -92,9 +92,13 @@ public class GameDetailDeserializer extends JsonDeserializer<GameDetailDTO> {
         try {
             return LocalDate.parse(releaseDate, DATE_FORMAT_COMMON);
         } catch (DateTimeParseException e1) {
-            // parse() requires the full date, including days
-            releaseDate = "1 " + releaseDate;
-            return LocalDate.parse(releaseDate, DATE_FORMAT_RARE);
+            try {
+                // parse() requires the full date, including days
+                releaseDate = "1 " + releaseDate;
+                return LocalDate.parse(releaseDate, DATE_FORMAT_RARE);
+            } catch (DateTimeParseException e2) {
+                return null;
+            }
         }
     }
 }
