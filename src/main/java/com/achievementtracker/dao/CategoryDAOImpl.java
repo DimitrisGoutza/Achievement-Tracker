@@ -61,4 +61,10 @@ public class CategoryDAOImpl extends GenericDAOImpl<Category, Long> implements C
     public void remove(Category entity) {
         super.remove(entity);
     }
+
+    @Transactional
+    @Override
+    public void removeAll() {
+        super.removeAll();
+    }
 }

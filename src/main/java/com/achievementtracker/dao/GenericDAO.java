@@ -12,4 +12,5 @@ public interface GenericDAO<T, ID> {
     Long getCount();
     T save(T entity);
     void remove(T entity);
+    void removeAll();
 }

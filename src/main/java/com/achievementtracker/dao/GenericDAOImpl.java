@@ -2,6 +2,7 @@ package com.achievementtracker.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,5 +55,12 @@ public abstract class GenericDAOImpl<T, ID extends Serializable> implements Gene
     @Override
     public void remove(T entity) {
         em.remove(entity);
+    }
+
+    @Override
+    public void removeAll() {
+        CriteriaDelete<T> delete = em.getCriteriaBuilder().createCriteriaDelete(entityClass);
+        delete.from(entityClass);
+        em.createQuery(delete).executeUpdate();
     }
 }
