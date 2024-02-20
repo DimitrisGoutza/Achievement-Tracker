@@ -1,6 +1,5 @@
 package com.achievementtracker.entity;
 
-import com.achievementtracker.dto.GameCategoriesDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,8 +18,8 @@ public class Category {
     @Column(name = "NAME", unique = true)
     private String name;
     @NotNull
-    @Column(name = "TOTAL_VOTES")
-    private Integer totalVotes;
+    @Column(name = "POPULARITY")
+    private Integer popularity = 1;
     @NotNull
     @OneToMany(mappedBy = "category",
                fetch = FetchType.LAZY)
@@ -28,13 +27,12 @@ public class Category {
 
     protected Category() {}
 
-    public Category(GameCategoriesDTO.CategoryDetailsDTO categoryDetailsDTO) {
-        this.name = categoryDetailsDTO.getName();
-        this.totalVotes = categoryDetailsDTO.getVotes();
+    public Category(String categoryName) {
+        this.name = categoryName;
     }
 
-    public void setTotalVotes(Integer totalVotes) {
-        this.totalVotes = totalVotes;
+    public void increasePopularity() {
+        this.popularity++;
     }
 
     public Long getId() {
@@ -45,8 +43,8 @@ public class Category {
         return name;
     }
 
-    public Integer getTotalVotes() {
-        return totalVotes;
+    public Integer getPopularity() {
+        return popularity;
     }
 
     public Set<CategorizedGame> getCategorizedGames() {
@@ -58,7 +56,7 @@ public class Category {
         return "Category{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", totalVotes=" + totalVotes +
+                ", popularity=" + popularity +
                 '}';
     }
 
