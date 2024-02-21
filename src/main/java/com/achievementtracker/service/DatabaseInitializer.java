@@ -45,12 +45,11 @@ class DatabaseInitializer {
     void initialize(long requestedTotal) {
         long currentTotal = gameDAO.getCount();
 
-        long startFromAppId = getLatestEntryIdFromDatabase();
         int MAX_RESULTS = 1000;
+        long startFromAppId = getLatestEntryIdFromDatabase();
         StoreAppListDTO storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
 
-        while (storeAppListDTO.hasMoreResults() && currentTotal < requestedTotal){
-            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
+        while (storeAppListDTO.hasMoreResults() && currentTotal < requestedTotal) {
             List<StoreAppListDTO.StoreAppDTO> storeApps = storeAppListDTO.getStoreApps();
 
             for (StoreAppListDTO.StoreAppDTO storeApp : storeApps) {
@@ -68,6 +67,7 @@ class DatabaseInitializer {
                 wait(2);
             }
             startFromAppId = storeAppListDTO.getLastAppId();
+            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
         }
     }
 
