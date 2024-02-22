@@ -8,25 +8,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public class CategorizedGameDAOImpl extends GenericDAOImpl<CategorizedGame, Long> implements CategorizedGameDAO {
+public class CategorizedGameDAOImpl extends GenericDAOImpl<CategorizedGame, CategorizedGame.Id> implements CategorizedGameDAO {
 
     public CategorizedGameDAOImpl() {
         super(CategorizedGame.class);
     }
 
     @Override
-    public CategorizedGame findById(Long aLong) {
-        return super.findById(aLong);
+    public CategorizedGame findById(CategorizedGame.Id id) {
+        return super.findById(id);
     }
 
     @Override
-    public CategorizedGame findById(Long aLong, LockModeType lockModeType) {
-        return super.findById(aLong, lockModeType);
+    public CategorizedGame findById(CategorizedGame.Id id, LockModeType lockModeType) {
+        return super.findById(id, lockModeType);
     }
 
     @Override
-    public CategorizedGame findReferenceById(Long aLong) {
-        return super.findReferenceById(aLong);
+    public CategorizedGame findReferenceById(CategorizedGame.Id id) {
+        return super.findReferenceById(id);
     }
 
     @Override
