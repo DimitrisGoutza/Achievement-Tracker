@@ -114,11 +114,11 @@ public class Achievement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Achievement that = (Achievement) o;
-        return hidden == that.hidden && Objects.equals(name, that.name) && Objects.equals(displayName, that.displayName) && Objects.equals(description, that.description) && Objects.equals(iconURL, that.iconURL) && Objects.equals(iconGrayURL, that.iconGrayURL);
+        return Objects.equals(name, that.name) && Objects.equals(displayName, that.displayName) && Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, displayName, description, hidden, iconURL, iconGrayURL);
+        return Objects.hash(name, displayName, description);
     }
 }
