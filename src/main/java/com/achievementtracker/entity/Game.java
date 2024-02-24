@@ -74,6 +74,18 @@ public class Game {
         this.comingSoon = comingSoon;
     }
 
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public void setImages(Image images) {
+        this.images = images;
+    }
+
     public void setScore(Double score) {
         this.score = score;
     }
@@ -151,11 +163,11 @@ public class Game {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Game game = (Game) o;
-        return Objects.equals(steamAppId, game.steamAppId) && Objects.equals(title, game.title);
+        return Objects.equals(storeId, game.storeId) && Objects.equals(steamAppId, game.steamAppId) && Objects.equals(title, game.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(steamAppId, title);
+        return Objects.hash(storeId, steamAppId, title);
     }
 }
