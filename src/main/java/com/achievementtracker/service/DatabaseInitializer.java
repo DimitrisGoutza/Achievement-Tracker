@@ -47,9 +47,10 @@ class DatabaseInitializer {
 
         int MAX_RESULTS = 1000;
         long startFromAppId = getLatestEntryIdFromDatabase();
-        StoreAppListDTO storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
+        StoreAppListDTO storeAppListDTO;
 
-        while (storeAppListDTO.hasMoreResults() && currentTotal < requestedTotal) {
+        do {
+            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
             List<StoreAppListDTO.StoreAppDTO> storeApps = storeAppListDTO.getStoreApps();
 
             for (StoreAppListDTO.StoreAppDTO storeApp : storeApps) {
@@ -67,14 +68,13 @@ class DatabaseInitializer {
                 wait(2);
             }
             startFromAppId = storeAppListDTO.getLastAppId();
-            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
-        }
+        } while (storeAppListDTO.hasMoreResults() && currentTotal < requestedTotal);
     }
 
     private long getLatestEntryIdFromDatabase() {
         Game latestGameEntry = gameDAO.retrieveLatestEntry();
         if (latestGameEntry != null)
-            return latestGameEntry.getSteamAppId();
+            return latestGameEntry.getStoreId();
         return 0;
     }
 
