@@ -2,15 +2,16 @@ package com.achievementtracker.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
 public abstract class GenericDAOImpl<T, ID extends Serializable> implements GenericDAO<T, ID> {
-    @Autowired
+    @PersistenceContext
     protected EntityManager em;
     protected final Class<T> entityClass;
 
@@ -47,16 +48,19 @@ public abstract class GenericDAOImpl<T, ID extends Serializable> implements Gene
         return em.createQuery(c).getSingleResult();
     }
 
+    @Transactional
     @Override
     public T save(T entity) {
         return em.merge(entity);
     }
 
+    @Transactional
     @Override
     public void remove(T entity) {
         em.remove(entity);
     }
 
+    @Transactional
     @Override
     public void removeAll() {
         CriteriaDelete<T> delete = em.getCriteriaBuilder().createCriteriaDelete(entityClass);
