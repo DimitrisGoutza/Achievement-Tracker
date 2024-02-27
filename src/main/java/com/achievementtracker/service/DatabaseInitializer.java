@@ -11,6 +11,7 @@ import com.achievementtracker.entity.Game;
 import com.achievementtracker.proxy.SteamGlobalStatsProxy;
 import com.achievementtracker.proxy.SteamSpyProxy;
 import com.achievementtracker.proxy.SteamStorefrontProxy;
+import com.achievementtracker.util.TimeUtility;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,11 +47,11 @@ class DatabaseInitializer {
         long currentTotal = gameDAO.getCount();
 
         int MAX_RESULTS = 1000;
-        long startFromAppId = getLatestEntryIdFromDatabase();
+        long lastProcessedAppId = getLatestEntryIdFromDatabase();
         StoreAppListDTO storeAppListDTO;
 
         do {
-            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, startFromAppId, MAX_RESULTS);
+            storeAppListDTO = steamGlobalStatsProxy.fetchAllStoreApps(true, false, lastProcessedAppId, MAX_RESULTS);
             List<StoreAppListDTO.StoreAppDTO> storeApps = storeAppListDTO.getStoreApps();
 
             for (StoreAppListDTO.StoreAppDTO storeApp : storeApps) {
@@ -65,9 +66,9 @@ class DatabaseInitializer {
                     break;
 
                 // polling rate = 1 request to all APIs per 2 seconds
-                wait(2);
+                TimeUtility.waitSeconds(2);
             }
-            startFromAppId = storeAppListDTO.getLastAppId();
+            lastProcessedAppId = storeAppListDTO.getLastAppId();
         } while (storeAppListDTO.hasMoreResults() && currentTotal < requestedTotal);
     }
 
@@ -144,14 +145,6 @@ class DatabaseInitializer {
                 CategorizedGame categorizedGame = new CategorizedGame(categoryDTO.getVotes(), category, game);
                 categorizedGameDAO.save(categorizedGame);
             }
-        }
-    }
-
-    private void wait(int seconds) {
-        try {
-            TimeUnit.SECONDS.sleep(seconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }
