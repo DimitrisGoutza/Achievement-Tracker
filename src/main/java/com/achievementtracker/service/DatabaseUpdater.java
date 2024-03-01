@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -119,15 +118,20 @@ class DatabaseUpdater {
 
         boolean hasAchievements = (gameSchemaDTO != null) && (achievementStatsDTO != null);
         if (hasAchievements) {
-            Map<String, Achievement> existingAchievements = game.getAchievements();
+            Set<Achievement> existingAchievements = game.getAchievements();
 
             List<GameSchemaDTO.AchievementDetailsDTO> updatedAchievements = gameSchemaDTO.getAchievements();
             for (GameSchemaDTO.AchievementDetailsDTO achievementDTO : updatedAchievements) {
-                Achievement achievement = existingAchievements.get(achievementDTO.getName());
-                if (achievement == null)
-                    game.addAchievement(new Achievement(achievementDTO, achievementStatsDTO, game));
-                else
+                Optional<Achievement> matchingAchievement = existingAchievements.stream().filter(
+                        existingAchievement -> existingAchievement.getName().equals(achievementDTO.getName()))
+                        .findFirst();
+                if (matchingAchievement.isPresent()) {
+                    Achievement achievement = matchingAchievement.get();
                     achievement.setPercentage(achievementStatsDTO.getAchievements().get(achievementDTO.getName()));
+                } else {
+                    Achievement achievement = new Achievement(achievementDTO, achievementStatsDTO, game);
+                    game.addAchievement(achievement);
+                }
             }
         }
     }

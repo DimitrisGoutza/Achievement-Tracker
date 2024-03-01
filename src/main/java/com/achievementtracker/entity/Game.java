@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "GAME")
@@ -36,8 +38,7 @@ public class Game {
     @OneToMany(mappedBy = "game",
                cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
-    @MapKey(name = "name")
-    private Map<String, Achievement> achievements = new HashMap<>();
+    private Set<Achievement> achievements = new HashSet<>();
     @OneToMany(mappedBy = "game",
                fetch = FetchType.LAZY)
     private Set<CategorizedGame> categorizedGames = new HashSet<>();
@@ -125,7 +126,7 @@ public class Game {
         return score;
     }
 
-    public Map<String, Achievement> getAchievements() {
+    public Set<Achievement> getAchievements() {
         return achievements;
     }
 
@@ -135,11 +136,11 @@ public class Game {
 
     public void addAchievement(Achievement achievement) {
         if (achievements == null)
-            achievements = new HashMap<>();
+            achievements = new HashSet<>();
 
         // Achievement MUST be associated with THIS Game
         if (achievement.getGame().equals(this))
-            achievements.put(achievement.getName(), achievement);
+            achievements.add(achievement);
     }
 
     @Override
