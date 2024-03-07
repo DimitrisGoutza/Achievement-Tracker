@@ -1,8 +1,6 @@
 package com.achievementtracker.service;
 
-import com.achievementtracker.dao.CategorizedGameDAO;
-import com.achievementtracker.dao.CategoryDAO;
-import com.achievementtracker.dao.GameDAO;
+import com.achievementtracker.dao.*;
 import com.achievementtracker.dto.AchievementStatsDTO;
 import com.achievementtracker.dto.GameCategoriesDTO;
 import com.achievementtracker.dto.GameDetailDTO;
@@ -14,7 +12,6 @@ import com.achievementtracker.proxy.SteamStorefrontProxy;
 import com.achievementtracker.util.TimeUtility;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -52,16 +49,19 @@ class DatabaseUpdater {
 
     @Scheduled(initialDelay = 24 * 60 * 60 * 1000, fixedRate = 24 * 60 * 60 * 1000) // every 24h
     void update() {
-        final int pageSize = 5;
-        int pageNumber = 0;
-        Page<Game> existingGames;
+        OffsetPage page = new OffsetPage(5, gameDAO.getCount(),
+                                Game_.storeId, Page.SortDirection.ASC,
+                                Game_.storeId);
+        int lastPage = page.getPageNumbers().get(page.getPageNumbers().size() - 1);
 
-         do {
-            existingGames = gameDAO.findAllWithCollections(PageRequest.of(pageNumber, pageSize));
+        do {
+            List<Game> existingGames = gameDAO.findAllWithCollections(page);
             for (Game gameInstance : existingGames) {
                 transactionTemplate.executeWithoutResult(status -> {
-                    /* Synchronize current entry with the persistence context (as it is currently in detached state),
-                    any changes made to it (game) will be committed and batch executed when the transaction finally commits */
+                    /*
+                    Synchronize current entry with the persistence context (as it is currently in detached state),
+                    any changes made to it (game) will be batch executed when the transaction finally commits
+                    */
                     Game game = gameDAO.save(gameInstance);
 
                     updateGame(game);
@@ -73,11 +73,11 @@ class DatabaseUpdater {
                 // polling rate = 1 request to all APIs per 2 seconds
                 TimeUtility.waitSeconds(2);
             }
-            pageNumber++;
-        } while (existingGames.hasNext());
+            page.setCurrent(page.getNext());
+        } while (page.getCurrent() <= lastPage);
 
-         // after updating existing entries, move on to persisting new ones
-         databaseInitializer.initialize(Long.MAX_VALUE);
+        // after updating existing entries, move on to persisting new ones
+        databaseInitializer.initialize(Long.MAX_VALUE);
     }
 
     private void updateCategoriesForGame(Game game) {
