@@ -34,3 +34,6 @@ build/
 
 # Sensitive info properties file
 /src/main/resources/sensitive-info.properties
+
+# SQL scripts used for testing Database operations
+/ClearMutableColumns.sql
