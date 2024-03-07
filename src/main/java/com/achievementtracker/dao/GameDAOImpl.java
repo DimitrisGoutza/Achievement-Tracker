@@ -1,11 +1,12 @@
 package com.achievementtracker.dao;
 
+import com.achievementtracker.entity.CategorizedGame;
+import com.achievementtracker.entity.CategorizedGame_;
 import com.achievementtracker.entity.Game;
+import com.achievementtracker.entity.Game_;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,22 +29,46 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public Page<Game> findAllWithCollections(Pageable pageable) {
-        TypedQuery<Long> queryForIDs = em.createQuery("SELECT storeId FROM Game", Long.class);
+    public List<Game> findAllWithCollections(Page page) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        int offset = pageable.getPageNumber() * pageable.getPageSize();
-        queryForIDs.setFirstResult(offset);
-        queryForIDs.setMaxResults(pageable.getPageSize());
-        List<Long> gameIds = queryForIDs.getResultList();
+        // First we retrieve the Game IDs paginated
+        CriteriaQuery<Long> criteriaQueryForIds = cb.createQuery(Long.class);
 
-        TypedQuery<Game> query = em.createQuery("FROM Game g LEFT JOIN FETCH " +
-                "g.achievements LEFT JOIN FETCH " +
-                "g.categorizedGames cg LEFT JOIN FETCH " +
-                "cg.category " +
-                "WHERE g.storeId IN :gameIds", Game.class);
-        query.setParameter("gameIds", gameIds);
-        List<Game> games = query.getResultList();
+        Root<Game> idRoot = criteriaQueryForIds.from(Game.class);
+        criteriaQueryForIds.select(idRoot.get(Game_.storeId));
 
-        return new PageImpl<>(games, pageable, getCount());
+        TypedQuery<Long> queryForIds = page.createQuery(em, criteriaQueryForIds, idRoot);
+        List<Long> gameIds = queryForIds.getResultList();
+
+        // Then we the retrieve Games (along with eagerly loaded collections) that correspond to those IDs
+        CriteriaQuery<Game> criteriaQueryForGames = cb.createQuery(Game.class);
+        // FROM Game
+        Root<Game> gameRoot = criteriaQueryForGames.from(Game.class);
+        // JOIN FETCH associated collections
+        gameRoot.fetch(Game_.achievements, JoinType.LEFT);
+        Fetch<Game, CategorizedGame> categorizedGameFetch = gameRoot.fetch(Game_.categorizedGames, JoinType.LEFT);
+        categorizedGameFetch.fetch(CategorizedGame_.category, JoinType.LEFT);
+        // WHERE Game.storeId IN gameIds
+        criteriaQueryForGames.where(gameRoot.get(Game_.storeId).in(gameIds));
+        // PROJECTION
+        criteriaQueryForGames.select(gameRoot).distinct(true);
+
+        TypedQuery<Game> query = em.createQuery(criteriaQueryForGames);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Game> findAll(Page page) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Game> criteriaQuery = cb.createQuery(Game.class);
+        // FROM Game
+        Root<Game> gameRoot = criteriaQuery.from(Game.class);
+        // PROJECTION
+        criteriaQuery.select(gameRoot);
+
+        TypedQuery<Game> query = page.createQuery(em, criteriaQuery, gameRoot);
+        return query.getResultList();
     }
 }
