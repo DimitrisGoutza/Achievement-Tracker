@@ -4,10 +4,7 @@ import com.achievementtracker.dao.CategorizedGameDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dto.*;
-import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.CategorizedGame;
-import com.achievementtracker.entity.Category;
-import com.achievementtracker.entity.Game;
+import com.achievementtracker.entity.*;
 import com.achievementtracker.proxy.SteamGlobalStatsProxy;
 import com.achievementtracker.proxy.SteamSpyProxy;
 import com.achievementtracker.proxy.SteamStorefrontProxy;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Component
 class DatabaseInitializer {
@@ -28,18 +24,21 @@ class DatabaseInitializer {
     private final GameDAO gameDAO;
     private final CategoryDAO categoryDAO;
     private final CategorizedGameDAO categorizedGameDAO;
+    private final AchievementAnalyticsService achievementAnalyticsService;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
     DatabaseInitializer(SteamGlobalStatsProxy steamGlobalStatsProxy,
                         SteamSpyProxy steamSpyProxy, SteamStorefrontProxy steamStorefrontProxy, GameDAO gameDAO,
-                        CategoryDAO categoryDAO, CategorizedGameDAO categorizedGameDAO, TransactionTemplate transactionTemplate) {
+                        CategoryDAO categoryDAO, CategorizedGameDAO categorizedGameDAO, AchievementAnalyticsService achievementAnalyticsService,
+                        TransactionTemplate transactionTemplate) {
         this.steamGlobalStatsProxy = steamGlobalStatsProxy;
         this.steamSpyProxy = steamSpyProxy;
         this.steamStorefrontProxy = steamStorefrontProxy;
         this.gameDAO = gameDAO;
         this.categoryDAO = categoryDAO;
         this.categorizedGameDAO = categorizedGameDAO;
+        this.achievementAnalyticsService = achievementAnalyticsService;
         this.transactionTemplate = transactionTemplate;
     }
 
@@ -112,6 +111,10 @@ class DatabaseInitializer {
                     game.addAchievement(achievement);
                 }
             }
+            game.setChallengeRating(achievementAnalyticsService.calculateChallengeRating(game.getAchievements()));
+            game.setAverageCompletion(achievementAnalyticsService.calculateAverageAchievementCompletion(game.getAchievements()));
+            game.setDifficultySpread(achievementAnalyticsService.calculateDifficultySpread(game.getAchievements()));
+
             gameDAO.save(game);
         }
     }

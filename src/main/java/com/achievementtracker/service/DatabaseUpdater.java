@@ -12,7 +12,6 @@ import com.achievementtracker.proxy.SteamStorefrontProxy;
 import com.achievementtracker.util.TimeUtility;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -29,19 +28,21 @@ class DatabaseUpdater {
     private final GameDAO gameDAO;
     private final CategoryDAO categoryDAO;
     private final CategorizedGameDAO categorizedGameDAO;
+    private final AchievementAnalyticsService achievementAnalyticsService;
     private final DatabaseInitializer databaseInitializer;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
     DatabaseUpdater(SteamGlobalStatsProxy steamGlobalStatsProxy, SteamSpyProxy steamSpyProxy, SteamStorefrontProxy steamStorefrontProxy,
-                    GameDAO gameDAO, CategoryDAO categoryDAO, CategorizedGameDAO categorizedGameDAO,
-                    DatabaseInitializer databaseInitializer, TransactionTemplate transactionTemplate) {
+                    GameDAO gameDAO, CategoryDAO categoryDAO, CategorizedGameDAO categorizedGameDAO, DatabaseInitializer databaseInitializer,
+                    AchievementAnalyticsService achievementAnalyticsService, TransactionTemplate transactionTemplate) {
         this.steamGlobalStatsProxy = steamGlobalStatsProxy;
         this.steamSpyProxy = steamSpyProxy;
         this.steamStorefrontProxy = steamStorefrontProxy;
         this.gameDAO = gameDAO;
         this.categoryDAO = categoryDAO;
         this.categorizedGameDAO = categorizedGameDAO;
+        this.achievementAnalyticsService = achievementAnalyticsService;
         this.databaseInitializer = databaseInitializer;
         this.transactionTemplate = transactionTemplate;
     }
@@ -134,6 +135,9 @@ class DatabaseUpdater {
                 }
             }
         }
+        game.setChallengeRating(achievementAnalyticsService.calculateChallengeRating(game.getAchievements()));
+        game.setAverageCompletion(achievementAnalyticsService.calculateAverageAchievementCompletion(game.getAchievements()));
+        game.setDifficultySpread(achievementAnalyticsService.calculateDifficultySpread(game.getAchievements()));
     }
 
     private void updateGame(Game game) {
