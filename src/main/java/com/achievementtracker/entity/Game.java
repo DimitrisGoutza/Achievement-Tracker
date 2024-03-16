@@ -35,6 +35,13 @@ public class Game {
     private String longDescription;
     @Embedded
     private Image images;
+    @NotNull
+    @Column(name = "CHALLENGE_RATING")
+    private int challengeRating;
+    @Column(name = "AVERAGE_COMPLETION")
+    private Double averageCompletion;
+    @Column(name = "DIFFICULTY_SPREAD")
+    private Double difficultySpread;
     @OneToMany(mappedBy = "game",
                cascade = CascadeType.ALL,
                fetch = FetchType.LAZY)
@@ -42,8 +49,6 @@ public class Game {
     @OneToMany(mappedBy = "game",
                fetch = FetchType.LAZY)
     private Set<CategorizedGame> categorizedGames = new HashSet<>();
-    @Transient
-    private Double score;
 
     protected Game() {
     }
@@ -86,8 +91,16 @@ public class Game {
         this.images = images;
     }
 
-    public void setScore(Double score) {
-        this.score = score;
+    public void setChallengeRating(int challengeRating) {
+        this.challengeRating = challengeRating;
+    }
+
+    public void setAverageCompletion(Double averageCompletion) {
+        this.averageCompletion = averageCompletion;
+    }
+
+    public void setDifficultySpread(Double difficultySpread) {
+        this.difficultySpread = difficultySpread;
     }
 
     public Long getStoreId() {
@@ -122,8 +135,16 @@ public class Game {
         return images;
     }
 
-    public Double getScore() {
-        return score;
+    public int getChallengeRating() {
+        return challengeRating;
+    }
+
+    public Double getAverageCompletion() {
+        return averageCompletion;
+    }
+
+    public Double getDifficultySpread() {
+        return difficultySpread;
     }
 
     public Set<Achievement> getAchievements() {
@@ -154,7 +175,9 @@ public class Game {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", longDescription='" + longDescription + '\'' +
                 ", images=" + images +
-                ", score=" + score +
+                ", challengeRating=" + challengeRating +
+                ", averageCompletion=" + averageCompletion +
+                ", difficultySpread=" + difficultySpread +
                 '}';
     }
 
