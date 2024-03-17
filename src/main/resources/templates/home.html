@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Achievement Tracker - Home</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th id="id-header">
+                    <span class="column-name">ID</span>
+                </th>
+                <th id="name-header">
+                    <span class="column-name">Name</span>
+                </th>
+                <th id="release-date-header">
+                    <span class="column-name">Release</span>
+                </th>
+                <th id="challenge-rating-header">
+                    <span class="column-name">Challenge Rating</span>
+                </th>
+                <th id="difficulty-spread-header">
+                    <span class="column-name">Difficulty Spread</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="table-content">
+            <tr th:each="game : ${games}">
+                <td><img th:src="${game.images.capsuleImageURL}" alt="Game Image"></td>
+                <td th:text="${game.title}"></td>
+                <td th:text="${game.releaseDate}"></td>
+                <td th:text="${game.challengeRating} + ' score'"></td>
+                <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
