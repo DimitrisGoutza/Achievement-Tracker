@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Achievement Tracker - Home</title>
     <script type="text/javascript" src="/pagination.js" defer></script>
+    <script type="text/javascript" src="/sorting.js" defer></script>
+    <link rel="stylesheet" href="/homepage.css">
 </head>
 <body>
     <label for="page-entries-select">Entries per Page :</label>
@@ -15,56 +17,61 @@
         <option value="500" th:attr="selected=${page.size == 500}">500</option>
         <option value="1000" th:attr="selected=${page.size == 1000}">1K</option>
     </select>
-        <table>
-            <thead>
-                <tr>
-                    <th id="id-header">
-                        <span class="column-name">ID</span>
-                    </th>
-                    <th id="name-header">
-                        <span class="column-name">Name</span>
-                    </th>
-                    <th id="release-date-header">
-                        <span class="column-name">Release</span>
-                    </th>
-                    <th id="challenge-rating-header">
-                        <span class="column-name">Challenge Rating</span>
-                    </th>
-                    <th id="difficulty-spread-header">
-                        <span class="column-name">Difficulty Spread</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="table-content">
-                <tr th:each="game : ${games}">
-                    <td><img th:src="${game.images.capsuleImageURL}" alt="Game Image"></td>
-                    <td th:text="${game.title}"></td>
-                    <td th:text="${game.releaseDate}"></td>
-                    <td th:text="${game.challengeRating} + ' score'"></td>
-                    <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>
-                </tr>
-            </tbody>
-        </table>
-        <div id="pagination-footer" th:if="${page.moreThanOneAvailable}">
-            <button type="button" th:attr="disabled = ${!page.previousAvailable}"
-                    th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
-            <button type="button" th:text="${page.first}" th:style="${page.first == page.current} ? 'background-color: #808080;' : null"
-                    th:onclick="'changePageNumber(' + ${page.first} + ')'"/>
+    <table>
+        <thead>
+        <tr>
+            <th id="id-header" onclick="sortTable('id-header')">
+                <span class="column-name">ID</span>
+                <span class="sort-direction sorted-default"></span>
+            </th>
+            <th id="name-header" onclick="sortTable('name-header')">
+                <span class="column-name">Name</span>
+                <span class="sort-direction sorted-default"></span>
+            </th>
+            <th id="release-date-header" onclick="sortTable('release-date-header')">
+                <span class="column-name">Release</span>
+                <span class="sort-direction sorted-default"></span>
+            </th>
+            <th id="challenge-rating-header" onclick="sortTable('challenge-rating-header')">
+                <span class="column-name">Challenge Rating</span>
+                <span class="sort-direction sorted-default"></span>
+            </th>
+            <th id="difficulty-spread-header" onclick="sortTable('difficulty-spread-header')">
+                <span class="column-name">Difficulty Spread</span>
+                <span class="sort-direction sorted-default"></span>
+            </th>
+        </tr>
+        </thead>
+        <tbody id="table-content">
+        <tr th:each="game : ${games}">
+            <td><img th:src="${game.images.capsuleImageURL}" alt="Game Image"></td>
+            <td th:text="${game.title}"></td>
+            <td th:text="${game.releaseDate}"></td>
+            <td th:text="${game.challengeRating} + ' score'"></td>
+            <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="pagination-footer" th:if="${page.moreThanOneAvailable}">
+        <button type="button" th:attr="disabled = ${!page.previousAvailable}"
+                th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
+        <button type="button" th:text="${page.first}" th:style="${page.first == page.current} ? 'background-color: #808080;' : null"
+                th:onclick="'changePageNumber(' + ${page.first} + ')'"/>
 
-            <th:block th:each="pageNumber : ${page.pageNumbers.subList(1, page.pageNumbers.size() - 1)}">
-                <span th:if="${pageNumber == page.current - 2}"> ... </span>
-                <button type="button" th:if="${pageNumber == page.current || (pageNumber >= page.current - 1 && pageNumber <= page.current + 1)}"
-                        th:text="${pageNumber}" th:style="${pageNumber == page.current} ? 'background-color: #808080;' : null"
-                        th:onclick="'changePageNumber(' + ${pageNumber} + ')'"/>
-                <span th:if="${pageNumber == page.current + 2}"> ... </span>
-            </th:block>
+        <th:block th:each="pageNumber : ${page.pageNumbers.subList(1, page.pageNumbers.size() - 1)}">
+            <span th:if="${pageNumber == page.current - 2}"> ... </span>
+            <button type="button" th:if="${pageNumber == page.current || (pageNumber >= page.current - 1 && pageNumber <= page.current + 1)}"
+                    th:text="${pageNumber}" th:style="${pageNumber == page.current} ? 'background-color: #808080;' : null"
+                    th:onclick="'changePageNumber(' + ${pageNumber} + ')'"/>
+            <span th:if="${pageNumber == page.current + 2}"> ... </span>
+        </th:block>
 
-            <button type="button" th:text="${page.last}" th:style="${page.last == page.current} ? 'background-color: #808080;' : null"
-                    th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
-            <button type="button" th:attr="disabled = ${!page.nextAvailable}"
-                    th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
+        <button type="button" th:text="${page.last}" th:style="${page.last == page.current} ? 'background-color: #808080;' : null"
+                th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
+        <button type="button" th:attr="disabled = ${!page.nextAvailable}"
+                th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
 
-            <span th:text="'Showing '+${page.rangeStartInteger}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
-        </div>
+        <span th:text="'Showing '+${page.rangeStartInteger}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
+    </div>
 </body>
 </html>

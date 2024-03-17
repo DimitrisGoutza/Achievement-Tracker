@@ -4,7 +4,9 @@ function changePageSize() {
 
         const fetchURL = new URL(window.location.origin + window.location.pathname + window.location.search);
 
+        const existingParams = fetchURL.searchParams;
         const newParams = new URLSearchParams();
+        existingParams.forEach((value, key) => newParams.set(key, value));
         newParams.set("size", selectedPageSize);
 
         fetchURL.search = newParams.toString();
@@ -31,7 +33,9 @@ function changePageNumber(requestPageNumber) {
 
         const fetchURL = new URL(window.location.origin + window.location.pathname + window.location.search);
 
+        const existingParams = fetchURL.searchParams;
         const newParams = new URLSearchParams();
+        existingParams.forEach((value, key) => newParams.set(key, value));
         newParams.set("size", selectedPageSize);
         newParams.set("page", requestPageNumber);
 

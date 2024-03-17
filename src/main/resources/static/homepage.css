@@ -1,0 +1,10 @@
+.sorted-default::before {
+    content: "⬆⬇";
+}
+.sorted-asc::before {
+    content: "⬆";
+}
+
+.sorted-desc::before {
+    content: "⬇";
+}

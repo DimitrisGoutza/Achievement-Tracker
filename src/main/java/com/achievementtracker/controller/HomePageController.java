@@ -32,9 +32,26 @@ public class HomePageController {
     @GetMapping("/home")
     public String getHomePage(@RequestParam(name = "page") Optional<Integer> pageOptional,
                               @RequestParam(name = "size") Optional<Integer> sizeOptional,
+                              @RequestParam(name = "sort") Optional<String> sortOptional,
                               Model model) {
+        String sortParamValue = sortOptional.orElse("challenge-rating_desc");
+        String sortColumn = sortParamValue.split("_")[0].toLowerCase();
+        String sortDirection = sortParamValue.split("_")[1].toLowerCase();
+
         page.setCurrent(pageOptional.orElse(1));
         page.setSize(sizeOptional.orElse(50));
+        page.setSortAttribute(
+                switch (sortColumn) {
+                    case "id" -> Game_.storeId;
+                    case "name" -> Game_.title;
+                    case "release" -> Game_.releaseDate;
+                    case "challenge-rating" -> Game_.challengeRating;
+                    case "difficulty-spread" -> Game_.difficultySpread;
+                    default -> Game_.challengeRating;
+                }
+        );
+        page.setSortDirection(sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?
+                Page.SortDirection.ASC : Page.SortDirection.DESC);
 
         List<Game> games = gameDAO.findAll(page);
 
