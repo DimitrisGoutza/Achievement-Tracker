@@ -33,13 +33,7 @@ function sortTable(headerId) {
     fetch(determineEndpointURL())
         .then(response => response.text())
         .then(html => {
-            const fragment = document.createRange().createContextualFragment(html);
-            const updatedTableBody = fragment.getElementById("table-content");
-            const updatedPageFooter = fragment.getElementById("pagination-footer");
-
-            document.getElementById("table-content").innerHTML = updatedTableBody.innerHTML;
-            document.getElementById("pagination-footer").innerHTML = updatedPageFooter.innerHTML;
-
+            updateTableContent(html);
             toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState);
             resetSortClassesForOtherColumns(headerId);
 
