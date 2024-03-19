@@ -7,8 +7,8 @@ const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
 
 function sortTable(headerId) {
     const targetHeader = document.getElementById(headerId);
-    const sortDirectionElement = targetHeader.getElementsByClassName("sort-direction")[0];
-    const sortColumnName = targetHeader.getElementsByClassName("column-name")[0].innerText
+    const sortDirectionElement = targetHeader.querySelector("span.sort-direction");
+    const sortColumnName = targetHeader.querySelector("span.column-name").innerText
         .trim().replace(/\s+/g, "-").toLowerCase();
 
     const currentSortState = Object.keys(SortClasses).find(sortState =>
@@ -63,7 +63,7 @@ function resetSortClassesForOtherColumns(excludedHeaderId) {
     allHeaders.forEach(header => {
         // for every other header
         if (header.id !== excludedHeaderId) {
-            const sortDirectionElement = header.getElementsByClassName("sort-direction")[0];
+            const sortDirectionElement = header.querySelector("span.sort-direction");
             // clear it from all appended sort classes (if any)
             Object.values(SortClasses).forEach(sortClass => sortDirectionElement.classList.remove(sortClass));
             // add the default sort class
