@@ -20,8 +20,7 @@ function sortTable(headerId) {
         const selectedPageSize = document.getElementById("page-entries-select").value;
 
         const fetchURL = new URL(window.location.href);
-
-        const params = new URLSearchParams();
+        const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
         if (requestedSortClass !== SortClasses.default)
             params.set("sort", SORT_PARAM_FORMAT.replace("{column}", sortColumnName).replace("{sortDirection}", requestedSortState));

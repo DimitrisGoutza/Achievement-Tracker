@@ -2,14 +2,12 @@ function changePageSize() {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
 
-        const fetchURL = new URL(window.location.origin + window.location.pathname + window.location.search);
+        const fetchURL = new URL(window.location.href);
 
-        const existingParams = fetchURL.searchParams;
-        const newParams = new URLSearchParams();
-        existingParams.forEach((value, key) => newParams.set(key, value));
-        newParams.set("size", selectedPageSize);
+        const params = new URLSearchParams(fetchURL.searchParams);
+        params.set("size", selectedPageSize);
 
-        fetchURL.search = newParams.toString();
+        fetchURL.search = params.toString();
         return fetchURL;
     };
 
@@ -25,15 +23,12 @@ function changePageNumber(requestPageNumber) {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
 
-        const fetchURL = new URL(window.location.origin + window.location.pathname + window.location.search);
+        const fetchURL = new URL(window.location.href);
+        const params = new URLSearchParams(fetchURL.searchParams);
+        params.set("size", selectedPageSize);
+        params.set("page", requestPageNumber);
 
-        const existingParams = fetchURL.searchParams;
-        const newParams = new URLSearchParams();
-        existingParams.forEach((value, key) => newParams.set(key, value));
-        newParams.set("size", selectedPageSize);
-        newParams.set("page", requestPageNumber);
-
-        fetchURL.search = newParams.toString();
+        fetchURL.search = params.toString();
         return fetchURL;
     };
 
