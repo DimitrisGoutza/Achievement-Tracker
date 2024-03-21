@@ -1,3 +1,9 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // Event Listeners
+    const selectPageSizeElement = document.getElementById("page-entries-select");
+    selectPageSizeElement.addEventListener("change", () => changePageSize());
+});
+
 function changePageSize() {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
