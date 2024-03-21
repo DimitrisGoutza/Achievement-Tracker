@@ -47,7 +47,9 @@ function sortTable(targetHeader) {
         const fetchURL = new URL(window.location.href);
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
-        if (requestedSortClass !== SortClasses.default)
+        if (requestedSortClass === SortClasses.default)
+            params.delete("sort");
+        else
             params.set("sort", SORT_PARAM_FORMAT.replace("{column}", sortColumnName).replace("{sortDirection}", requestedSortState));
 
         fetchURL.search = params.toString();
