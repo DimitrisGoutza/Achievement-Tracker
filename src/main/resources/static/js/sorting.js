@@ -4,9 +4,34 @@ const SortClasses = {
     desc: "sorted-desc"
 };
 const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
+const HEADER_ID_FORMAT = "{column}-header"; // name-header
 
-function sortTable(headerId) {
-    const targetHeader = document.getElementById(headerId);
+document.addEventListener("DOMContentLoaded", function attachSortStates() {
+    const params = new URLSearchParams(window.location.search);
+    const sortParam = params.get("sort");
+    if (sortParam) {
+        const columnName = sortParam.split("_")[0];
+        const sortDirection = sortParam.split("_")[1];
+
+        const targetHeader = document.getElementById(HEADER_ID_FORMAT.replace("{column}", columnName));
+        targetHeader.querySelector("span.sort-direction").classList.add(SortClasses[sortDirection]);
+
+        document.querySelectorAll("th").forEach(th => {
+           if (th !== targetHeader)
+               th.querySelector("span.sort-direction").classList.add(SortClasses.default);
+        });
+    } else {
+        document.querySelectorAll("th").forEach(th =>
+           th.querySelector("span.sort-direction").classList.add(SortClasses.default)
+        );
+    }
+
+    // Event Listeners
+    const allHeaders = document.querySelectorAll("th");
+    allHeaders.forEach(th => th.addEventListener("click", () => sortTable(th)));
+});
+
+function sortTable(targetHeader) {
     const sortDirectionElement = targetHeader.querySelector("span.sort-direction");
     const sortColumnName = targetHeader.querySelector("span.column-name").innerText
         .trim().replace(/\s+/g, "-").toLowerCase();
@@ -34,7 +59,7 @@ function sortTable(headerId) {
         .then(html => {
             updateTableContent(html);
             toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState);
-            resetSortClassesForOtherColumns(headerId);
+            resetSortClassesForOtherColumns(targetHeader);
 
             window.history.replaceState({}, "", generateVisibleURL(sortColumnName, requestedSortState, requestedSortClass));
         })
@@ -56,12 +81,12 @@ function toggleSortDirection(sortDirectionElement, currentSortState, requestedSo
     sortDirectionElement.classList.add(SortClasses[requestedSortState]);
 }
 
-function resetSortClassesForOtherColumns(excludedHeaderId) {
+function resetSortClassesForOtherColumns(excludedHeader) {
     const allHeaders = document.querySelectorAll("th");
 
     allHeaders.forEach(header => {
         // for every other header
-        if (header.id !== excludedHeaderId) {
+        if (header !== excludedHeader) {
             const sortDirectionElement = header.querySelector("span.sort-direction");
             // clear it from all appended sort classes (if any)
             Object.values(SortClasses).forEach(sortClass => sortDirectionElement.classList.remove(sortClass));
