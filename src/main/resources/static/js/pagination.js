@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    disableActivePageButton();
     // Event Listeners
     const selectPageSizeElement = document.getElementById("page-entries-select");
     selectPageSizeElement.addEventListener("change", () => changePageSize());
@@ -25,14 +26,14 @@ function changePageSize() {
         .catch(error => console.error("Error: "+error));
 }
 
-function changePageNumber(requestPageNumber) {
+function changePageNumber(requestedPageNumber) {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
 
         const fetchURL = new URL(window.location.href);
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
-        params.set("page", requestPageNumber);
+        params.set("page", requestedPageNumber);
 
         fetchURL.search = params.toString();
         return fetchURL;
@@ -42,6 +43,7 @@ function changePageNumber(requestPageNumber) {
         .then(response => response.text())
         .then(html => {
             updateTableContent(html);
+            disableActivePageButton();
             scrollToTop();
         })
         .catch(error => console.error("Error: "+error));
@@ -57,10 +59,18 @@ function updateTableContent(html) {
     document.getElementById("pagination-footer").innerHTML = updatedPageFooter.innerHTML;
 }
 
+function disableActivePageButton() {
+    const activeButton = document.querySelector("button.selected");
+    const activePageNumber = activeButton.innerText;
+    if (activeButton.getAttribute("onclick").includes("changePageNumber("+activePageNumber+")"))
+        activeButton.removeAttribute("onclick");
+}
+
 function scrollToTop() {
-    // TODO : make this scroll to top of table, not top of page
+    const table = document.querySelector("table");
+    const tableTopOffset = table.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({
-        top: 0,
+        top: tableTopOffset,
         behavior: "smooth"
     });
 }

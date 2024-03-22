@@ -8,3 +8,7 @@
 .sorted-desc::before {
     content: "⬇";
 }
+
+.selected {
+    background-color: #808080;
+}
