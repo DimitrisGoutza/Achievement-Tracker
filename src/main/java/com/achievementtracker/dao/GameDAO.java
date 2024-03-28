@@ -10,4 +10,6 @@ public interface GameDAO extends GenericDAO<Game, Long> {
     List<Game> findAllWithCollections(Page page);
 
     List<Game> findAll(Page page);
+
+    List<Game> findAllByCategoryId(List<Long> categoryIds, Page page);
 }

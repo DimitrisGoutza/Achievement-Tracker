@@ -3,6 +3,7 @@ package com.achievementtracker.controller;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
+import com.achievementtracker.dto.SelectedFilterData;
 import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +37,14 @@ public class HomePageController {
     public String getHomePage(@RequestParam(name = "page") Optional<Integer> pageOptional,
                               @RequestParam(name = "size") Optional<Integer> sizeOptional,
                               @RequestParam(name = "sort") Optional<String> sortOptional,
+                              @RequestParam(name = "categoryid") Optional<String> categoryOptional,
                               Model model) {
         String sortParamValue = sortOptional.orElse("challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
+        // Filters
+        String categoriesParam = categoryOptional.orElse("");
+        SelectedFilterData selectedFilterData = new SelectedFilterData(extractCategoryIds(categoriesParam));
 
         // Pagination
         page.setCurrent(pageOptional.orElse(1));
@@ -56,11 +62,24 @@ public class HomePageController {
         page.setSortDirection(sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?
                 Page.SortDirection.ASC : Page.SortDirection.DESC);
 
-        List<Game> games = gameFilterService.getFilteredGames(page);
+        List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
+        List<Category> categories = gameFilterService.getAvailableCategories();
 
         model.addAttribute("games", games);
+        model.addAttribute("categories", categories);
+        model.addAttribute("selectedFilters", selectedFilterData);
         model.addAttribute("page", page);
 
         return "home";
+    }
+
+    private List<Long> extractCategoryIds(String categoryIds) {
+        if (categoryIds.isEmpty())
+            return List.of();
+        if (categoryIds.contains(","))
+            return Arrays.stream(categoryIds.split(","))
+                    .map(Long::valueOf).toList();
+        else
+            return List.of(Long.valueOf(categoryIds));
     }
 }

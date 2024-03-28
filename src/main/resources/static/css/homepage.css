@@ -12,3 +12,12 @@
 .selected {
     background-color: #808080;
 }
+
+#category-list {
+    padding: 1vh 0 0 0;
+    margin: 0;
+    list-style-type: none;
+    overflow: auto;
+    max-height: 30vh;
+    max-width: 22vh;
+}

@@ -82,5 +82,22 @@
         <!-- Page Entry Information -->
         <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
     </div>
+    <!-- Filters -->
+    <form id="filter-form" method="GET">
+        <!-- Category checkboxes -->
+        <div id="category-filter">
+            <input id="category-search" type="search" placeholder="Search">
+            <ul id="category-list">
+                <li class="category-item" th:each="category, pos : ${categories}">
+                    <input class="category-checkbox" th:id="'category-'+ ${pos.count}" type="checkbox" th:value="${category.id}" th:checked="${selectedFilters.categoryIds.contains(category.id)}">
+                    <label class="category-name" th:for="'category-'+ ${pos.count}" th:text="${category.name}"></label>
+                </li>
+            </ul>
+        </div>
+        <!-- Submit / Reset -->
+        <button type="submit" disabled>Apply Selected</button>
+        <!-- TODO: make reset button work correctly -->
+        <button type="reset"><a href="/home">Clear Filters</a></button>
+    </form>
 </body>
 </html>
