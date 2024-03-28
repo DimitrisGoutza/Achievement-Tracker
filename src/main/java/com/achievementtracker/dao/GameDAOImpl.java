@@ -1,12 +1,12 @@
 package com.achievementtracker.dao;
 
-import com.achievementtracker.entity.CategorizedGame;
-import com.achievementtracker.entity.CategorizedGame_;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     @Override
     public List<Game> findAll(Page page) {
         // Count query
-        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g) FROM Game g", Long.class);
+        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g.storeId) FROM Game g", Long.class);
         Long totalRecordCount = queryForCount.getSingleResult();
         page.setTotalRecords(totalRecordCount);
 

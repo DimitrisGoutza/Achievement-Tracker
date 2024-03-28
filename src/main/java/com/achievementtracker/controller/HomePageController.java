@@ -3,8 +3,10 @@ package com.achievementtracker.controller;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
+import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
+import com.achievementtracker.service.GameFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +18,12 @@ import java.util.Optional;
 
 @Controller
 public class HomePageController {
-    private final GameDAO gameDAO;
+    private final GameFilterService gameFilterService;
     private final OffsetPage page;
 
     @Autowired
-    public HomePageController(GameDAO gameDAO) {
-        this.gameDAO = gameDAO;
+    public HomePageController(GameFilterService gameFilterService, GameDAO gameDAO) {
+        this.gameFilterService = gameFilterService;
 
         this.page = new OffsetPage(50, gameDAO.getCount(),
                 Game_.challengeRating, Page.SortDirection.DESC,
@@ -29,7 +31,7 @@ public class HomePageController {
                 Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread);
     }
 
-    @GetMapping("/home")
+    @GetMapping("/home")    // TODO : Add validation for params
     public String getHomePage(@RequestParam(name = "page") Optional<Integer> pageOptional,
                               @RequestParam(name = "size") Optional<Integer> sizeOptional,
                               @RequestParam(name = "sort") Optional<String> sortOptional,
@@ -38,6 +40,7 @@ public class HomePageController {
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
 
+        // Pagination
         page.setCurrent(pageOptional.orElse(1));
         page.setSize(sizeOptional.orElse(50));
         page.setSortAttribute(
@@ -53,7 +56,7 @@ public class HomePageController {
         page.setSortDirection(sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?
                 Page.SortDirection.ASC : Page.SortDirection.DESC);
 
-        List<Game> games = gameDAO.findAll(page);
+        List<Game> games = gameFilterService.getFilteredGames(page);
 
         model.addAttribute("games", games);
         model.addAttribute("page", page);
