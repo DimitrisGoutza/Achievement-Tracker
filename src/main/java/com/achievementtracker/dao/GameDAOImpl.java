@@ -55,8 +55,8 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     @Override
     public List<Game> findAll(boolean achievementsOnly ,Page page) {
         // Count query
-        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g.storeId) FROM Game g" +
-                (achievementsOnly ? " JOIN Achievement a ON a.game.storeId = g.storeId" : ""), Long.class);
+        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(DISTINCT g.storeId) FROM Game g " +
+                (achievementsOnly ? "JOIN Achievement a ON a.game.storeId = g.storeId " : ""), Long.class);
         Long totalRecordCount = queryForCount.getSingleResult();
         page.setTotalRecords(totalRecordCount);
 
