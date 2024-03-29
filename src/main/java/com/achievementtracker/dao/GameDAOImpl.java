@@ -64,6 +64,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Game> cq = cb.createQuery(Game.class);
         Root<Game> gameRoot = cq.from(Game.class);
+        cq.select(gameRoot).distinct(true);
         if (achievementsOnly)
             gameRoot.join(Game_.achievements, JoinType.INNER);
 
