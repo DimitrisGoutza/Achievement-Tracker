@@ -24,7 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }));
 
     filterForm.addEventListener("submit", () => applyFilters());
+    filterForm.addEventListener("reset", () => clearFilters());
 });
+
+function clearFilters() {
+    filterForm.action = window.location.pathname;
+    filterForm.submit();
+}
 
 function applyFilters() {
     // Category checkboxes
