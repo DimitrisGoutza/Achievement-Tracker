@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* --------------------- Event Listeners --------------------- */
+    const onlyAchievementsCheckbox = document.getElementById("only-achievements-checkbox");
+    onlyAchievementsCheckbox.addEventListener("change", () => applyButton.disabled = !formDataHasChanged());
+
     const categorySearch = document.getElementById("category-search");
     categorySearch.addEventListener("input", (event) => searchCategories(event.target.value));
 
@@ -33,6 +36,10 @@ function clearFilters() {
 }
 
 function applyFilters() {
+    // Toggle checkboxes
+    const onlyAchievementsCheckbox = document.getElementById("only-achievements-checkbox");
+    const onlyAchievements = onlyAchievementsCheckbox.checked;
+
     // Category checkboxes
     const allCategories = filterForm.querySelectorAll("li.category-item");
     const selectedCategories = [];
@@ -46,6 +53,11 @@ function applyFilters() {
     // Form Action Path
     filterForm.action = window.location.pathname;
     // Form Request Parameters
+    if (onlyAchievements) {
+        const onlyAchievementsParam = createFormParameterElement("onlyachievements");
+        onlyAchievementsParam.value = onlyAchievements;
+        filterForm.appendChild(onlyAchievementsParam);
+    }
     if (selectedCategories.length !== 0) {
         const categoryParam = createFormParameterElement("categoryid");
         categoryParam.value = selectedCategories.toString();
@@ -65,7 +77,17 @@ function createFormParameterElement(name) {
 function formDataHasChanged() {
     const currentURL = new URL(window.location.href);
     const params = currentURL.searchParams;
-
+    // Toggle checkboxes
+    const onlyAchievementsParam = params.get("onlyachievements");
+    if (onlyAchievementsParam) { // If the parameter exists it means the checkbox was previously checked
+        const checkboxIsStillChecked = document.getElementById("only-achievements-checkbox").checked;
+        if (!checkboxIsStillChecked)
+            return true;
+    } else { // Else it means the checkbox wasn't previously checked
+        const checkboxIsNowChecked = document.getElementById("only-achievements-checkbox").checked;
+        if (checkboxIsNowChecked)
+            return true;
+    }
     // Category checkboxes
     const categoryIdsParam = params.get("categoryid");
     if (categoryIdsParam) {
@@ -78,8 +100,7 @@ function formDataHasChanged() {
         // Compare the two collections
         if (!arraysContainTheSameItems(previouslySelectedCategoryIDs, currentlySelectedCategoryIDs))
             return true;
-    } else {
-        // Else there weren't any previously selected categories
+    } else { // Else there weren't any previously selected categories
         const categoryCheckboxes = filterForm.querySelectorAll("input[type='checkbox'].category-checkbox");
         const checkedCheckboxExists = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
         if (checkedCheckboxExists)

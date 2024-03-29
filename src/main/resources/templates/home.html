@@ -84,6 +84,10 @@
     </div>
     <!-- Filters -->
     <form id="filter-form" method="GET">
+        <!-- Toggle checkboxes -->
+        <div>
+            <label><input id="only-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsOnly}"> Show only games with achievements</label>
+        </div>
         <!-- Category checkboxes -->
         <div id="category-filter">
             <input id="category-search" type="search" placeholder="Search">

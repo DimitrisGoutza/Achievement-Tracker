@@ -53,9 +53,10 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<Game> findAll(Page page) {
+    public List<Game> findAll(boolean achievementsOnly ,Page page) {
         // Count query
-        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g.storeId) FROM Game g", Long.class);
+        TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g.storeId) FROM Game g" +
+                (achievementsOnly ? " JOIN Achievement a ON a.game.storeId = g.storeId" : ""), Long.class);
         Long totalRecordCount = queryForCount.getSingleResult();
         page.setTotalRecords(totalRecordCount);
 
@@ -63,16 +64,19 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Game> cq = cb.createQuery(Game.class);
         Root<Game> gameRoot = cq.from(Game.class);
+        if (achievementsOnly)
+            gameRoot.join(Game_.achievements, JoinType.INNER);
 
         TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findAllByCategoryId(List<Long> categoryIds, Page page) {
+    public List<Game> findAllByCategoryId(List<Long> categoryIds, boolean achievementsOnly, Page page) {
         // Count query
         TypedQuery<Long> queryForCount = em.createQuery("SELECT COUNT(g.storeId) FROM Game g WHERE g.storeId IN ( " +
                 "SELECT DISTINCT g.storeId FROM Game g " +
+                (achievementsOnly ? "JOIN Achievement a ON a.game.storeId = g.storeId " : "") +
                 "JOIN CategorizedGame cg ON cg.id.gameId = g.storeId " +
                 "WHERE cg.category.id IN :categoryIds " +
                 "GROUP BY g.storeId " +
@@ -89,6 +93,9 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         Root<Game> idGameRoot = cqForIds.from(Game.class);
         // SELECT distinct g.storeId
         cqForIds.select(idGameRoot.get(Game_.storeId)).distinct(true);
+        // (JOIN Achievement)
+        if (achievementsOnly)
+            idGameRoot.join(Game_.achievements, JoinType.INNER);
         // JOIN CategorizedGame
         Join<Game, CategorizedGame> categorizedGameJoin = idGameRoot.join(Game_.categorizedGames, JoinType.INNER);
         // WHERE CategorizedGame.id.categoryId IN :categoryIds

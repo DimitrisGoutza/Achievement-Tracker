@@ -30,10 +30,11 @@ public class GameFilterServiceImpl implements GameFilterService {
     @Override
     public List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page) {
         List<Long> categoryIds = selectedFilterData.getCategoryIds();
+        boolean achievementsOnly = selectedFilterData.isAchievementsOnly();
 
         if (!categoryIds.isEmpty())
-            return gameDAO.findAllByCategoryId(categoryIds, page);
+            return gameDAO.findAllByCategoryId(categoryIds, achievementsOnly, page);
         else
-            return gameDAO.findAll(page);
+            return gameDAO.findAll(achievementsOnly, page);
     }
 }

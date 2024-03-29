@@ -38,13 +38,17 @@ public class HomePageController {
                               @RequestParam(name = "size") Optional<Integer> sizeOptional,
                               @RequestParam(name = "sort") Optional<String> sortOptional,
                               @RequestParam(name = "categoryid") Optional<String> categoryOptional,
+                              @RequestParam(name = "onlyachievements") Optional<String> achievementsOptional,
                               Model model) {
         String sortParamValue = sortOptional.orElse("challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
         // Filters
         String categoriesParam = categoryOptional.orElse("");
-        SelectedFilterData selectedFilterData = new SelectedFilterData(extractCategoryIds(categoriesParam));
+        SelectedFilterData selectedFilterData = new SelectedFilterData(
+                extractCategoryIds(categoriesParam),
+                achievementsOptional.isPresent()
+        );
 
         // Pagination
         page.setCurrent(pageOptional.orElse(1));
