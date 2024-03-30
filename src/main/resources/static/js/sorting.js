@@ -43,10 +43,12 @@ function sortTable(targetHeader) {
 
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
+        const searchTerm = document.getElementById("game-search").value;
 
         const fetchURL = new URL(window.location.href);
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
+        params.set("search", searchTerm);
         if (requestedSortClass === SortClasses.default)
             params.delete("sort");
         else

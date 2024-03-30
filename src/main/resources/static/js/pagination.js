@@ -8,11 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
 function changePageSize() {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
+        const searchTerm = document.getElementById("game-search").value;
 
         const fetchURL = new URL(window.location.href);
 
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
+        params.set("search", searchTerm);
 
         fetchURL.search = params.toString();
         return fetchURL;
@@ -29,11 +31,13 @@ function changePageSize() {
 function changePageNumber(requestedPageNumber) {
     const determineEndpointURL = () => {
         const selectedPageSize = document.getElementById("page-entries-select").value;
+        const searchTerm = document.getElementById("game-search").value;
 
         const fetchURL = new URL(window.location.href);
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
         params.set("page", requestedPageNumber);
+        params.set("search", searchTerm);
 
         fetchURL.search = params.toString();
         return fetchURL;

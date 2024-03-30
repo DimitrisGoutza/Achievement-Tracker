@@ -11,5 +11,9 @@ public interface GameDAO extends GenericDAO<Game, Long> {
 
     List<Game> findAll(boolean achievementsOnly ,Page page);
 
+    List<Game> findAll(String searchTerm, boolean achievementsOnly, Page page);
+
     List<Game> findAllByCategoryId(List<Long> categoryIds, boolean achievementsOnly, Page page);
+
+    List<Game> findAllByCategoryId(String searchTerm, List<Long> categoryIds, boolean achievementsOnly, Page page);
 }

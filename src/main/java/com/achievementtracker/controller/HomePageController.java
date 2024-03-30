@@ -37,6 +37,7 @@ public class HomePageController {
     public String getHomePage(@RequestParam(name = "page") Optional<Integer> pageOptional,
                               @RequestParam(name = "size") Optional<Integer> sizeOptional,
                               @RequestParam(name = "sort") Optional<String> sortOptional,
+                              @RequestParam(name = "search") Optional<String> searchOptional,
                               @RequestParam(name = "categoryid") Optional<String> categoryOptional,
                               @RequestParam(name = "onlyachievements") Optional<String> achievementsOptional,
                               Model model) {
@@ -46,6 +47,7 @@ public class HomePageController {
         // Filters
         String categoriesParam = categoryOptional.orElse("");
         SelectedFilterData selectedFilterData = new SelectedFilterData(
+                searchOptional.orElse(""),
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent()
         );

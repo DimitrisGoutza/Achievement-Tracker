@@ -6,6 +6,7 @@
     <script type="text/javascript" src="/js/sorting.js" defer></script>
     <script type="text/javascript" src="/js/pagination.js" defer></script>
     <script type="text/javascript" src="/js/filters.js" defer></script>
+    <script type="text/javascript" src="/js/search.js" defer></script>
     <link rel="stylesheet" href="/css/homepage.css">
 </head>
 <body>
@@ -19,6 +20,9 @@
         <option value="500" th:attr="selected=${page.size == 500}">500</option>
         <option value="1000" th:attr="selected=${page.size == 1000}">1K</option>
     </select>
+    <!-- Game Search -->
+    <input id="game-search" type="search" placeholder="Search any game" autocomplete="off">
+    <!-- Results -->
     <table>
         <thead>
         <tr>
@@ -54,6 +58,7 @@
         </tr>
         </tbody>
     </table>
+    <!-- Pagination -->
     <div id="pagination-footer">
         <!-- Previous Page Button -->
         <button type="button" th:attr="disabled = ${!page.previousAvailable}"

@@ -4,15 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectedFilterData {
-    List<Long> categoryIds = new ArrayList<>();
-    boolean achievementsOnly = false;
+    private String searchTerm;
+    private List<Long> categoryIds = new ArrayList<>();
+    private boolean achievementsOnly;
 
     public SelectedFilterData() {
     }
 
-    public SelectedFilterData(List<Long> categoryIds, boolean achievementsOnly) {
+    public SelectedFilterData(String searchTerm, List<Long> categoryIds, boolean achievementsOnly) {
+        this.searchTerm = searchTerm;
         this.categoryIds = categoryIds;
         this.achievementsOnly = achievementsOnly;
+    }
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
     }
 
     public List<Long> getCategoryIds() {

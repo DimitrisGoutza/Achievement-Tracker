@@ -29,12 +29,15 @@ public class GameFilterServiceImpl implements GameFilterService {
 
     @Override
     public List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page) {
+        String searchTerm = selectedFilterData.getSearchTerm();
         List<Long> categoryIds = selectedFilterData.getCategoryIds();
         boolean achievementsOnly = selectedFilterData.isAchievementsOnly();
 
         if (!categoryIds.isEmpty())
-            return gameDAO.findAllByCategoryId(categoryIds, achievementsOnly, page);
+            return searchTerm.isEmpty() ? gameDAO.findAll(achievementsOnly, page)
+                    : gameDAO.findAll(searchTerm, achievementsOnly, page);
         else
-            return gameDAO.findAll(achievementsOnly, page);
+            return searchTerm.isEmpty() ? gameDAO.findAllByCategoryId(categoryIds, achievementsOnly, page)
+                    : gameDAO.findAllByCategoryId(searchTerm, categoryIds, achievementsOnly, page);
     }
 }
