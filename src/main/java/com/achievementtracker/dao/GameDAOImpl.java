@@ -64,7 +64,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         cq.select(gameRoot).distinct(true);
 
         if (achievementsOnly) {
-            Subquery<Long> subquery = cb.createQuery().subquery(Long.class);
+            Subquery<Long> subquery = cq.subquery(Long.class);
             Root<Achievement> achievementRoot = subquery.from(Achievement.class);
             subquery.where(cb.equal(achievementRoot.get(Achievement_.game).get(Game_.storeId), gameRoot.get(Game_.storeId)));
 
@@ -95,7 +95,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         Predicate searchPredicate = cb.like(gameRoot.get(Game_.title), "%" + searchTerm + "%");
 
         if (achievementsOnly) {
-            Subquery<Long> subquery = cb.createQuery().subquery(Long.class);
+            Subquery<Long> subquery = cq.subquery(Long.class);
             Root<Achievement> achievementRoot = subquery.from(Achievement.class);
             subquery.where(cb.equal(achievementRoot.get(Achievement_.game).get(Game_.storeId), gameRoot.get(Game_.storeId)));
 
@@ -137,7 +137,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         Predicate categoryPredicate = categorizedGameJoin.get(CategorizedGame_.category).get(Category_.id).in(categoryIds);
 
         if (achievementsOnly) {
-            Subquery<Long> subquery = cb.createQuery().subquery(Long.class);
+            Subquery<Long> subquery = cqForIds.subquery(Long.class);
             Root<Achievement> achievementRoot = subquery.from(Achievement.class);
             subquery.select(cb.literal(1L));
             subquery.where(cb.equal(achievementRoot.get(Achievement_.game).get(Game_.storeId), idGameRoot.get(Game_.storeId)));
@@ -193,7 +193,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
                 cb.like(idGameRoot.get(Game_.title), "%" + searchTerm + "%"));
 
         if (achievementsOnly) {
-            Subquery<Long> subquery = cb.createQuery().subquery(Long.class);
+            Subquery<Long> subquery = cqForIds.subquery(Long.class);
             Root<Achievement> achievementRoot = subquery.from(Achievement.class);
             subquery.select(cb.literal(1L));
             subquery.where(cb.equal(achievementRoot.get(Achievement_.game).get(Game_.storeId), idGameRoot.get(Game_.storeId)));
