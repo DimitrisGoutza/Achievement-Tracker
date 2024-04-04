@@ -47,7 +47,7 @@ public class GameSchemaDeserializer extends JsonDeserializer<GameSchemaDTO> {
 
                     achievementDetailsDTO.setName(achievement.get("name").textValue());
                     achievementDetailsDTO.setDisplayName(achievement.get("displayName").textValue());
-                    achievementDetailsDTO.setHidden(achievement.get("hidden").booleanValue());
+                    achievementDetailsDTO.setHidden(achievement.get("hidden").intValue() == 1);
 
                     achievementDetailsDTO.setDescription(
                             // Case #2
