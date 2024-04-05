@@ -5,17 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let previousSearchTerm = "";
 
     gameSearch.addEventListener("input", (event) => {
-       const searchTerm = event.target.value.trim();
+        const searchTerm = event.target.value.trim();
 
-       clearTimeout(searchTimeout);
-
-       searchTimeout = setTimeout(() => {
-           if (searchIsEligible(searchTerm, previousSearchTerm)) {
-               searchGames(searchTerm);
-               previousSearchTerm = searchTerm;
-           }
-       }, 200);
-   });
+        clearTimeout(searchTimeout);
+        const timeoutDuration = (searchTerm === "" ? 0 : 300);
+        searchTimeout = setTimeout(() => {
+            if (searchIsEligible(searchTerm, previousSearchTerm)) {
+                searchGames(searchTerm);
+                previousSearchTerm = searchTerm;
+            }
+        }, timeoutDuration);
+    });
 });
 
 function searchIsEligible(currentSearch, previousSearch) {
