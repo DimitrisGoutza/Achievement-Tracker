@@ -34,6 +34,9 @@ public class Achievement {
     @NotNull
     @Column(name = "PERCENTAGE")
     private Double percentage;
+    @NotNull
+    @Column(name = "POS")
+    private int position;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "GAME_ID")
@@ -57,6 +60,10 @@ public class Achievement {
 
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public Long getId() {
@@ -91,6 +98,10 @@ public class Achievement {
         return percentage;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
     public Game getGame() {
         return game;
     }
@@ -106,6 +117,7 @@ public class Achievement {
                 ", iconURL='" + iconURL + '\'' +
                 ", iconGrayURL='" + iconGrayURL + '\'' +
                 ", percentage=" + percentage +
+                ", position=" + position +
                 '}';
     }
 

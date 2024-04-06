@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -134,6 +135,10 @@ class DatabaseUpdater {
                     game.addAchievement(achievement);
                 }
             }
+            List<Achievement> orderedAchievements = game.getAchievements().stream().sorted(Comparator.comparingDouble(Achievement::getPercentage)).toList();
+            orderedAchievements.forEach(achievement -> {
+                achievement.setPosition(orderedAchievements.indexOf(achievement) + 1);
+            });
         }
         game.setChallengeRating(achievementAnalyticsService.calculateChallengeRating(game.getAchievements()));
         game.setAverageCompletion(achievementAnalyticsService.calculateAverageAchievementCompletion(game.getAchievements()));

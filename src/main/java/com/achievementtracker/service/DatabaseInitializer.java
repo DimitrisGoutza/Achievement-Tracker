@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -110,6 +111,10 @@ class DatabaseInitializer {
                     Achievement achievement = new Achievement(achievementDTO, achievementStatsDTO, game);
                     game.addAchievement(achievement);
                 }
+                List<Achievement> orderedAchievements = game.getAchievements().stream().sorted(Comparator.comparingDouble(Achievement::getPercentage)).toList();
+                orderedAchievements.forEach(achievement -> {
+                    achievement.setPosition(orderedAchievements.indexOf(achievement) + 1);
+                });
             }
             game.setChallengeRating(achievementAnalyticsService.calculateChallengeRating(game.getAchievements()));
             game.setAverageCompletion(achievementAnalyticsService.calculateAverageAchievementCompletion(game.getAchievements()));
