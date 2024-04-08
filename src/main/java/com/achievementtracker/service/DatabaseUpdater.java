@@ -20,9 +20,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Component
 class DatabaseUpdater {
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
     private final SteamGlobalStatsProxy steamGlobalStatsProxy;
     private final SteamSpyProxy steamSpyProxy;
     private final SteamStorefrontProxy steamStorefrontProxy;
@@ -136,9 +138,7 @@ class DatabaseUpdater {
                 }
             }
             List<Achievement> orderedAchievements = game.getAchievements().stream().sorted(Comparator.comparingDouble(Achievement::getPercentage)).toList();
-            orderedAchievements.forEach(achievement -> {
-                achievement.setPosition(orderedAchievements.indexOf(achievement) + 1);
-            });
+            orderedAchievements.forEach(achievement -> achievement.setPosition(orderedAchievements.indexOf(achievement) + 1));
         }
         game.setChallengeRating(achievementAnalyticsService.calculateChallengeRating(game.getAchievements()));
         game.setAverageCompletion(achievementAnalyticsService.calculateAverageAchievementCompletion(game.getAchievements()));
@@ -171,6 +171,8 @@ class DatabaseUpdater {
         try {
             return steamGlobalStatsProxy.fetchAchievementStatsByGameId(gameId);
         } catch (FeignException.Forbidden e) {
+            logger.info(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Achievement Stats, " +
+                    "because Game (steam-appid: " + gameId + ") has no achievements OR hasn't released yet.");
             return null;
         }
     }
@@ -178,9 +180,14 @@ class DatabaseUpdater {
     private GameSchemaDTO fetchSchemaForGame(Long gameId) {
         try {
             return steamGlobalStatsProxy.fetchSchemaByAppId(gameId);
-        } catch (FeignException.BadRequest | FeignException.Forbidden e) {
-            // BadRequest = invalid app, Forbidden = app hasn't released yet
+        } catch (FeignException.Forbidden e) {
+            logger.info(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Game Schema, " +
+                    "because Game (steam-appid: " + gameId + ") hasn't released yet.");
             return null;
+        } catch (FeignException.BadRequest e) {
+            logger.warning(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Game Schema, " +
+                    "because Game (steam-appid: " + gameId + ") is not a valid app.");
+            throw e;
         }
     }
 }
