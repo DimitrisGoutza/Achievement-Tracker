@@ -4,11 +4,17 @@ import com.achievementtracker.dto.AchievementStatsDTO;
 import com.achievementtracker.dto.AppListDTO;
 import com.achievementtracker.dto.GameSchemaDTO;
 import com.achievementtracker.dto.StoreAppListDTO;
+import feign.FeignException;
+import feign.RetryableException;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "steam-api-global-data", url = "${steam.api.url}")
+@Retryable(retryFor = {RetryableException.class, FeignException.BadGateway.class}, maxAttemptsExpression = "${retry.max-attempts}",
+        backoff = @Backoff(delayExpression = "${retry.backoff-delay}", multiplierExpression = "${retry.backoff-multiplier}"))
 public interface SteamGlobalStatsProxy {
     @GetMapping("${app.list.endpoint}" + "/")
     AppListDTO fetchAllApps();
