@@ -186,7 +186,7 @@ class DatabaseUpdater {
             return null;
         } catch (FeignException.BadRequest e) {
             logger.warning(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Game Schema, " +
-                    "because Game (steam-appid: " + gameId + ") is not a valid app.");
+                    "because Game (steam-appid: " + gameId + ") is not a valid app OR is not available for purchase anymore.");
             throw e;
         }
     }
