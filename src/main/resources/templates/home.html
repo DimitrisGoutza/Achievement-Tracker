@@ -51,7 +51,15 @@
         <tbody id="table-content">
         <tr th:each="game : ${games}">
             <td><img th:src="${game.images.capsuleImageURL}" alt="Game Image"></td>
-            <td th:text="${game.title}"></td>
+            <td>
+                <span th:text="${game.title}"></span>
+                <div>
+                    <img th:each="achievement : ${achievements.get(game.storeId)}" class="achievement-icon"
+                         th:src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}"
+                         th:title="${achievement.hidden ? achievement.displayName + ' (hidden)' : achievement.description} + ' - ' + ${achievement.percentage} + '%'"
+                         alt="Achievement Icon">
+                </div>
+            </td>
             <td th:text="${game.releaseDate}"></td>
             <td th:text="${game.challengeRating} + ' score'"></td>
             <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>

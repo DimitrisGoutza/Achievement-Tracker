@@ -4,6 +4,7 @@ import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.SelectedFilterData;
+import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -69,9 +71,11 @@ public class HomePageController {
                 Page.SortDirection.ASC : Page.SortDirection.DESC);
 
         List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
+        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games.stream().map(Game::getStoreId).toList());
         List<Category> categories = gameFilterService.getAvailableCategories();
 
         model.addAttribute("games", games);
+        model.addAttribute("achievements", achievementsMap);
         model.addAttribute("categories", categories);
         model.addAttribute("selectedFilters", selectedFilterData);
         model.addAttribute("page", page);
