@@ -71,4 +71,9 @@ public class GameFilterServiceImpl implements GameFilterService {
         List<Long> gameIds = games.stream().map(Game::getStoreId).toList();
         return achievementDAO.getTopXAchievementsForGames(topAmount, gameIds);
     }
+
+    @Override
+    public Long getGameEntryCount() {
+        return gameDAO.getCount();
+    }
 }

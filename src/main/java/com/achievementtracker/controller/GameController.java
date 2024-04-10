@@ -1,6 +1,5 @@
 package com.achievementtracker.controller;
 
-import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.SelectedFilterData;
@@ -21,42 +20,42 @@ import java.util.Map;
 import java.util.Optional;
 
 @Controller
-public class HomePageController {
+public class GameController {
     private final GameFilterService gameFilterService;
     private final OffsetPage page;
 
     @Autowired
-    public HomePageController(GameFilterService gameFilterService, GameDAO gameDAO) {
+    public GameController(GameFilterService gameFilterService) {
         this.gameFilterService = gameFilterService;
 
-        this.page = new OffsetPage(50, gameDAO.getCount(),
+        this.page = new OffsetPage(50, gameFilterService.getGameEntryCount(),
                 Game_.challengeRating, Page.SortDirection.DESC,
                 Game_.storeId, Game_.steamAppId, Game_.title, Game_.releaseDate,
                 Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread);
     }
 
-    @GetMapping("/home")    // TODO : Add validation for params
-    public String getHomePage(@RequestParam(name = "page") Optional<Integer> pageOptional,
-                              @RequestParam(name = "size") Optional<Integer> sizeOptional,
-                              @RequestParam(name = "sort") Optional<String> sortOptional,
-                              @RequestParam(name = "search") Optional<String> searchOptional,
-                              @RequestParam(name = "categoryid") Optional<String> categoryOptional,
-                              @RequestParam(name = "onlyachievements") Optional<String> achievementsOptional,
-                              Model model) {
-        String sortParamValue = sortOptional.orElse("challenge-rating_desc");
+    @GetMapping("/games")    // TODO : Add validation for params
+    public String getGames(@RequestParam(name = "page") Optional<Integer> pageOptional,
+                           @RequestParam(name = "size") Optional<Integer> sizeOptional,
+                           @RequestParam(name = "sort") Optional<String> sortOptional,
+                           @RequestParam(name = "search") Optional<String> searchOptional,
+                           @RequestParam(name = "categoryid") Optional<String> categoryOptional,
+                           @RequestParam(name = "onlyachievements") Optional<String> achievementsOptional,
+                           Model model) {
+        String sortParamValue = sortOptional.orElseGet(() -> "challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
         // Filters
-        String categoriesParam = categoryOptional.orElse("");
+        String categoriesParam = categoryOptional.orElseGet(() -> "");
         SelectedFilterData selectedFilterData = new SelectedFilterData(
-                searchOptional.orElse(""),
+                searchOptional.orElseGet(() -> ""),
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent()
         );
 
         // Pagination
-        page.setCurrent(pageOptional.orElse(1));
-        page.setSize(sizeOptional.orElse(50));
+        page.setCurrent(pageOptional.orElseGet(() -> 1));
+        page.setSize(sizeOptional.orElseGet(() -> 50));
         page.setSortAttribute(
                 switch (sortColumn) {
                     case "id" -> Game_.storeId;
