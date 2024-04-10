@@ -106,8 +106,10 @@
             <input id="category-search" type="search" placeholder="Search">
             <ul id="category-list">
                 <li class="category-item" th:each="category, pos : ${categories}">
-                    <input class="category-checkbox" th:id="'category-'+ ${pos.count}" type="checkbox" th:value="${category.id}" th:checked="${selectedFilters.categoryIds.contains(category.id)}">
-                    <label class="category-name" th:for="'category-'+ ${pos.count}" th:text="${category.name}"></label>
+                    <input class="category-checkbox" th:id="'category-'+ ${pos.count}" type="checkbox" th:value="${category.id}"
+                           th:checked="${selectedFilters.categoryIds.contains(category.id)}" th:disabled="${!category.available}">
+                    <label class="category-name" th:for="'category-'+ ${pos.count}" th:text="${category.name}"
+                        th:style="${!category.available} ? 'color: #999' : null"></label>
                 </li>
             </ul>
         </div>

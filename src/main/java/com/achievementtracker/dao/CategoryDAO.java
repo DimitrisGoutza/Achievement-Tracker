@@ -8,4 +8,6 @@ public interface CategoryDAO extends GenericDAO<Category, Long> {
     Category findByName(String name);
 
     List<Category> findAllSortedByPopularity();
+
+    List<Long> findAvailableBasedOnFilteredGames(List<Long> gameIds);
 }

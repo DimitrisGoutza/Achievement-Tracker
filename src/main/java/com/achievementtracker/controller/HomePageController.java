@@ -71,8 +71,8 @@ public class HomePageController {
                 Page.SortDirection.ASC : Page.SortDirection.DESC);
 
         List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
-        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games.stream().map(Game::getStoreId).toList());
-        List<Category> categories = gameFilterService.getAvailableCategories();
+        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
+        List<Category> categories = gameFilterService.getAvailableCategories(selectedFilterData, games);
 
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);

@@ -25,6 +25,10 @@ public class Category {
                fetch = FetchType.LAZY)
     private Set<CategorizedGame> categorizedGames = new HashSet<>();
 
+    /* UI Attributes below */
+    @Transient
+    boolean available = false;
+
     protected Category() {}
 
     public Category(String categoryName) {
@@ -33,6 +37,10 @@ public class Category {
 
     public void increasePopularity() {
         this.popularity++;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     public Long getId() {
@@ -49,6 +57,10 @@ public class Category {
 
     public Set<CategorizedGame> getCategorizedGames() {
         return categorizedGames;
+    }
+
+    public boolean isAvailable() {
+        return available;
     }
 
     @Override

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface GameFilterService {
-    List<Category> getAvailableCategories();
+    List<Category> getAvailableCategories(SelectedFilterData selectedFilterData, List<Game> games);
     List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page);
 
-    Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Long> gameIds);
+    Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Game> games);
 }

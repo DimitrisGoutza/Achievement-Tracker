@@ -30,4 +30,13 @@ public class CategoryDAOImpl extends GenericDAOImpl<Category, Long> implements C
         TypedQuery<Category> query = em.createQuery("FROM Category ORDER BY popularity DESC", Category.class);
         return query.getResultList();
     }
+
+    @Override
+    public List<Long> findAvailableBasedOnFilteredGames(List<Long> gameIds) {
+        TypedQuery<Long> query = em.createQuery("SELECT DISTINCT c.id FROM Category c " +
+                "JOIN CategorizedGame cg ON cg.category.id = c.id " +
+                "WHERE cg.game.storeId IN :gameIds", Long.class);
+        query.setParameter("gameIds", gameIds);
+        return query.getResultList();
+    }
 }
