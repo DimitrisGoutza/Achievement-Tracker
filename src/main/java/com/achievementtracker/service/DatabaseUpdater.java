@@ -2,7 +2,7 @@ package com.achievementtracker.service;
 
 import com.achievementtracker.dao.*;
 import com.achievementtracker.dto.AchievementStatsDTO;
-import com.achievementtracker.dto.GameCategoriesDTO;
+import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
 import com.achievementtracker.dto.GameDetailDTO;
 import com.achievementtracker.dto.GameSchemaDTO;
 import com.achievementtracker.entity.*;
@@ -85,12 +85,12 @@ class DatabaseUpdater {
     }
 
     private void updateCategoriesForGame(Game game) {
-        GameCategoriesDTO gameCategoriesDTO = steamSpyProxy.fetchCategoriesByGameId(game.getStoreId());
+        GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(game.getStoreId());
 
-        List<GameCategoriesDTO.CategoryDetailsDTO> updatedCategories = gameCategoriesDTO.getCategories();
+        List<GameCategoriesAndReviewsDTO.CategoryDetailsDTO> updatedCategories = gameCategoriesAndReviewsDTO.getCategories();
         Set<CategorizedGame> associatedCategories = game.getCategorizedGames();
 
-        for (GameCategoriesDTO.CategoryDetailsDTO categoryDTO : updatedCategories) {
+        for (GameCategoriesAndReviewsDTO.CategoryDetailsDTO categoryDTO : updatedCategories) {
             // check if it is already associated with game
             Optional<CategorizedGame> result = associatedCategories.stream().filter(
                     cg -> cg.getCategory().getName().equals(categoryDTO.getName())
@@ -147,6 +147,7 @@ class DatabaseUpdater {
 
     private void updateGame(Game game) {
         GameDetailDTO gameDetailDTO = steamStorefrontProxy.fetchDetailsByGameId(game.getStoreId());
+        GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(game.getStoreId());
 
         boolean gameHasNowReleased = (game.isComingSoon()) && (!gameDetailDTO.isComingSoon());
         if (gameHasNowReleased) {
@@ -154,6 +155,10 @@ class DatabaseUpdater {
             game.setReleaseDate(gameDetailDTO.getReleaseDate());
         }
         // these could have been updated as well
+        game.setRating(calculateRating(
+                gameCategoriesAndReviewsDTO.getPositiveReviews(),
+                gameCategoriesAndReviewsDTO.getNegativeReviews()
+        ));
         game.setShortDescription(gameDetailDTO.getShortDescription());
         game.setLongDescription(gameDetailDTO.getLongDescription());
         game.setImages(
@@ -187,7 +192,16 @@ class DatabaseUpdater {
         } catch (FeignException.BadRequest e) {
             logger.warning(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Game Schema, " +
                     "because Game (steam-appid: " + gameId + ") is not a valid app OR is not available for purchase anymore.");
-            throw e;
+            return null;
         }
+    }
+
+    private Double calculateRating(int positiveReviews, int negativeReviews) {
+        int totalReviews = positiveReviews + negativeReviews;
+
+        if (totalReviews != 0)
+            return ((double) positiveReviews / totalReviews) * 100.0;
+        else
+            return null;
     }
 }

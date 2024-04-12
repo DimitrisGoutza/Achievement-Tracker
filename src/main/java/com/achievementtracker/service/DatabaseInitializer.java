@@ -85,10 +85,10 @@ class DatabaseInitializer {
     }
 
     private void persistCategoriesFromGame(Long storeAppId) {
-        GameCategoriesDTO gameCategoriesDTO = steamSpyProxy.fetchCategoriesByGameId(storeAppId);
-        List<GameCategoriesDTO.CategoryDetailsDTO> categories = gameCategoriesDTO.getCategories();
+        GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(storeAppId);
+        List<GameCategoriesAndReviewsDTO.CategoryDetailsDTO> categories = gameCategoriesAndReviewsDTO.getCategories();
 
-        for (GameCategoriesDTO.CategoryDetailsDTO categoryDTO : categories) {
+        for (GameCategoriesAndReviewsDTO.CategoryDetailsDTO categoryDTO : categories) {
             // category is unique, first check if it already exists
             Category category = categoryDAO.findByName(categoryDTO.getName());
             if (category == null)
@@ -104,7 +104,10 @@ class DatabaseInitializer {
         boolean appIsValid = (gameDetailDTO.getSteamAppId() != null);
 
         if (appIsValid) {
-            Game game = new Game(storeAppId, gameDetailDTO);
+            GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(storeAppId);
+            Double rating = calculateRating(gameCategoriesAndReviewsDTO.getPositiveReviews(), gameCategoriesAndReviewsDTO.getNegativeReviews());
+
+            Game game = new Game(storeAppId, gameDetailDTO, rating);
 
             GameSchemaDTO gameSchemaDTO = fetchSchemaForGame(game.getSteamAppId());
             AchievementStatsDTO achievementStatsDTO = fetchAchievementStatsForGame(game.getSteamAppId());
@@ -147,14 +150,14 @@ class DatabaseInitializer {
         } catch (FeignException.BadRequest e) {
             logger.warning(e.getClass().getName() + " <" + e.getMessage() + "> \nwas caught while fetching Game Schema, " +
                     "because Game (steam-appid: " + gameId + ") is not a valid app OR is not available for purchase anymore.");
-            throw e;
+            return null;
         }
     }
 
     private void associateCategoriesWithGame(Long storeAppId) {
-        GameCategoriesDTO gameCategoriesDTO = steamSpyProxy.fetchCategoriesByGameId(storeAppId);
-        List<GameCategoriesDTO.CategoryDetailsDTO> categories = gameCategoriesDTO.getCategories();
-        for (GameCategoriesDTO.CategoryDetailsDTO categoryDTO : categories) {
+        GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(storeAppId);
+        List<GameCategoriesAndReviewsDTO.CategoryDetailsDTO> categories = gameCategoriesAndReviewsDTO.getCategories();
+        for (GameCategoriesAndReviewsDTO.CategoryDetailsDTO categoryDTO : categories) {
 
             Category category = categoryDAO.findByName(categoryDTO.getName());
             Game game = gameDAO.findById(storeAppId);
@@ -164,5 +167,14 @@ class DatabaseInitializer {
                 categorizedGameDAO.save(categorizedGame);
             }
         }
+    }
+
+    private Double calculateRating(int positiveReviews, int negativeReviews) {
+        int totalReviews = positiveReviews + negativeReviews;
+
+        if (totalReviews != 0)
+            return ((double) positiveReviews / totalReviews) * 100.0;
+        else
+            return null;
     }
 }

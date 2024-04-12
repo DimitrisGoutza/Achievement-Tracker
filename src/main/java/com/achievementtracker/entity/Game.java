@@ -27,6 +27,8 @@ public class Game {
     @NotNull
     @Column(name = "COMING_SOON")
     private boolean comingSoon;
+    @Column(name = "RATING")
+    private Double rating;
     @NotNull
     @Column(name = "SHORT_DESCRIPTION")
     private String shortDescription;
@@ -53,12 +55,13 @@ public class Game {
     protected Game() {
     }
 
-    public Game(Long storeId, GameDetailDTO gameDetailDTO) {
+    public Game(Long storeId, GameDetailDTO gameDetailDTO, Double rating) {
         this.storeId = storeId;
         this.steamAppId = gameDetailDTO.getSteamAppId();
         this.title = gameDetailDTO.getTitle();
         this.releaseDate = gameDetailDTO.getReleaseDate();
         this.comingSoon = gameDetailDTO.isComingSoon();
+        this.rating = rating;
         this.shortDescription = gameDetailDTO.getShortDescription();
         this.longDescription = gameDetailDTO.getLongDescription();
 
@@ -77,6 +80,10 @@ public class Game {
 
     public void setComingSoon(boolean comingSoon) {
         this.comingSoon = comingSoon;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
     public void setShortDescription(String shortDescription) {
@@ -121,6 +128,10 @@ public class Game {
 
     public boolean isComingSoon() {
         return comingSoon;
+    }
+
+    public Double getRating() {
+        return rating;
     }
 
     public String getShortDescription() {
@@ -172,6 +183,7 @@ public class Game {
                 ", title='" + title + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", comingSoon=" + comingSoon +
+                ", rating=" + rating +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", longDescription='" + longDescription + '\'' +
                 ", images=" + images +

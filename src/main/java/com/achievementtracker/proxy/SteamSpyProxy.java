@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.GameCategoriesDTO;
+import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
 import feign.FeignException;
 import feign.RetryableException;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,5 +15,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SteamSpyProxy {
 
     @GetMapping("/?request=appdetails&appid={appId}")
-    GameCategoriesDTO fetchCategoriesByGameId(@RequestParam("appid") Long appId);
+    GameCategoriesAndReviewsDTO fetchCategoriesAndReviewsByGameId(@RequestParam("appid") Long appId);
 }
