@@ -149,12 +149,8 @@ class DatabaseUpdater {
         GameDetailDTO gameDetailDTO = steamStorefrontProxy.fetchDetailsByGameId(game.getStoreId());
         GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(game.getStoreId());
 
-        boolean gameHasNowReleased = (game.isComingSoon()) && (!gameDetailDTO.isComingSoon());
-        if (gameHasNowReleased) {
-            game.setComingSoon(gameDetailDTO.isComingSoon());
-            game.setReleaseDate(gameDetailDTO.getReleaseDate());
-        }
-        // these could have been updated as well
+        game.setComingSoon(gameDetailDTO.isComingSoon());
+        game.setReleaseDate(gameDetailDTO.getReleaseDate());
         game.setRating(calculateRating(
                 gameCategoriesAndReviewsDTO.getPositiveReviews(),
                 gameCategoriesAndReviewsDTO.getNegativeReviews()
