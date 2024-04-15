@@ -37,6 +37,3 @@ build/
 
 # SQL scripts used for testing Database operations
 /ClearMutableColumns.sql
-
-# Main
-/src/main/java/com/achievementtracker/AchievementTrackerApplication.java
