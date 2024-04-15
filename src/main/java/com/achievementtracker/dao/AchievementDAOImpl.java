@@ -28,29 +28,19 @@ public class AchievementDAOImpl extends GenericDAOImpl<Achievement, Long> implem
     public Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Long> gameIds) {
         Map<Long, List<Achievement>> achievements = new HashMap<>();
 
-        /* Batch Processing, Chunk = 15 */
-        int batchSize = 15;
-        for (int i=0; i < gameIds.size(); i+=batchSize) {
-            List<Long> batchIds = gameIds.subList(i, Math.min(i+batchSize, gameIds.size()));
+        TypedQuery<Object[]> query = em.createQuery("SELECT a.game.storeId, a FROM Achievement a " +
+                "WHERE a.game.storeId IN :gameIds AND (a.position BETWEEN 1 AND :topAmount) " +
+                "ORDER BY a.game.storeId, a.percentage", Object[].class);
+        query.setParameter("gameIds", gameIds).setParameter("topAmount", topAmount);
+        List<Object[]> results = query.getResultList();
 
-            /* Actual Method */
-            Map<Long, List<Achievement>> achievementsBatch = new HashMap<>();
+        for (Object[] result : results) {
+            Long storeId = (Long) result[0];
+            Achievement achievement = (Achievement) result[1];
 
-            TypedQuery<Object[]> query = em.createQuery("SELECT a.game.storeId, a FROM Achievement a " +
-                    "WHERE a.game.storeId IN :gameIds AND (a.position BETWEEN 1 AND :topAmount) " +
-                    "ORDER BY a.game.storeId, a.percentage", Object[].class);
-            query.setParameter("gameIds", batchIds).setParameter("topAmount", topAmount);
-            List<Object[]> results = query.getResultList();
-
-            for (Object[] result : results) {
-                Long storeId = (Long) result[0];
-                Achievement achievement = (Achievement) result[1];
-
-                if (!achievementsBatch.containsKey(storeId))
-                    achievementsBatch.put(storeId, new ArrayList<>());
-                achievementsBatch.get(storeId).add(achievement);
-            }
-            achievements.putAll(achievementsBatch);
+            if (!achievements.containsKey(storeId))
+                achievements.put(storeId, new ArrayList<>());
+            achievements.get(storeId).add(achievement);
         }
         return achievements;
     }
