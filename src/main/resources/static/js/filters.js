@@ -38,8 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function clearFilters() {
-    filterForm.action = window.location.pathname;
-    filterForm.submit();
+    const emptyFormURL = new URL(window.location.href);
+    emptyFormURL.search = "";
+    window.location.href = emptyFormURL.toString();
 }
 
 function applyFilters() {
