@@ -9,11 +9,11 @@ public interface GameDAO extends GenericDAO<Game, Long> {
 
     List<Game> findAllWithCollections(Page page);
 
-    List<Game> findAll(boolean achievementsOnly ,Page page);
+    List<Game> findAllGames(String searchTerm, Page page);
 
-    List<Game> findAll(String searchTerm, boolean achievementsOnly, Page page);
+    List<Game> findOnlyGamesWithAchievements(String searchTerm, Page page);
 
-    List<Game> findAllByCategoryId(List<Long> categoryIds, boolean achievementsOnly, Page page);
+    List<Game> findAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Page page);
 
-    List<Game> findAllByCategoryId(String searchTerm, List<Long> categoryIds, boolean achievementsOnly, Page page);
+    List<Game> findOnlyGamesWithAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Page page);
 }

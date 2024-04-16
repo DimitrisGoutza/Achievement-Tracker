@@ -54,16 +54,17 @@ public class GameFilterServiceImpl implements GameFilterService {
         List<Long> categoryIds = selectedFilterData.getCategoryIds();
         boolean achievementsOnly = selectedFilterData.isAchievementsOnly();
 
-        List<Game> games;
         if (categoryIds.isEmpty()) {
-            games = searchTerm.isEmpty() ? gameDAO.findAll(achievementsOnly, page)
-                    : gameDAO.findAll(searchTerm, achievementsOnly, page);
+            if (achievementsOnly)
+                return gameDAO.findOnlyGamesWithAchievements(searchTerm, page);
+            else
+                return gameDAO.findAllGames(searchTerm, page);
+        } else {
+            if (achievementsOnly)
+                return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, page);
+            else
+                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, page);
         }
-        else {
-            games = searchTerm.isEmpty() ? gameDAO.findAllByCategoryId(categoryIds, achievementsOnly, page)
-                    : gameDAO.findAllByCategoryId(searchTerm, categoryIds, achievementsOnly, page);
-        }
-        return games;
     }
 
     @Override
