@@ -105,9 +105,8 @@ class DatabaseInitializer {
 
         if (appIsValid) {
             GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(storeAppId);
-            Double rating = calculateRating(gameCategoriesAndReviewsDTO.getPositiveReviews(), gameCategoriesAndReviewsDTO.getNegativeReviews());
 
-            Game game = new Game(storeAppId, gameDetailDTO, rating);
+            Game game = new Game(storeAppId, gameDetailDTO, gameCategoriesAndReviewsDTO);
 
             GameSchemaDTO gameSchemaDTO = fetchSchemaForGame(game.getSteamAppId());
             AchievementStatsDTO achievementStatsDTO = fetchAchievementStatsForGame(game.getSteamAppId());
@@ -167,14 +166,5 @@ class DatabaseInitializer {
                 categorizedGameDAO.save(categorizedGame);
             }
         }
-    }
-
-    private Double calculateRating(int positiveReviews, int negativeReviews) {
-        int totalReviews = positiveReviews + negativeReviews;
-
-        if (totalReviews != 0)
-            return ((double) positiveReviews / totalReviews) * 100.0;
-        else
-            return null;
     }
 }

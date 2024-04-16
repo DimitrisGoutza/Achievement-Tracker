@@ -1,5 +1,6 @@
 package com.achievementtracker.entity;
 
+import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
 import com.achievementtracker.dto.GameDetailDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,9 @@ public class Game {
     @Column(name = "RATING")
     private Double rating;
     @NotNull
+    @Column(name = "REVIEWS")
+    private int reviews;
+    @NotNull
     @Column(name = "SHORT_DESCRIPTION")
     private String shortDescription;
     @NotNull
@@ -55,13 +59,14 @@ public class Game {
     protected Game() {
     }
 
-    public Game(Long storeId, GameDetailDTO gameDetailDTO, Double rating) {
+    public Game(Long storeId, GameDetailDTO gameDetailDTO, GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO) {
         this.storeId = storeId;
         this.steamAppId = gameDetailDTO.getSteamAppId();
         this.title = gameDetailDTO.getTitle();
         this.releaseDate = gameDetailDTO.getReleaseDate();
         this.comingSoon = gameDetailDTO.isComingSoon();
-        this.rating = rating;
+        this.rating = calculateRating(gameCategoriesAndReviewsDTO);
+        this.reviews = gameCategoriesAndReviewsDTO.getPositiveReviews() + gameCategoriesAndReviewsDTO.getNegativeReviews();
         this.shortDescription = gameDetailDTO.getShortDescription();
         this.longDescription = gameDetailDTO.getLongDescription();
 
@@ -82,8 +87,12 @@ public class Game {
         this.comingSoon = comingSoon;
     }
 
-    public void setRating(Double rating) {
-        this.rating = rating;
+    public void setRating(GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO) {
+        this.rating = calculateRating(gameCategoriesAndReviewsDTO);
+    }
+
+    public void setReviews(GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO) {
+        this.reviews = gameCategoriesAndReviewsDTO.getPositiveReviews() + gameCategoriesAndReviewsDTO.getNegativeReviews();
     }
 
     public void setShortDescription(String shortDescription) {
@@ -134,6 +143,10 @@ public class Game {
         return rating;
     }
 
+    public int getReviews() {
+        return reviews;
+    }
+
     public String getShortDescription() {
         return shortDescription;
     }
@@ -175,6 +188,15 @@ public class Game {
             achievements.add(achievement);
     }
 
+    private Double calculateRating(GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO) {
+        int totalReviews = gameCategoriesAndReviewsDTO.getPositiveReviews() + gameCategoriesAndReviewsDTO.getNegativeReviews();
+
+        if (totalReviews != 0)
+            return ((double) gameCategoriesAndReviewsDTO.getPositiveReviews() / totalReviews) * 100.0;
+        else
+            return null;
+    }
+
     @Override
     public String toString() {
         return "Game{" +
@@ -184,6 +206,7 @@ public class Game {
                 ", releaseDate=" + releaseDate +
                 ", comingSoon=" + comingSoon +
                 ", rating=" + rating +
+                ", reviews=" + reviews +
                 ", shortDescription='" + shortDescription + '\'' +
                 ", longDescription='" + longDescription + '\'' +
                 ", images=" + images +

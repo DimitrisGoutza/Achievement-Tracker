@@ -151,10 +151,8 @@ class DatabaseUpdater {
 
         game.setComingSoon(gameDetailDTO.isComingSoon());
         game.setReleaseDate(gameDetailDTO.getReleaseDate());
-        game.setRating(calculateRating(
-                gameCategoriesAndReviewsDTO.getPositiveReviews(),
-                gameCategoriesAndReviewsDTO.getNegativeReviews()
-        ));
+        game.setRating(gameCategoriesAndReviewsDTO);
+        game.setReviews(gameCategoriesAndReviewsDTO);
         game.setShortDescription(gameDetailDTO.getShortDescription());
         game.setLongDescription(gameDetailDTO.getLongDescription());
         game.setImages(
@@ -166,6 +164,8 @@ class DatabaseUpdater {
                         gameDetailDTO.getBackgroundRawImageUrl()
                 )
         );
+
+        TimeUtility.waitSeconds(1);
     }
 
     private AchievementStatsDTO fetchAchievementStatsForGame(Long gameId) {
@@ -190,14 +190,5 @@ class DatabaseUpdater {
                     "because Game (steam-appid: " + gameId + ") is not a valid app OR is not available for purchase anymore.");
             return null;
         }
-    }
-
-    private Double calculateRating(int positiveReviews, int negativeReviews) {
-        int totalReviews = positiveReviews + negativeReviews;
-
-        if (totalReviews != 0)
-            return ((double) positiveReviews / totalReviews) * 100.0;
-        else
-            return null;
     }
 }
