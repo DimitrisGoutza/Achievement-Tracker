@@ -52,18 +52,27 @@ public class GameFilterServiceImpl implements GameFilterService {
     public List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page) {
         String searchTerm = selectedFilterData.getSearchTerm();
         List<Long> categoryIds = selectedFilterData.getCategoryIds();
-        boolean achievementsOnly = selectedFilterData.isAchievementsOnly();
+        boolean achievements = selectedFilterData.isAchievements();
+        boolean hiddenAchievements = selectedFilterData.isHiddenAchievements();
 
-        if (categoryIds.isEmpty()) {
-            if (achievementsOnly)
-                return gameDAO.findOnlyGamesWithAchievements(searchTerm, page);
-            else
+        if (categoryIds.isEmpty()) { // No categories
+            if (achievements) {
+                if (hiddenAchievements)
+                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, page);
+                else
+                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, page);
+            } else {
                 return gameDAO.findAllGames(searchTerm, page);
-        } else {
-            if (achievementsOnly)
-                return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, page);
-            else
+            }
+        } else { // Categorized
+            if (achievements) {
+                if (hiddenAchievements)
+                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, page);
+                else
+                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, page);
+            } else {
                 return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, page);
+            }
         }
     }
 

@@ -219,6 +219,102 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         return query.getResultList();
     }
 
+    @Override
+    public List<Game> findOnlyGamesWithHiddenAchievements(String searchTerm, Page page) {
+        /* Count query */
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+        // FROM Game g
+        Root<Game> gameRootCount = cqForCount.from(Game.class);
+        // SELECT COUNT(g.storeId)
+        cqForCount.select(cb.count(gameRootCount.get(Game_.storeId)));
+        // JOIN Achievement a
+        Join<Game, Achievement> achievementJoinForCount = gameRootCount.join(Game_.achievements, JoinType.INNER);
+        // WHERE a.hidden = true
+        Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
+
+        if (!searchTerm.isEmpty()) {
+            // AND g.title LIKE '%term%'
+            Predicate searchPredicate = cb.like(gameRootCount.get(Game_.title), "%" +searchTerm+ "%");
+            finalPredicateForCount = cb.and(finalPredicateForCount, searchPredicate);
+        }
+        cqForCount.where(finalPredicateForCount);
+        long resultCount = em.createQuery(cqForCount).getSingleResult();
+        page.setTotalRecords(resultCount);
+
+        /* Main query */
+        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        // FROM Game g
+        Root<Game> gameRoot = cq.from(Game.class);
+        // JOIN Achievement a
+        Join<Game, Achievement> achievementJoin = gameRoot.join(Game_.achievements, JoinType.INNER);
+        Predicate finalPredicate = cb.isTrue(achievementJoin.get(Achievement_.hidden));
+
+        if (!searchTerm.isEmpty()) {
+            // AND g.title LIKE '%term%'
+            Predicate searchPredicate = cb.like(gameRoot.get(Game_.title), "%" +searchTerm+ "%");
+            finalPredicate = cb.and(finalPredicate, searchPredicate);
+        }
+        cq.where(finalPredicate);
+
+        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Game> findOnlyGamesWithHiddenAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Page page) {
+        /* Count query */
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+        // FROM Game
+        Root<Game> gameRootForCount = cqForCount.from(Game.class);
+        // SELECT COUNT(DISTINCT g.storeId)
+        cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
+        // JOIN Achievement a
+        Join<Game, Achievement> achievementJoinForCount = gameRootForCount.join(Game_.achievements, JoinType.INNER);
+        // WHERE a.hidden = true
+        Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
+        // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
+        Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
+        // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
+        finalPredicateForCount = cb.and(finalPredicateForCount, cb.and(categoryPredicatesForCount));
+
+        if (!searchTerm.isEmpty()) {
+            // AND g.title LIKE '%term%'
+            Predicate searchPredicate = cb.like(gameRootForCount.get(Game_.title), "%" +searchTerm+ "%");
+            finalPredicateForCount = cb.and(finalPredicateForCount, searchPredicate);
+        }
+        cqForCount.where(finalPredicateForCount);
+
+        long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
+        page.setTotalRecords(totalRecordCount);
+
+        /* Main query */
+        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        // FROM Game
+        Root<Game> gameRoot = cq.from(Game.class);
+        // SELECT DISTINCT g
+        cq.distinct(true);
+        // JOIN Achievement a
+        Join<Game, Achievement> achievementJoin = gameRoot.join(Game_.achievements, JoinType.INNER);
+        // WHERE a.hidden = true
+        Predicate finalPredicate = cb.isTrue(achievementJoin.get(Achievement_.hidden));
+        // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
+        Predicate[] categoryPredicates = buildCategorizedGameJoin(cb, gameRoot, categoryIds);
+        // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
+        finalPredicate = cb.and(finalPredicate, cb.and(categoryPredicates));
+
+        if (!searchTerm.isEmpty()) {
+            // AND g.title LIKE '%term%'
+            Predicate searchPredicate = cb.like(gameRoot.get(Game_.title), "%" +searchTerm+ "%");
+            finalPredicate = cb.and(finalPredicate, searchPredicate);
+        }
+        cq.where(finalPredicate);
+
+        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        return query.getResultList();
+    }
+
     private Predicate[] buildCategorizedGameJoin(CriteriaBuilder cb, Root<Game> gameRoot, List<Long> categoryIds) {
         Predicate[] categoryPredicates = new Predicate[categoryIds.size()];
 

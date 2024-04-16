@@ -6,15 +6,17 @@ import java.util.List;
 public class SelectedFilterData {
     private String searchTerm;
     private List<Long> categoryIds = new ArrayList<>();
-    private boolean achievementsOnly;
+    private boolean achievements;
+    private boolean hiddenAchievements;
 
     public SelectedFilterData() {
     }
 
-    public SelectedFilterData(String searchTerm, List<Long> categoryIds, boolean achievementsOnly) {
+    public SelectedFilterData(String searchTerm, List<Long> categoryIds, boolean achievements, boolean hiddenAchievements) {
         this.searchTerm = searchTerm;
         this.categoryIds = categoryIds;
-        this.achievementsOnly = achievementsOnly;
+        this.achievements = achievements;
+        this.hiddenAchievements = hiddenAchievements;
     }
 
     public String getSearchTerm() {
@@ -33,11 +35,19 @@ public class SelectedFilterData {
         this.categoryIds = categoryIds;
     }
 
-    public boolean isAchievementsOnly() {
-        return achievementsOnly;
+    public boolean isAchievements() {
+        return achievements;
     }
 
-    public void setAchievementsOnly(boolean achievementsOnly) {
-        this.achievementsOnly = achievementsOnly;
+    public void setAchievements(boolean achievements) {
+        this.achievements = achievements;
+    }
+
+    public boolean isHiddenAchievements() {
+        return hiddenAchievements;
+    }
+
+    public void setHiddenAchievements(boolean hiddenAchievements) {
+        this.hiddenAchievements = hiddenAchievements;
     }
 }

@@ -40,7 +40,8 @@ public class GameController {
                            @RequestParam(name = "sort") Optional<String> sortOptional,
                            @RequestParam(name = "search") Optional<String> searchOptional,
                            @RequestParam(name = "categoryid") Optional<String> categoryOptional,
-                           @RequestParam(name = "onlyachievements") Optional<String> achievementsOptional,
+                           @RequestParam(name = "achievements") Optional<String> achievementsOptional,
+                           @RequestParam(name = "hidden") Optional<String> hiddenOptional,
                            Model model) {
         String sortParamValue = sortOptional.orElseGet(() -> "challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
@@ -50,7 +51,8 @@ public class GameController {
         SelectedFilterData selectedFilterData = new SelectedFilterData(
                 searchOptional.orElseGet(() -> ""),
                 extractCategoryIds(categoriesParam),
-                achievementsOptional.isPresent()
+                achievementsOptional.isPresent(),
+                hiddenOptional.isPresent()
         );
 
         // Pagination
@@ -79,7 +81,7 @@ public class GameController {
         model.addAttribute("selectedFilters", selectedFilterData);
         model.addAttribute("page", page);
 
-        return "home";
+        return "gameTable";
     }
 
     private List<Long> extractCategoryIds(String categoryIds) {

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const idA = parseInt(b.querySelector("input[type='checkbox'].category-checkbox").id.split("-")[1]);
         return idB - idA;
     });
+    toggleHiddenAchievementsSubChoice();
     moveCheckedCategoriesToTop(categoriesWithOriginalOrder);
 
     const applyButton = filterForm.querySelector("button[type='submit']");
@@ -14,8 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* --------------------- Event Listeners --------------------- */
-    const onlyAchievementsCheckbox = document.getElementById("only-achievements-checkbox");
-    onlyAchievementsCheckbox.addEventListener("change", () => applyButton.disabled = !formDataHasChanged());
+    const achievementsCheckbox = document.getElementById("achievements-checkbox");
+    achievementsCheckbox.addEventListener("change", () => {
+        toggleHiddenAchievementsSubChoice();
+        applyButton.disabled = !formDataHasChanged();
+    });
+
+    const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
+    hiddenAchievementsCheckbox.addEventListener("change", () => applyButton.disabled = !formDataHasChanged());
 
     const categorySearch = document.getElementById("category-search");
     categorySearch.addEventListener("input", (event) => searchCategories(event.target.value));
@@ -37,8 +44,13 @@ function clearFilters() {
 
 function applyFilters() {
     // Toggle checkboxes
-    const onlyAchievementsCheckbox = document.getElementById("only-achievements-checkbox");
-    const onlyAchievements = onlyAchievementsCheckbox.checked;
+    const achievementsCheckbox = document.getElementById("achievements-checkbox");
+    const achievements = achievementsCheckbox.checked;
+    let hiddenAchievements = false;
+    if (achievements) {
+        const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
+        hiddenAchievements = hiddenAchievementsCheckbox.checked;
+    }
 
     // Category checkboxes
     const allCategories = filterForm.querySelectorAll("li.category-item");
@@ -53,10 +65,16 @@ function applyFilters() {
     // Form Action Path
     filterForm.action = window.location.pathname;
     // Form Request Parameters
-    if (onlyAchievements) {
-        const onlyAchievementsParam = createFormParameterElement("onlyachievements");
-        onlyAchievementsParam.value = onlyAchievements;
-        filterForm.appendChild(onlyAchievementsParam);
+    if (achievements) {
+        const achievementsParam = createFormParameterElement("achievements");
+        achievementsParam.value = achievements;
+        filterForm.appendChild(achievementsParam);
+
+        if (hiddenAchievements) {
+            const hiddenAchievementsParam = createFormParameterElement("hidden");
+            hiddenAchievementsParam.value = hiddenAchievements;
+            filterForm.appendChild(hiddenAchievementsParam);
+        }
     }
     if (selectedCategories.length !== 0) {
         const categoryParam = createFormParameterElement("categoryid");
@@ -78,13 +96,25 @@ function formDataHasChanged() {
     const currentURL = new URL(window.location.href);
     const params = currentURL.searchParams;
     // Toggle checkboxes
-    const onlyAchievementsParam = params.get("onlyachievements");
-    if (onlyAchievementsParam) { // If the parameter exists it means the checkbox was previously checked
-        const checkboxIsStillChecked = document.getElementById("only-achievements-checkbox").checked;
+    const achievementsParam = params.get("achievements");
+    const hiddenAchievementsParam = params.get("hidden");
+    if (achievementsParam) { // If the parameter exists it means the checkbox was previously checked
+        const checkboxIsStillChecked = document.getElementById("achievements-checkbox").checked;
         if (!checkboxIsStillChecked)
             return true;
+        else { // If the main checkbox has not changed (from previously being checked), maybe the sub-checkbox has
+            if (hiddenAchievementsParam) {
+                const checkboxIsStillChecked = document.getElementById("hidden-achievements-checkbox").checked;
+                if (!checkboxIsStillChecked)
+                    return true;
+            } else {
+                const checkboxIsNowChecked = document.getElementById("hidden-achievements-checkbox").checked;
+                if (checkboxIsNowChecked)
+                    return true;
+            }
+        }
     } else { // Else it means the checkbox wasn't previously checked
-        const checkboxIsNowChecked = document.getElementById("only-achievements-checkbox").checked;
+        const checkboxIsNowChecked = document.getElementById("achievements-checkbox").checked;
         if (checkboxIsNowChecked)
             return true;
     }
@@ -117,6 +147,19 @@ function arraysContainTheSameItems(arr1, arr2) {
     const set2 = new Set(arr2);
 
     return (set1.size === set2.size) && arr1.every(item => set2.has(item));
+}
+
+function toggleHiddenAchievementsSubChoice() {
+    const achievementsCheckbox = document.getElementById("achievements-checkbox");
+    const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
+    const hiddenAchievementsElement = hiddenAchievementsCheckbox.closest("label");
+
+    if (achievementsCheckbox.checked) {
+        hiddenAchievementsElement.style.display = "block";
+    } else {
+        hiddenAchievementsCheckbox.checked = false;
+        hiddenAchievementsElement.style.display = "none";
+    }
 }
 
 function searchCategories(input) {
