@@ -30,22 +30,8 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public List<Category> getAvailableCategories(SelectedFilterData selectedFilterData, List<Game> games) {
-        List<Long> selectedCategoryIds = selectedFilterData.getCategoryIds();
-        List<Category> allCategories = categoryDAO.findAllSortedByPopularity();
-
-        if (selectedCategoryIds.isEmpty()) {
-            allCategories.forEach(category -> category.setAvailable(true));
-        } else {
-            List<Long> gameIds = games.stream().map(Game::getStoreId).toList();
-            List<Long> availableCategoryIds = categoryDAO.findAvailableBasedOnFilteredGames(gameIds);
-            for (Long categoryId : availableCategoryIds) {
-                allCategories.stream().filter(category -> category.getId().equals(categoryId))
-                        .findFirst().get().setAvailable(true);
-            }
-        }
-
-        return allCategories;
+    public List<Category> getAvailableCategories() {
+        return categoryDAO.findAllSortedByPopularity();
     }
 
     @Override

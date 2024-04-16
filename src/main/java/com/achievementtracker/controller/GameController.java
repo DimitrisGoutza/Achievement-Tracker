@@ -2,6 +2,7 @@ package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
+import com.achievementtracker.dto.FilterData;
 import com.achievementtracker.dto.SelectedFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Category;
@@ -46,7 +47,7 @@ public class GameController {
         String sortParamValue = sortOptional.orElseGet(() -> "challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
-        // Filters
+        // Selected Filters
         String categoriesParam = categoryOptional.orElseGet(() -> "");
         SelectedFilterData selectedFilterData = new SelectedFilterData(
                 searchOptional.orElseGet(() -> ""),
@@ -73,7 +74,7 @@ public class GameController {
 
         List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
-        List<Category> categories = gameFilterService.getAvailableCategories(selectedFilterData, games);
+        List<Category> categories = gameFilterService.getAvailableCategories();
 
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);
