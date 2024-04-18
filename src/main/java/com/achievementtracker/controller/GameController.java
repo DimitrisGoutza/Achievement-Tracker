@@ -39,10 +39,8 @@ public class GameController {
                            @RequestParam(name = "size") Optional<Integer> sizeOptional,
                            @RequestParam(name = "sort") Optional<String> sortOptional,
                            @RequestParam(name = "search") Optional<String> searchOptional,
-                           @RequestParam(name = "categoryid") Optional<String> categoryOptional,
-                           // TODO: make achievements and hidden into one parameter instead of two
-                           @RequestParam(name = "achievements") Optional<String> achievementsOptional,
-                           @RequestParam(name = "hidden") Optional<String> hiddenOptional,
+                           @RequestParam(name = "categories") Optional<String> categoryOptional,
+                           @RequestParam(name = "achievements") Optional<Integer> achievementsOptional,
                            @RequestParam(name = "min_reviews") Optional<Integer> minReviewsOptional,
                            @RequestParam(name = "max_reviews") Optional<Integer> maxReviewsOptional,
                            Model model) {
@@ -55,7 +53,7 @@ public class GameController {
                 searchOptional.orElseGet(() -> ""),
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent(),
-                hiddenOptional.isPresent(),
+                achievementsOptional.isPresent() && achievementsOptional.get() == 2,
                 minReviewsOptional.orElseGet(() -> 1000),
                 maxReviewsOptional.orElseGet(() -> null)
         );

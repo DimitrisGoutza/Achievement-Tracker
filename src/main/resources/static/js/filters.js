@@ -84,14 +84,14 @@ function applyFilters() {
     /* Form Request Parameters */
     // Achievements
     if (achievements) {
-        createFormParameter("achievements", achievements);
-        // Hidden Achievements
-        if (hiddenAchievements)
-            createFormParameter("hidden", hiddenAchievements);
+        if (hiddenAchievements) // Hidden Achievements
+            createFormParameter("achievements", 2);
+        else
+            createFormParameter("achievements", 1);
     }
     // Categories
     if (selectedCategories.length !== 0)
-        createFormParameter("categoryid", selectedCategories.toString());
+        createFormParameter("categories", selectedCategories.toString());
     // Reviews
     if (minReviews.length !== 0)
         createFormParameter("min_reviews", minReviews);
