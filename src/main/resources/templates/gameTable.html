@@ -99,22 +99,38 @@
     <form id="filter-form" method="GET">
         <!-- Toggle checkboxes -->
         <div>
+            <h4 style="margin: 0; padding: 0.3em">Preferences</h4>
             <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievements}"> Show only games with achievements</label>
             <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.hiddenAchievements}"> hidden achievements only </label>
         </div>
         <!-- Category checkboxes -->
         <div id="category-filter">
+            <h4 style="margin: 0; padding: 0.3em">Categories</h4>
             <input id="category-search" type="search" placeholder="Search">
             <ul id="category-list">
-                <li class="category-item" th:each="category, pos : ${categories}">
+                <li class="category-item" th:each="category, pos : ${filterData.categories}">
                     <input class="category-checkbox" th:id="'category-'+ ${pos.count}" type="checkbox" th:value="${category.id}"
                            th:checked="${selectedFilters.categoryIds.contains(category.id)}">
                     <label class="category-name" th:for="'category-'+ ${pos.count}" th:text="${category.name}"></label>
                 </li>
             </ul>
         </div>
+        <!-- Reviews range inputs -->
+        <div id="reviews-filter">
+            <h4 style="margin: 0; padding: 0.3em">Reviews</h4>
+            <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
+                   th:value="${selectedFilters.minReviews}"
+                   th:maxlength="${#strings.length(filterData.maxReviews)}"
+                   th:size="${#strings.length(filterData.maxReviews)}">
+            -
+            <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
+                   th:value="${selectedFilters.maxReviews}"
+                   th:maxlength="${#strings.length(filterData.maxReviews)}"
+                   th:size="${#strings.length(filterData.maxReviews)}">
+        </div>
+        <!-- TODO : add release date filter -->
         <!-- Submit / Reset -->
-        <button type="submit" disabled>Apply Selected</button>
+        <button id="filter-submit-button" type="button" disabled>Apply Selected Filters</button>
         <button type="reset">Clear Filters</button>
     </form>
 </body>

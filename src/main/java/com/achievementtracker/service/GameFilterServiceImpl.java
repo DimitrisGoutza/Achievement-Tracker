@@ -4,9 +4,9 @@ import com.achievementtracker.dao.AchievementDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.Page;
+import com.achievementtracker.dto.FilterData;
 import com.achievementtracker.dto.SelectedFilterData;
 import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,34 +30,31 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public List<Category> getAvailableCategories() {
-        return categoryDAO.findAllSortedByPopularity();
-    }
-
-    @Override
     public List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page) {
         String searchTerm = selectedFilterData.getSearchTerm();
         List<Long> categoryIds = selectedFilterData.getCategoryIds();
         boolean achievements = selectedFilterData.isAchievements();
         boolean hiddenAchievements = selectedFilterData.isHiddenAchievements();
+        Integer minReviews = selectedFilterData.getMinReviews();
+        Integer maxReviews = selectedFilterData.getMaxReviews();
 
         if (categoryIds.isEmpty()) { // No categories
             if (achievements) {
                 if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, page);
+                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, minReviews, maxReviews, page);
                 else
-                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, page);
+                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, minReviews, maxReviews, page);
             } else {
-                return gameDAO.findAllGames(searchTerm, page);
+                return gameDAO.findAllGames(searchTerm, minReviews, maxReviews, page);
             }
         } else { // Categorized
             if (achievements) {
                 if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, page);
+                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, page);
                 else
-                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, page);
+                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, page);
             } else {
-                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, page);
+                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, page);
             }
         }
     }
@@ -71,5 +68,13 @@ public class GameFilterServiceImpl implements GameFilterService {
     @Override
     public Long getGameEntryCount() {
         return gameDAO.getCount();
+    }
+
+    @Override
+    public FilterData getFilterData() {
+        return new FilterData(
+                categoryDAO.findAllSortedByPopularity(),
+                gameDAO.findMaxReviews()
+        );
     }
 }

@@ -1,4 +1,6 @@
 const filterForm = document.getElementById("filter-form");
+const DEFAULT_MIN_REVIEWS = "1000";
+const DEFAULT_MAX_REVIEWS = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     // The category ids show their original position - we need this order later
@@ -10,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleHiddenAchievementsSubChoice();
     moveCheckedCategoriesToTop(categoriesWithOriginalOrder);
 
-    const applyButton = filterForm.querySelector("button[type='submit']");
+    const applyButton = document.getElementById("filter-submit-button");
     applyButton.disabled = !formDataHasChanged();
 
 
@@ -33,7 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
         applyButton.disabled = !formDataHasChanged();
     }));
 
-    filterForm.addEventListener("submit", () => applyFilters());
+    const reviewInputs = document.getElementById("reviews-filter").querySelectorAll("input[type='text']");
+    reviewInputs.forEach(input => {
+        input.addEventListener("input", () => applyButton.disabled = !formDataHasChanged());
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter")
+                applyFilters();
+        });
+    });
+
+    applyButton.addEventListener("click", () => applyFilters());
     filterForm.addEventListener("reset", () => clearFilters());
 });
 
@@ -63,34 +74,44 @@ function applyFilters() {
             selectedCategories.push(checkbox.value);
     });
 
-    // Form Action Path
-    filterForm.action = window.location.pathname;
-    // Form Request Parameters
-    if (achievements) {
-        const achievementsParam = createFormParameterElement("achievements");
-        achievementsParam.value = achievements;
-        filterForm.appendChild(achievementsParam);
+    // Review inputs
+    const minReviews = document.getElementById("min-reviews-input").value;
+    const maxReviews = document.getElementById("max-reviews-input").value;
 
-        if (hiddenAchievements) {
-            const hiddenAchievementsParam = createFormParameterElement("hidden");
-            hiddenAchievementsParam.value = hiddenAchievements;
-            filterForm.appendChild(hiddenAchievementsParam);
-        }
+    /* Form Action Path */
+    filterForm.action = window.location.pathname;
+
+    /* Form Request Parameters */
+    // Achievements
+    if (achievements) {
+        createFormParameter("achievements", achievements);
+        // Hidden Achievements
+        if (hiddenAchievements)
+            createFormParameter("hidden", hiddenAchievements);
     }
-    if (selectedCategories.length !== 0) {
-        const categoryParam = createFormParameterElement("categoryid");
-        categoryParam.value = selectedCategories.toString();
-        filterForm.appendChild(categoryParam);
-    }
+    // Categories
+    if (selectedCategories.length !== 0)
+        createFormParameter("categoryid", selectedCategories.toString());
+    // Reviews
+    if (minReviews.length !== 0)
+        createFormParameter("min_reviews", minReviews);
+    if (maxReviews.length !== 0)
+        createFormParameter("max_reviews", maxReviews)
+
     // Submit
-    filterForm.submit();
+    if (filterInputsAreValid())
+        filterForm.submit();
 }
 
-function createFormParameterElement(name) {
+function createFormParameter(paramName, value) {
     const parameter = document.createElement("input");
     parameter.setAttribute("type", "hidden");
-    parameter.setAttribute("name", name);
-    return parameter;
+    parameter.setAttribute("name", paramName);
+    parameter.value = value;
+
+    const paramElementExists = filterForm.querySelector(`input[type='hidden'][name='${paramName}'][value='${value}']`);
+    if (!paramElementExists)
+        filterForm.appendChild(parameter);
 }
 
 function formDataHasChanged() {
@@ -136,6 +157,26 @@ function formDataHasChanged() {
         const checkedCheckboxExists = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
         if (checkedCheckboxExists)
             return true;
+    }
+    // Review inputs
+    const minReviewsParam = params.get("min_reviews");
+    const currentMinReviews = document.getElementById("min-reviews-input").value;
+    if (minReviewsParam) { // First check if the user previously typed a minimum
+        if (minReviewsParam !== currentMinReviews) { // and compare it to the current input
+            return true;
+        }
+    } else if (currentMinReviews !== DEFAULT_MIN_REVIEWS) { // Else compare the current input to the default one
+        return true;
+    }
+
+    const maxReviewsParam = params.get("max_reviews");
+    const currentMaxReviews = document.getElementById("max-reviews-input").value;
+    if (maxReviewsParam) { // First check if the user previously typed a maximum
+        if (maxReviewsParam !== currentMaxReviews) { // and compare it to the current input
+            return true;
+        }
+    } else if (currentMaxReviews !== DEFAULT_MAX_REVIEWS) { // Else compare the current input to the default one
+        return true;
     }
 
     // ..more filter checks
@@ -194,4 +235,24 @@ function moveCheckedCategoriesToTop(categoriesWithOriginalOrder) {
     categoryList.innerHTML = "";
     // re-build it in new order
     newCategories.forEach(category => categoryList.appendChild(category));
+}
+
+function filterInputsAreValid() {
+    // Reviews
+    const minReviewsInput = document.getElementById("min-reviews-input").value;
+    const maxReviewsInput = document.getElementById("max-reviews-input").value;
+    const pattern = /^\d+$/;
+    if (!pattern.test(minReviewsInput) || (maxReviewsInput !== DEFAULT_MAX_REVIEWS && !pattern.test(maxReviewsInput)))
+        // TODO : build a function that shows an error modal
+        return false;
+
+    const minReviews = parseInt(minReviewsInput);
+    const maxReviews = parseInt(maxReviewsInput);
+    if (minReviews > maxReviews && maxReviewsInput !== DEFAULT_MAX_REVIEWS)
+        // TODO : error modal here as well but with different message
+        return false;
+
+    // more checks ..
+
+    return true;
 }

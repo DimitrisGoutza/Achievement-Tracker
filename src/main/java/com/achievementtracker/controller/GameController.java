@@ -5,7 +5,6 @@ import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.FilterData;
 import com.achievementtracker.dto.SelectedFilterData;
 import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
@@ -41,8 +40,11 @@ public class GameController {
                            @RequestParam(name = "sort") Optional<String> sortOptional,
                            @RequestParam(name = "search") Optional<String> searchOptional,
                            @RequestParam(name = "categoryid") Optional<String> categoryOptional,
+                           // TODO: make achievements and hidden into one parameter instead of two
                            @RequestParam(name = "achievements") Optional<String> achievementsOptional,
                            @RequestParam(name = "hidden") Optional<String> hiddenOptional,
+                           @RequestParam(name = "min_reviews") Optional<Integer> minReviewsOptional,
+                           @RequestParam(name = "max_reviews") Optional<Integer> maxReviewsOptional,
                            Model model) {
         String sortParamValue = sortOptional.orElseGet(() -> "challenge-rating_desc");
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
@@ -53,7 +55,9 @@ public class GameController {
                 searchOptional.orElseGet(() -> ""),
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent(),
-                hiddenOptional.isPresent()
+                hiddenOptional.isPresent(),
+                minReviewsOptional.orElseGet(() -> 1000),
+                maxReviewsOptional.orElseGet(() -> null)
         );
 
         // Pagination
@@ -74,11 +78,11 @@ public class GameController {
 
         List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
-        List<Category> categories = gameFilterService.getAvailableCategories();
+        FilterData filterData = gameFilterService.getFilterData();
 
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);
-        model.addAttribute("categories", categories);
+        model.addAttribute("filterData", filterData);
         model.addAttribute("selectedFilters", selectedFilterData);
         model.addAttribute("page", page);
 
