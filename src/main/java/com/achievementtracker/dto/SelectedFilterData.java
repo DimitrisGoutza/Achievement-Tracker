@@ -8,18 +8,20 @@ public class SelectedFilterData {
     private List<Long> categoryIds = new ArrayList<>();
     private boolean achievements;
     private boolean hiddenAchievements;
+    private final Integer defaultMinReviews;
+    private final Integer defaultMaxReviews;
     private Integer minReviews;
     private Integer maxReviews;
 
-    public SelectedFilterData() {
-    }
-
     public SelectedFilterData(String searchTerm, List<Long> categoryIds, boolean achievements,
-                              boolean hiddenAchievements, Integer minReviews, Integer maxReviews) {
+                              boolean hiddenAchievements, Integer defaultMinReviews, Integer defaultMaxReviews,
+                              Integer minReviews, Integer maxReviews) {
         this.searchTerm = searchTerm;
         this.categoryIds = categoryIds;
         this.achievements = achievements;
         this.hiddenAchievements = hiddenAchievements;
+        this.defaultMinReviews = defaultMinReviews;
+        this.defaultMaxReviews = defaultMaxReviews;
         this.minReviews = minReviews;
         this.maxReviews = maxReviews;
     }
@@ -54,6 +56,14 @@ public class SelectedFilterData {
 
     public void setHiddenAchievements(boolean hiddenAchievements) {
         this.hiddenAchievements = hiddenAchievements;
+    }
+
+    public Integer getDefaultMinReviews() {
+        return defaultMinReviews;
+    }
+
+    public Integer getDefaultMaxReviews() {
+        return defaultMaxReviews;
     }
 
     public Integer getMinReviews() {

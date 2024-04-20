@@ -24,6 +24,10 @@ public class GameController {
     private final GameFilterService gameFilterService;
     private final OffsetPage page;
 
+    /* Default Values */
+    private final Integer DEFAULT_MIN_REVIEWS = 300;
+    private final Integer DEFAULT_MAX_REVIEWS = null;
+
     @Autowired
     public GameController(GameFilterService gameFilterService) {
         this.gameFilterService = gameFilterService;
@@ -55,8 +59,10 @@ public class GameController {
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent(),
                 achievementsOptional.isPresent() && achievementsOptional.get() == 2,
-                minReviewsOptional.orElseGet(() -> 1000),
-                maxReviewsOptional.orElseGet(() -> null)
+                DEFAULT_MIN_REVIEWS,
+                DEFAULT_MAX_REVIEWS,
+                minReviewsOptional.orElseGet(() -> DEFAULT_MIN_REVIEWS),
+                maxReviewsOptional.orElseGet(() -> DEFAULT_MAX_REVIEWS)
         );
 
         // Pagination

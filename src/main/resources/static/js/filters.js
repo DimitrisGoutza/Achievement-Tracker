@@ -1,6 +1,7 @@
 const filterForm = document.getElementById("filter-form");
-const DEFAULT_MIN_REVIEWS = "1000";
-const DEFAULT_MAX_REVIEWS = "";
+// NULL values convert into empty strings in order be comparable later
+const DEFAULT_MIN_REVIEWS = (document.getElementById("min-reviews-input").dataset.defaultMin) ?? "";
+const DEFAULT_MAX_REVIEWS = (document.getElementById("max-reviews-input").dataset.defaultMax) ?? "";
 
 document.addEventListener("DOMContentLoaded", () => {
     // The category ids show their original position - we need this order later

@@ -124,11 +124,13 @@
         <div id="reviews-filter">
             <h4 style="margin: 0; padding: 0.3em">Reviews</h4>
             <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
+                   th:data-default-min="${selectedFilters.defaultMinReviews}"
                    th:value="${selectedFilters.minReviews}"
                    th:maxlength="${#strings.length(filterData.maxReviews)}"
                    th:size="${#strings.length(filterData.maxReviews)}">
             -
             <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
+                   th:data-default-max="${selectedFilters.defaultMaxReviews}"
                    th:value="${selectedFilters.maxReviews}"
                    th:maxlength="${#strings.length(filterData.maxReviews)}"
                    th:size="${#strings.length(filterData.maxReviews)}">
