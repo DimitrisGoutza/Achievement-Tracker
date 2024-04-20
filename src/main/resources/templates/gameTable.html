@@ -46,6 +46,10 @@
                 <span class="column-name">Difficulty Spread</span>
                 <span class="sort-direction"></span>
             </th>
+            <th id="rating-header">
+                <span class="column-name">Rating</span>
+                <span class="sort-direction"></span>
+            </th>
         </tr>
         </thead>
         <tbody id="table-content">
@@ -63,6 +67,7 @@
             <td th:text="${game.releaseDate}"></td>
             <td th:text="${game.challengeRating} + ' score'"></td>
             <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>
+            <td th:text="${game.rating == null ? 'N/A' : game.rating + '%'}"></td>
         </tr>
         </tbody>
     </table>

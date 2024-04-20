@@ -31,7 +31,8 @@ public class GameController {
         this.page = new OffsetPage(50, gameFilterService.getGameEntryCount(),
                 Game_.challengeRating, Page.SortDirection.DESC,
                 Game_.storeId, Game_.steamAppId, Game_.title, Game_.releaseDate,
-                Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread);
+                Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread,
+                Game_.rating);
     }
 
     @GetMapping("/games")    // TODO : Add validation for params
@@ -68,6 +69,7 @@ public class GameController {
                     case "release" -> Game_.releaseDate;
                     case "challenge-rating" -> Game_.challengeRating;
                     case "difficulty-spread" -> Game_.difficultySpread;
+                    case "rating" -> Game_.rating;
                     default -> Game_.challengeRating;
                 }
         );
