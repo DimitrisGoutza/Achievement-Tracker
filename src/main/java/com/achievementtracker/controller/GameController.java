@@ -8,6 +8,7 @@ import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
+import jakarta.persistence.metamodel.SingularAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,10 @@ public class GameController {
     private final OffsetPage page;
 
     /* Default Values */
+    private final int DEFAULT_PAGE_SIZE = 100;
+    private final int DEFAULT_PAGE_NUMBER = 1;
+    private final SingularAttribute DEFAULT_SORT_COLUMN = Game_.challengeRating;
+    private final Page.SortDirection DEFAULT_SORT_DIRECTION = Page.SortDirection.DESC;
     private final Integer DEFAULT_MIN_REVIEWS = 300;
     private final Integer DEFAULT_MAX_REVIEWS = null;
 
@@ -32,8 +37,8 @@ public class GameController {
     public GameController(GameFilterService gameFilterService) {
         this.gameFilterService = gameFilterService;
 
-        this.page = new OffsetPage(50, gameFilterService.getGameEntryCount(),
-                Game_.challengeRating, Page.SortDirection.DESC,
+        this.page = new OffsetPage(DEFAULT_PAGE_SIZE, gameFilterService.getGameEntryCount(),
+                DEFAULT_SORT_COLUMN, DEFAULT_SORT_DIRECTION,
                 Game_.storeId, Game_.steamAppId, Game_.title, Game_.releaseDate,
                 Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread,
                 Game_.rating);
@@ -49,34 +54,34 @@ public class GameController {
                            @RequestParam(name = "min_reviews") Optional<Integer> minReviewsOptional,
                            @RequestParam(name = "max_reviews") Optional<Integer> maxReviewsOptional,
                            Model model) {
-        String sortParamValue = sortOptional.orElseGet(() -> "challenge-rating_desc");
+        String sortParamValue = sortOptional.orElse(" _" + DEFAULT_SORT_DIRECTION.name());
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
         String sortDirection = sortParamValue.split("_")[1].toLowerCase();
         // Selected Filters
-        String categoriesParam = categoryOptional.orElseGet(() -> "");
+        String categoriesParam = categoryOptional.orElse("");
         SelectedFilterData selectedFilterData = new SelectedFilterData(
-                searchOptional.orElseGet(() -> ""),
+                searchOptional.orElse(""),
                 extractCategoryIds(categoriesParam),
                 achievementsOptional.isPresent(),
                 achievementsOptional.isPresent() && achievementsOptional.get() == 2,
                 DEFAULT_MIN_REVIEWS,
                 DEFAULT_MAX_REVIEWS,
-                minReviewsOptional.orElseGet(() -> DEFAULT_MIN_REVIEWS),
-                maxReviewsOptional.orElseGet(() -> DEFAULT_MAX_REVIEWS)
+                minReviewsOptional.orElse(DEFAULT_MIN_REVIEWS),
+                maxReviewsOptional.orElse(DEFAULT_MAX_REVIEWS)
         );
 
         // Pagination
-        page.setCurrent(pageOptional.orElseGet(() -> 1));
-        page.setSize(sizeOptional.orElseGet(() -> 50));
+        page.setCurrent(pageOptional.orElse(DEFAULT_PAGE_NUMBER));
+        page.setSize(sizeOptional.orElse(DEFAULT_PAGE_SIZE));
         page.setSortAttribute(
                 switch (sortColumn) {
                     case "id" -> Game_.storeId;
                     case "name" -> Game_.title;
                     case "release" -> Game_.releaseDate;
-                    case "challenge-rating" -> Game_.challengeRating;
-                    case "difficulty-spread" -> Game_.difficultySpread;
+                    case "challenge" -> Game_.challengeRating;
+                    case "difficulty" -> Game_.difficultySpread;
                     case "rating" -> Game_.rating;
-                    default -> Game_.challengeRating;
+                    default -> DEFAULT_SORT_COLUMN;
                 }
         );
         page.setSortDirection(sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?

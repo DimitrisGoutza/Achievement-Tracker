@@ -4,7 +4,6 @@ const SortClasses = {
     desc: "sorted-desc"
 };
 const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
-const HEADER_ID_FORMAT = "{column}-header"; // name-header
 
 document.addEventListener("DOMContentLoaded", function attachSortStates() {
     const params = new URLSearchParams(window.location.search);
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function attachSortStates() {
         const columnName = sortParam.split("_")[0];
         const sortDirection = sortParam.split("_")[1];
 
-        const targetHeader = document.getElementById(HEADER_ID_FORMAT.replace("{column}", columnName));
+        const targetHeader = document.querySelector(`th[data-column-name='${columnName}']`);
         targetHeader.querySelector("span.sort-direction").classList.add(SortClasses[sortDirection]);
 
         document.querySelectorAll("th").forEach(th => {
@@ -33,8 +32,7 @@ document.addEventListener("DOMContentLoaded", function attachSortStates() {
 
 function sortTable(targetHeader) {
     const sortDirectionElement = targetHeader.querySelector("span.sort-direction");
-    const sortColumnName = targetHeader.querySelector("span.column-name").innerText
-        .trim().replace(/\s+/g, "-").toLowerCase();
+    const sortColumnName = targetHeader.dataset.columnName;
 
     const currentSortState = Object.keys(SortClasses).find(sortState =>
         sortDirectionElement.classList.contains(SortClasses[sortState]));
