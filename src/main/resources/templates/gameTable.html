@@ -7,7 +7,7 @@
     <script type="text/javascript" src="/js/pagination.js" defer></script>
     <script type="text/javascript" src="/js/filters.js" defer></script>
     <script type="text/javascript" src="/js/search.js" defer></script>
-    <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="/css/gameTable.css">
 </head>
 <body>
     <!-- Page Size Select -->
@@ -104,16 +104,16 @@
     <form id="filter-form" method="GET">
         <!-- Toggle checkboxes -->
         <div>
-            <h4 style="margin: 0; padding: 0.3em">Preferences</h4>
+            <h4 class="filter-title">Preferences</h4>
             <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievements}"> Show only games with achievements</label>
             <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.hiddenAchievements}"> hidden achievements only </label>
         </div>
         <!-- Category checkboxes -->
         <div id="category-filter">
-            <h4 style="margin: 0; padding: 0.3em">Categories</h4>
+            <h4 class="filter-title">Categories</h4>
             <input id="category-search" type="search" placeholder="Search">
             <ul id="category-list">
-                <li class="category-item" th:each="category, pos : ${filterData.categories}">
+                <li class="category-item" th:each="category, pos : ${usefulFilterData.categories}">
                     <input class="category-checkbox" th:id="'category-'+ ${pos.count}" type="checkbox" th:value="${category.id}"
                            th:checked="${selectedFilters.categoryIds.contains(category.id)}">
                     <label class="category-name" th:for="'category-'+ ${pos.count}" th:text="${category.name}"></label>
@@ -122,20 +122,30 @@
         </div>
         <!-- Reviews range inputs -->
         <div id="reviews-filter">
-            <h4 style="margin: 0; padding: 0.3em">Reviews</h4>
+            <h4 class="filter-title">Reviews</h4>
             <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
                    th:data-default-min="${selectedFilters.defaultMinReviews}"
                    th:value="${selectedFilters.minReviews}"
-                   th:maxlength="${#strings.length(filterData.maxReviews)}"
-                   th:size="${#strings.length(filterData.maxReviews)}">
+                   th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
+                   th:size="${#strings.length(usefulFilterData.maxReviews)}">
             -
             <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
                    th:data-default-max="${selectedFilters.defaultMaxReviews}"
                    th:value="${selectedFilters.maxReviews}"
-                   th:maxlength="${#strings.length(filterData.maxReviews)}"
-                   th:size="${#strings.length(filterData.maxReviews)}">
+                   th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
+                   th:size="${#strings.length(usefulFilterData.maxReviews)}">
         </div>
-        <!-- TODO : add release date filter -->
+        <div id="release-date-filter">
+            <h4 class="filter-title">Release Date</h4>
+            <label> From <input id="min-release-date" type="month" autocomplete="off"
+                                th:data-default-min="${selectedFilters.defaultMinReleaseDate}"
+                                th:value="${selectedFilters.minReleaseDate}"
+                                th:min="${usefulFilterData.minReleaseDate}"></label>
+            <label> To <input id="max-release-date" type="month" autocomplete="off"
+                              th:data-default-max="${selectedFilters.defaultMaxReleaseDate}"
+                              th:value="${selectedFilters.maxReleaseDate}"
+                              th:max="${#dates.format(#dates.createNow(), 'yyyy-MM')}"></label>
+        </div>
         <!-- Submit / Reset -->
         <button id="filter-submit-button" type="button" disabled>Apply Selected Filters</button>
         <button type="reset">Clear Filters</button>

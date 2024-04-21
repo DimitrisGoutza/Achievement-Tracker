@@ -2,8 +2,8 @@ package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
-import com.achievementtracker.dto.FilterData;
 import com.achievementtracker.dto.SelectedFilterData;
+import com.achievementtracker.dto.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
@@ -30,8 +30,10 @@ public class GameController {
     private final int DEFAULT_PAGE_NUMBER = 1;
     private final SingularAttribute DEFAULT_SORT_COLUMN = Game_.challengeRating;
     private final Page.SortDirection DEFAULT_SORT_DIRECTION = Page.SortDirection.DESC;
-    private final Integer DEFAULT_MIN_REVIEWS = 300;
+    private final Integer DEFAULT_MIN_REVIEWS = 250;
     private final Integer DEFAULT_MAX_REVIEWS = null;
+    private final String DEFAULT_MIN_RELEASE_DATE = "";
+    private final String DEFAULT_MAX_RELEASE_DATE = "";
 
     @Autowired
     public GameController(GameFilterService gameFilterService) {
@@ -53,6 +55,8 @@ public class GameController {
                            @RequestParam(name = "achievements") Optional<Integer> achievementsOptional,
                            @RequestParam(name = "min_reviews") Optional<Integer> minReviewsOptional,
                            @RequestParam(name = "max_reviews") Optional<Integer> maxReviewsOptional,
+                           @RequestParam(name = "min_release") Optional<String> minReleaseOptional,
+                           @RequestParam(name = "max_release") Optional<String> maxReleaseOptional,
                            Model model) {
         String sortParamValue = sortOptional.orElse(" _" + DEFAULT_SORT_DIRECTION.name());
         String sortColumn = sortParamValue.split("_")[0].toLowerCase();
@@ -67,7 +71,11 @@ public class GameController {
                 DEFAULT_MIN_REVIEWS,
                 DEFAULT_MAX_REVIEWS,
                 minReviewsOptional.orElse(DEFAULT_MIN_REVIEWS),
-                maxReviewsOptional.orElse(DEFAULT_MAX_REVIEWS)
+                maxReviewsOptional.orElse(DEFAULT_MAX_REVIEWS),
+                DEFAULT_MIN_RELEASE_DATE,
+                DEFAULT_MAX_RELEASE_DATE,
+                minReleaseOptional.orElse(DEFAULT_MIN_RELEASE_DATE),
+                maxReleaseOptional.orElse(DEFAULT_MAX_RELEASE_DATE)
         );
 
         // Pagination
@@ -89,11 +97,11 @@ public class GameController {
 
         List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
-        FilterData filterData = gameFilterService.getFilterData();
+        UsefulFilterData usefulFilterData = gameFilterService.getUsefulFilterData();
 
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);
-        model.addAttribute("filterData", filterData);
+        model.addAttribute("usefulFilterData", usefulFilterData);
         model.addAttribute("selectedFilters", selectedFilterData);
         model.addAttribute("page", page);
 

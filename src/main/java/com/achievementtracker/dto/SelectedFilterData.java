@@ -12,10 +12,15 @@ public class SelectedFilterData {
     private final Integer defaultMaxReviews;
     private Integer minReviews;
     private Integer maxReviews;
+    private final String defaultMinReleaseDate;
+    private final String defaultMaxReleaseDate;
+    private String minReleaseDate;
+    private String maxReleaseDate;
 
     public SelectedFilterData(String searchTerm, List<Long> categoryIds, boolean achievements,
                               boolean hiddenAchievements, Integer defaultMinReviews, Integer defaultMaxReviews,
-                              Integer minReviews, Integer maxReviews) {
+                              Integer minReviews, Integer maxReviews, String defaultMinReleaseDate, String defaultMaxReleaseDate,
+                              String minReleaseDate, String maxReleaseDate) {
         this.searchTerm = searchTerm;
         this.categoryIds = categoryIds;
         this.achievements = achievements;
@@ -24,6 +29,10 @@ public class SelectedFilterData {
         this.defaultMaxReviews = defaultMaxReviews;
         this.minReviews = minReviews;
         this.maxReviews = maxReviews;
+        this.defaultMinReleaseDate = defaultMinReleaseDate;
+        this.defaultMaxReleaseDate = defaultMaxReleaseDate;
+        this.minReleaseDate = minReleaseDate;
+        this.maxReleaseDate = maxReleaseDate;
     }
 
     public String getSearchTerm() {
@@ -80,5 +89,29 @@ public class SelectedFilterData {
 
     public void setMaxReviews(Integer maxReviews) {
         this.maxReviews = maxReviews;
+    }
+
+    public String getDefaultMinReleaseDate() {
+        return defaultMinReleaseDate;
+    }
+
+    public String getDefaultMaxReleaseDate() {
+        return defaultMaxReleaseDate;
+    }
+
+    public String getMinReleaseDate() {
+        return minReleaseDate;
+    }
+
+    public void setMinReleaseDate(String minReleaseDate) {
+        this.minReleaseDate = minReleaseDate;
+    }
+
+    public String getMaxReleaseDate() {
+        return maxReleaseDate;
+    }
+
+    public void setMaxReleaseDate(String maxReleaseDate) {
+        this.maxReleaseDate = maxReleaseDate;
     }
 }

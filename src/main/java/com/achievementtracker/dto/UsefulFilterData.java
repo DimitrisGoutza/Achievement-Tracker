@@ -5,16 +5,18 @@ import com.achievementtracker.entity.Category;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FilterData {
+public class UsefulFilterData {
     private List<Category> categories = new ArrayList<>();
     private int maxReviews;
+    private String minReleaseDate;
 
-    public FilterData() {
+    public UsefulFilterData() {
     }
 
-    public FilterData(List<Category> categories, int maxReviews) {
+    public UsefulFilterData(List<Category> categories, int maxReviews, String minReleaseDate) {
         this.categories = categories;
         this.maxReviews = maxReviews;
+        this.minReleaseDate = minReleaseDate;
     }
 
     public List<Category> getCategories() {
@@ -31,5 +33,13 @@ public class FilterData {
 
     public void setMaxReviews(int maxReviews) {
         this.maxReviews = maxReviews;
+    }
+
+    public String getMinReleaseDate() {
+        return minReleaseDate;
+    }
+
+    public void setMinReleaseDate(String minReleaseDate) {
+        this.minReleaseDate = minReleaseDate;
     }
 }

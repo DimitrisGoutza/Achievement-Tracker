@@ -2,9 +2,12 @@ const filterForm = document.getElementById("filter-form");
 // NULL values convert into empty strings in order be comparable later
 const DEFAULT_MIN_REVIEWS = (document.getElementById("min-reviews-input").dataset.defaultMin) ?? "";
 const DEFAULT_MAX_REVIEWS = (document.getElementById("max-reviews-input").dataset.defaultMax) ?? "";
+const DEFAULT_MIN_RELEASE_DATE = (document.getElementById("min-release-date").dataset.defaultMin) ?? "";
+const DEFAULT_MAX_RELEASE_DATE = (document.getElementById("max-release-date").dataset.defaultMax) ?? "";
 
 document.addEventListener("DOMContentLoaded", () => {
     // The category ids show their original position - we need this order later
+    // TODO : refactor this and use HTML data attribute instead of ids
     const categoriesWithOriginalOrder = Array.from(filterForm.querySelectorAll("li.category-item")).sort((a, b) => {
         const idB = parseInt(a.querySelector("input[type='checkbox'].category-checkbox").id.split("-")[1]);
         const idA = parseInt(b.querySelector("input[type='checkbox'].category-checkbox").id.split("-")[1]);
@@ -12,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     toggleHiddenAchievementsSubChoice();
     moveCheckedCategoriesToTop(categoriesWithOriginalOrder);
+    setMaxAndMinDateRanges();
 
     const applyButton = document.getElementById("filter-submit-button");
     applyButton.disabled = !formDataHasChanged();
@@ -44,6 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 applyFilters();
         });
     });
+
+    const releaseDateInputs = filterForm.querySelectorAll("input[type='month']");
+    releaseDateInputs.forEach(dateInput => dateInput.addEventListener("input", () => {
+        setMaxAndMinDateRanges();
+        applyButton.disabled = !formDataHasChanged();
+    }));
 
     applyButton.addEventListener("click", () => applyFilters());
     filterForm.addEventListener("reset", () => clearFilters());
@@ -79,6 +89,10 @@ function applyFilters() {
     const minReviews = document.getElementById("min-reviews-input").value;
     const maxReviews = document.getElementById("max-reviews-input").value;
 
+    // Release Date inputs
+    const minReleaseDate = document.getElementById("min-release-date").value;
+    const maxReleaseDate = document.getElementById("max-release-date").value;
+
     /* Form Action Path */
     filterForm.action = window.location.pathname;
 
@@ -94,12 +108,16 @@ function applyFilters() {
     if (selectedCategories.length !== 0)
         createFormParameter("categories", selectedCategories.toString());
     // Reviews
-    if (minReviews.length !== 0)
-        createFormParameter("min_reviews", minReviews);
+    createFormParameter("min_reviews", minReviews.length !== 0 ? minReviews : 0);
     if (maxReviews.length !== 0)
         createFormParameter("max_reviews", maxReviews)
+    // Release Date
+    if (minReleaseDate.length !== 0)
+        createFormParameter("min_release", minReleaseDate);
+    if (maxReleaseDate.length !== 0)
+        createFormParameter("max_release", maxReleaseDate);
 
-    // Submit
+    /* Submit */
     if (filterInputsAreValid())
         filterForm.submit();
 }
@@ -163,9 +181,8 @@ function formDataHasChanged() {
     const minReviewsParam = params.get("min_reviews");
     const currentMinReviews = document.getElementById("min-reviews-input").value;
     if (minReviewsParam) { // First check if the user previously typed a minimum
-        if (minReviewsParam !== currentMinReviews) { // and compare it to the current input
+        if (minReviewsParam !== currentMinReviews) // and compare it to the current input
             return true;
-        }
     } else if (currentMinReviews !== DEFAULT_MIN_REVIEWS) { // Else compare the current input to the default one
         return true;
     }
@@ -173,10 +190,27 @@ function formDataHasChanged() {
     const maxReviewsParam = params.get("max_reviews");
     const currentMaxReviews = document.getElementById("max-reviews-input").value;
     if (maxReviewsParam) { // First check if the user previously typed a maximum
-        if (maxReviewsParam !== currentMaxReviews) { // and compare it to the current input
+        if (maxReviewsParam !== currentMaxReviews) // and compare it to the current input
             return true;
-        }
     } else if (currentMaxReviews !== DEFAULT_MAX_REVIEWS) { // Else compare the current input to the default one
+        return true;
+    }
+    // Release Date inputs
+    const minReleaseParam = params.get("min_release");
+    const currentMinRelease = document.getElementById("min-release-date").value;
+    if (minReleaseParam) { // First check if the user previously typed a minimum
+        if (minReviewsParam !== currentMinRelease) // and compare it to the current input
+            return true
+    } else if (currentMinRelease !== DEFAULT_MIN_RELEASE_DATE) { // Else compare the current input to the default one
+        return true;
+    }
+
+    const maxReleaseParam = params.get("max_release");
+    const currentMaxRelease = document.getElementById("max-release-date").value;
+    if (minReviewsParam) { // First check if the user previously typed a minimum
+        if (maxReleaseParam !== currentMaxRelease) // and compare it to the current input
+            return true
+    } else if (currentMaxRelease !== DEFAULT_MAX_RELEASE_DATE) { // Else compare the current input to the default one
         return true;
     }
 
@@ -238,20 +272,51 @@ function moveCheckedCategoriesToTop(categoriesWithOriginalOrder) {
     newCategories.forEach(category => categoryList.appendChild(category));
 }
 
+function setMaxAndMinDateRanges() {
+    const minReleaseDateElement = document.getElementById("min-release-date");
+    const maxReleaseDateElement = document.getElementById("max-release-date");
+    minReleaseDateElement.setAttribute("max", maxReleaseDateElement.value);
+    maxReleaseDateElement.setAttribute("min", minReleaseDateElement.value);
+}
+
 function filterInputsAreValid() {
-    // Reviews
+    // TODO : build a function that shows an error modal with a different message depending on the validation error
+    /* Reviews */
     const minReviewsInput = document.getElementById("min-reviews-input").value;
     const maxReviewsInput = document.getElementById("max-reviews-input").value;
-    const pattern = /^\d+$/;
-    if (!pattern.test(minReviewsInput) || (maxReviewsInput !== DEFAULT_MAX_REVIEWS && !pattern.test(maxReviewsInput)))
-        // TODO : build a function that shows an error modal
+    const reviewInputPattern = /^\d+$/; // \d+ matches one or more digits (0-9)
+
+    // Check 1 : Pass the regex test while not being empty (cause empty means no limit)
+    if (minReviewsInput.length !== 0 && !reviewInputPattern.test(minReviewsInput))
+        return false;
+    if (maxReviewsInput.length !== 0 && !reviewInputPattern.test(maxReviewsInput))
+        return false;
+    // Check 2 : If both of them are populated, minimum should be smaller than or equal to maximum
+    if (maxReviewsInput.length !==0 && minReviewsInput.length !==0) {
+        const minReviews = parseInt(minReviewsInput);
+        const maxReviews = parseInt(maxReviewsInput);
+        if (minReviews > maxReviews)
+            return false;
+    }
+
+    /* Release Dates */
+    const minReleaseDate = document.getElementById("min-release-date").value;
+    const maxReleaseDate = document.getElementById("max-release-date").value;
+    const datePattern = /^\d{4}-(0[1-9]|1[012])$/; // \d{4} matches exactly four digits which represent the year, (0[1-9]|1[0-2]) matches a two-digit month from 01 to 12
+
+    // Check 1 : Pass the regex test while not being empty (cause empty means no limit)
+    if (minReleaseDate.length !==0 && !datePattern.test(minReleaseDate))
+        return false;
+    if (maxReleaseDate.length !==0 && !datePattern.test(maxReleaseDate))
         return false;
 
-    const minReviews = parseInt(minReviewsInput);
-    const maxReviews = parseInt(maxReviewsInput);
-    if (minReviews > maxReviews && maxReviewsInput !== DEFAULT_MAX_REVIEWS)
-        // TODO : error modal here as well but with different message
-        return false;
+    // Check 2 : If both of them are populated, max date should be ahead or equal to min date
+    if (minReleaseDate.length !== 0 && maxReleaseDate.length !== 0) {
+        const minDate = new Date(minReleaseDate + "-01");
+        const maxDate = new Date(maxReleaseDate + "-01");
+        if (maxDate < minDate)
+            return false;
+    }
 
     // more checks ..
 
