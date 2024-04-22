@@ -1,20 +1,20 @@
 const filterForm = document.getElementById("filter-form");
+const achievementsCheckbox = document.getElementById("achievements-checkbox");
+const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
+const categoryCheckboxes = Array.from(filterForm.querySelectorAll("input[type='checkbox'].category-checkbox"));
+const minReviewsInput = document.getElementById("min-reviews-input");
+const maxReviewsInput = document.getElementById("max-reviews-input");
+const minReleaseDateInput = document.getElementById("min-release-date");
+const maxReleaseDateInput = document.getElementById("max-release-date");
 // NULL values convert into empty strings in order be comparable later
-const DEFAULT_MIN_REVIEWS = (document.getElementById("min-reviews-input").dataset.defaultMin) ?? "";
-const DEFAULT_MAX_REVIEWS = (document.getElementById("max-reviews-input").dataset.defaultMax) ?? "";
-const DEFAULT_MIN_RELEASE_DATE = (document.getElementById("min-release-date").dataset.defaultMin) ?? "";
-const DEFAULT_MAX_RELEASE_DATE = (document.getElementById("max-release-date").dataset.defaultMax) ?? "";
+const DEFAULT_MIN_REVIEWS = (minReviewsInput.dataset.defaultMin) ?? "";
+const DEFAULT_MAX_REVIEWS = (maxReviewsInput.dataset.defaultMax) ?? "";
+const DEFAULT_MIN_RELEASE_DATE = (minReleaseDateInput.dataset.defaultMin) ?? "";
+const DEFAULT_MAX_RELEASE_DATE = (maxReleaseDateInput.dataset.defaultMax) ?? "";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // The category ids show their original position - we need this order later
-    // TODO : refactor this and use HTML data attribute instead of ids
-    const categoriesWithOriginalOrder = Array.from(filterForm.querySelectorAll("li.category-item")).sort((a, b) => {
-        const idB = parseInt(a.querySelector("input[type='checkbox'].category-checkbox").id.split("-")[1]);
-        const idA = parseInt(b.querySelector("input[type='checkbox'].category-checkbox").id.split("-")[1]);
-        return idB - idA;
-    });
     toggleHiddenAchievementsSubChoice();
-    moveCheckedCategoriesToTop(categoriesWithOriginalOrder);
+    moveCheckedCategoriesToTop();
     setMaxAndMinDateRanges();
 
     const applyButton = document.getElementById("filter-submit-button");
@@ -22,21 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* --------------------- Event Listeners --------------------- */
-    const achievementsCheckbox = document.getElementById("achievements-checkbox");
     achievementsCheckbox.addEventListener("change", () => {
         toggleHiddenAchievementsSubChoice();
         applyButton.disabled = !formDataHasChanged();
     });
 
-    const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
     hiddenAchievementsCheckbox.addEventListener("change", () => applyButton.disabled = !formDataHasChanged());
 
     const categorySearch = document.getElementById("category-search");
     categorySearch.addEventListener("input", (event) => searchCategories(event.target.value));
 
-    const categoryCheckboxes = filterForm.querySelectorAll("input[type='checkbox'].category-checkbox");
     categoryCheckboxes.forEach(checkbox => checkbox.addEventListener("change", () => {
-        moveCheckedCategoriesToTop(categoriesWithOriginalOrder);
+        moveCheckedCategoriesToTop();
         applyButton.disabled = !formDataHasChanged();
     }));
 
@@ -49,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    const releaseDateInputs = filterForm.querySelectorAll("input[type='month']");
+    const releaseDateInputs = document.getElementById("release-date-filter").querySelectorAll("input[type='month']");
     releaseDateInputs.forEach(dateInput => dateInput.addEventListener("input", () => {
         setMaxAndMinDateRanges();
         applyButton.disabled = !formDataHasChanged();
@@ -67,31 +64,27 @@ function clearFilters() {
 
 function applyFilters() {
     // Toggle checkboxes
-    const achievementsCheckbox = document.getElementById("achievements-checkbox");
     const achievements = achievementsCheckbox.checked;
     let hiddenAchievements = false;
     if (achievements) {
-        const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
         hiddenAchievements = hiddenAchievementsCheckbox.checked;
     }
 
     // Category checkboxes
-    const allCategories = filterForm.querySelectorAll("li.category-item");
     const selectedCategories = [];
 
-    allCategories.forEach(category => {
-        const checkbox = category.querySelector("input[type='checkbox'].category-checkbox");
+    categoryCheckboxes.forEach(checkbox => {
         if (checkbox.checked)
             selectedCategories.push(checkbox.value);
     });
 
     // Review inputs
-    const minReviews = document.getElementById("min-reviews-input").value;
-    const maxReviews = document.getElementById("max-reviews-input").value;
+    const minReviews = minReviewsInput.value;
+    const maxReviews = maxReviewsInput.value;
 
     // Release Date inputs
-    const minReleaseDate = document.getElementById("min-release-date").value;
-    const maxReleaseDate = document.getElementById("max-release-date").value;
+    const minReleaseDate = minReleaseDateInput.value;
+    const maxReleaseDate = maxReleaseDateInput.value;
 
     /* Form Action Path */
     filterForm.action = window.location.pathname;
@@ -128,8 +121,10 @@ function createFormParameter(paramName, value) {
     parameter.setAttribute("name", paramName);
     parameter.value = value;
 
-    const paramElementExists = filterForm.querySelector(`input[type='hidden'][name='${paramName}'][value='${value}']`);
-    if (!paramElementExists)
+    const paramElement = filterForm.querySelector(`input[type='hidden'][name='${paramName}']`);
+    if (paramElement)
+        paramElement.value = value;
+    else
         filterForm.appendChild(parameter);
 }
 
@@ -138,48 +133,44 @@ function formDataHasChanged() {
     const params = currentURL.searchParams;
     // Toggle checkboxes
     const achievementsParam = params.get("achievements");
-    const hiddenAchievementsParam = params.get("hidden");
     if (achievementsParam) { // If the parameter exists it means the checkbox was previously checked
-        const checkboxIsStillChecked = document.getElementById("achievements-checkbox").checked;
+        const checkboxIsStillChecked = achievementsCheckbox.checked;
         if (!checkboxIsStillChecked)
             return true;
         else { // If the main checkbox has not changed (from previously being checked), maybe the sub-checkbox has
-            if (hiddenAchievementsParam) {
-                const checkboxIsStillChecked = document.getElementById("hidden-achievements-checkbox").checked;
+            if (achievementsParam === "2") {
+                const checkboxIsStillChecked = hiddenAchievementsCheckbox.checked;
                 if (!checkboxIsStillChecked)
                     return true;
             } else {
-                const checkboxIsNowChecked = document.getElementById("hidden-achievements-checkbox").checked;
+                const checkboxIsNowChecked = hiddenAchievementsCheckbox.checked;
                 if (checkboxIsNowChecked)
                     return true;
             }
         }
     } else { // Else it means the checkbox wasn't previously checked
-        const checkboxIsNowChecked = document.getElementById("achievements-checkbox").checked;
+        const checkboxIsNowChecked = achievementsCheckbox.checked;
         if (checkboxIsNowChecked)
             return true;
     }
     // Category checkboxes
-    const categoryIdsParam = params.get("categoryid");
-    if (categoryIdsParam) {
-        const allCategories = Array.from(filterForm.querySelectorAll("li.category-item"));
+    const categoriesParam = params.get("categories");
+    if (categoriesParam) {
         // Get the previously applied categories (their values) through URL parameters
-        const previouslySelectedCategoryIDs = categoryIdsParam.split(",");
+        const previouslySelectedCategoryIDs = categoriesParam.split(",");
         // Filter the currently checked categories and only keep their values
-        const currentlySelectedCategoryIDs = allCategories.filter(category => category.querySelector("input[type='checkbox'].category-checkbox").checked)
-            .map(category => category.querySelector("input[type='checkbox'].category-checkbox").value);
+        const currentlySelectedCategoryIDs = categoryCheckboxes.filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
         // Compare the two collections
         if (!arraysContainTheSameItems(previouslySelectedCategoryIDs, currentlySelectedCategoryIDs))
             return true;
     } else { // Else there weren't any previously selected categories
-        const categoryCheckboxes = filterForm.querySelectorAll("input[type='checkbox'].category-checkbox");
-        const checkedCheckboxExists = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
-        if (checkedCheckboxExists)
+        const atLeastOneChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+        if (atLeastOneChecked)
             return true;
     }
     // Review inputs
     const minReviewsParam = params.get("min_reviews");
-    const currentMinReviews = document.getElementById("min-reviews-input").value;
+    const currentMinReviews = minReviewsInput.value;
     if (minReviewsParam) { // First check if the user previously typed a minimum
         if (minReviewsParam !== currentMinReviews) // and compare it to the current input
             return true;
@@ -188,7 +179,7 @@ function formDataHasChanged() {
     }
 
     const maxReviewsParam = params.get("max_reviews");
-    const currentMaxReviews = document.getElementById("max-reviews-input").value;
+    const currentMaxReviews = maxReviewsInput.value;
     if (maxReviewsParam) { // First check if the user previously typed a maximum
         if (maxReviewsParam !== currentMaxReviews) // and compare it to the current input
             return true;
@@ -197,7 +188,7 @@ function formDataHasChanged() {
     }
     // Release Date inputs
     const minReleaseParam = params.get("min_release");
-    const currentMinRelease = document.getElementById("min-release-date").value;
+    const currentMinRelease = minReleaseDateInput.value;
     if (minReleaseParam) { // First check if the user previously typed a minimum
         if (minReviewsParam !== currentMinRelease) // and compare it to the current input
             return true
@@ -206,8 +197,8 @@ function formDataHasChanged() {
     }
 
     const maxReleaseParam = params.get("max_release");
-    const currentMaxRelease = document.getElementById("max-release-date").value;
-    if (minReviewsParam) { // First check if the user previously typed a minimum
+    const currentMaxRelease = maxReleaseDateInput.value;
+    if (maxReleaseParam) { // First check if the user previously typed a minimum
         if (maxReleaseParam !== currentMaxRelease) // and compare it to the current input
             return true
     } else if (currentMaxRelease !== DEFAULT_MAX_RELEASE_DATE) { // Else compare the current input to the default one
@@ -227,8 +218,6 @@ function arraysContainTheSameItems(arr1, arr2) {
 }
 
 function toggleHiddenAchievementsSubChoice() {
-    const achievementsCheckbox = document.getElementById("achievements-checkbox");
-    const hiddenAchievementsCheckbox = document.getElementById("hidden-achievements-checkbox");
     const hiddenAchievementsElement = hiddenAchievementsCheckbox.closest("label");
 
     if (achievementsCheckbox.checked) {
@@ -253,16 +242,20 @@ function searchCategories(input) {
     });
 }
 
-function moveCheckedCategoriesToTop(categoriesWithOriginalOrder) {
-    const checkedCategories = [];
-    // push the checked categories into an Array
-    filterForm.querySelectorAll("li.category-item").forEach(category => {
-        const checkbox = category.querySelector("input[type='checkbox'].category-checkbox");
-        if (checkbox.checked)
-            checkedCategories.push(category);
+function moveCheckedCategoriesToTop() {
+    const categoriesSortedByPos = Array.from(filterForm.querySelectorAll("li.category-item")).sort((a, b) => {
+        const posB = parseInt(a.dataset.pos);
+        const posA = parseInt(b.dataset.pos);
+        return posB - posA;
     });
-    // filter unchecked categories with their original order
-    const uncheckedCategories = categoriesWithOriginalOrder.filter(category => !checkedCategories.includes(category));
+    const checkedCategories = [];
+    // push the checked category items into an Array
+    categoryCheckboxes.forEach(checkbox => {
+        if (checkbox.checked)
+            checkedCategories.push(checkbox.closest("li.category-item"));
+    });
+    // filter unchecked categories (with the help of categoriesSortedByPos, to keep their original order intact)
+    const uncheckedCategories = categoriesSortedByPos.filter(category => !checkedCategories.includes(category));
     // insert the checked categories first
     const newCategories = [...checkedCategories, ...uncheckedCategories];
     const categoryList = document.getElementById("category-list");
@@ -273,35 +266,33 @@ function moveCheckedCategoriesToTop(categoriesWithOriginalOrder) {
 }
 
 function setMaxAndMinDateRanges() {
-    const minReleaseDateElement = document.getElementById("min-release-date");
-    const maxReleaseDateElement = document.getElementById("max-release-date");
-    minReleaseDateElement.setAttribute("max", maxReleaseDateElement.value);
-    maxReleaseDateElement.setAttribute("min", minReleaseDateElement.value);
+    minReleaseDateInput.setAttribute("max", maxReleaseDateInput.value);
+    maxReleaseDateInput.setAttribute("min", minReleaseDateInput.value);
 }
 
 function filterInputsAreValid() {
     // TODO : build a function that shows an error modal with a different message depending on the validation error
     /* Reviews */
-    const minReviewsInput = document.getElementById("min-reviews-input").value;
-    const maxReviewsInput = document.getElementById("max-reviews-input").value;
+    const minReviewsValue = minReviewsInput.value;
+    const maxReviewsValue = maxReviewsInput.value;
     const reviewInputPattern = /^\d+$/; // \d+ matches one or more digits (0-9)
 
     // Check 1 : Pass the regex test while not being empty (cause empty means no limit)
-    if (minReviewsInput.length !== 0 && !reviewInputPattern.test(minReviewsInput))
+    if (minReviewsValue.length !== 0 && !reviewInputPattern.test(minReviewsValue))
         return false;
-    if (maxReviewsInput.length !== 0 && !reviewInputPattern.test(maxReviewsInput))
+    if (maxReviewsValue.length !== 0 && !reviewInputPattern.test(maxReviewsValue))
         return false;
     // Check 2 : If both of them are populated, minimum should be smaller than or equal to maximum
-    if (maxReviewsInput.length !==0 && minReviewsInput.length !==0) {
-        const minReviews = parseInt(minReviewsInput);
-        const maxReviews = parseInt(maxReviewsInput);
+    if (maxReviewsValue.length !==0 && minReviewsValue.length !==0) {
+        const minReviews = parseInt(minReviewsValue);
+        const maxReviews = parseInt(maxReviewsValue);
         if (minReviews > maxReviews)
             return false;
     }
 
     /* Release Dates */
-    const minReleaseDate = document.getElementById("min-release-date").value;
-    const maxReleaseDate = document.getElementById("max-release-date").value;
+    const minReleaseDate = minReleaseDateInput.value;
+    const maxReleaseDate = maxReleaseDateInput.value;
     const datePattern = /^\d{4}-(0[1-9]|1[012])$/; // \d{4} matches exactly four digits which represent the year, (0[1-9]|1[0-2]) matches a two-digit month from 01 to 12
 
     // Check 1 : Pass the regex test while not being empty (cause empty means no limit)
