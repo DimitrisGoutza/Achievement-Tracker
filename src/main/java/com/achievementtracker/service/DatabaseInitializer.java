@@ -101,7 +101,7 @@ class DatabaseInitializer {
 
     private void persistGameWithAchievements(Long storeAppId) {
         GameDetailDTO gameDetailDTO = steamStorefrontProxy.fetchDetailsByGameId(storeAppId);
-        boolean appIsValid = (gameDetailDTO.getSteamAppId() != null);
+        boolean appIsValid = (gameDetailDTO != null && gameDetailDTO.getSteamAppId() != null);
 
         if (appIsValid) {
             GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(storeAppId);

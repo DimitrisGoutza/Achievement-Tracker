@@ -149,21 +149,26 @@ class DatabaseUpdater {
         GameDetailDTO gameDetailDTO = steamStorefrontProxy.fetchDetailsByGameId(game.getStoreId());
         GameCategoriesAndReviewsDTO gameCategoriesAndReviewsDTO = steamSpyProxy.fetchCategoriesAndReviewsByGameId(game.getStoreId());
 
-        game.setComingSoon(gameDetailDTO.isComingSoon());
-        game.setReleaseDate(gameDetailDTO.getReleaseDate());
-        game.setRating(gameCategoriesAndReviewsDTO);
-        game.setReviews(gameCategoriesAndReviewsDTO);
-        game.setShortDescription(gameDetailDTO.getShortDescription());
-        game.setLongDescription(gameDetailDTO.getLongDescription());
-        game.setImages(
-                new Image(
-                        gameDetailDTO.getHeaderImageUrl(),
-                        gameDetailDTO.getCapsuleImageUrl(),
-                        gameDetailDTO.getCapsuleSmallImageUrl(),
-                        gameDetailDTO.getBackgroundImageUrl(),
-                        gameDetailDTO.getBackgroundRawImageUrl()
-                )
-        );
+        try {
+            game.setComingSoon(gameDetailDTO.isComingSoon());
+            game.setReleaseDate(gameDetailDTO.getReleaseDate());
+            game.setRating(gameCategoriesAndReviewsDTO);
+            game.setReviews(gameCategoriesAndReviewsDTO);
+            game.setShortDescription(gameDetailDTO.getShortDescription());
+            game.setLongDescription(gameDetailDTO.getLongDescription());
+            game.setImages(
+                    new Image(
+                            gameDetailDTO.getHeaderImageUrl(),
+                            gameDetailDTO.getCapsuleImageUrl(),
+                            gameDetailDTO.getCapsuleSmallImageUrl(),
+                            gameDetailDTO.getBackgroundImageUrl(),
+                            gameDetailDTO.getBackgroundRawImageUrl()
+                    )
+            );
+        } catch (NullPointerException e) {
+            logger.warning(e.getClass().getName() + " <" + e.getMessage() + "> \n was caught while fetching Game Details, " +
+                    "because Steam Store API returned null for steam-appid: " + game.getStoreId() + ".");
+        }
 
         TimeUtility.waitSeconds(1);
     }
