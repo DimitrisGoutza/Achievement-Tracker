@@ -152,7 +152,7 @@ public class GameReqParamsDTO {
     public LocalDate getMinReleaseDateAsNullableDate() {
         if (min_release == null || min_release.isEmpty())
             return null;
-        return LocalDate.parse(min_release);
+        return LocalDate.parse(min_release + "-01");
     }
 
     public String getMaxReleaseDate() {
