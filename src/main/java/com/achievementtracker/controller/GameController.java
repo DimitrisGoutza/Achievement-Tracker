@@ -2,85 +2,62 @@ package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dao.Page;
-import com.achievementtracker.dto.SelectedFilterData;
+import com.achievementtracker.dto.GameReqParamsDTO;
 import com.achievementtracker.dto.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
-import jakarta.persistence.metamodel.SingularAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class GameController {
     private final GameFilterService gameFilterService;
-    private final OffsetPage page;
-
-    /* Default Values */
-    private final int DEFAULT_PAGE_SIZE = 100;
-    private final int DEFAULT_PAGE_NUMBER = 1;
-    private final SingularAttribute DEFAULT_SORT_COLUMN = Game_.challengeRating;
-    private final Page.SortDirection DEFAULT_SORT_DIRECTION = Page.SortDirection.DESC;
-    private final Integer DEFAULT_MIN_REVIEWS = 250;
-    private final Integer DEFAULT_MAX_REVIEWS = null;
-    private final String DEFAULT_MIN_RELEASE_DATE = "";
-    private final String DEFAULT_MAX_RELEASE_DATE = "";
 
     @Autowired
     public GameController(GameFilterService gameFilterService) {
         this.gameFilterService = gameFilterService;
+    }
 
-        this.page = new OffsetPage(DEFAULT_PAGE_SIZE, gameFilterService.getGameEntryCount(),
-                DEFAULT_SORT_COLUMN, DEFAULT_SORT_DIRECTION,
+    @GetMapping("/games")
+    public String getGames(@Validated @ModelAttribute GameReqParamsDTO paramsDTO, Model model) {
+        OffsetPage page = setPaginationAndSorting(paramsDTO);
+
+        List<Game> games = gameFilterService.getFilteredGames(paramsDTO, page);
+        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
+        UsefulFilterData usefulFilterData = gameFilterService.getUsefulFilterData();
+
+        model.addAttribute("games", games);
+        model.addAttribute("achievements", achievementsMap);
+        model.addAttribute("usefulFilterData", usefulFilterData);
+        model.addAttribute("selectedFilters", paramsDTO);
+        model.addAttribute("page", page);
+
+        return "gameTable";
+    }
+
+    private OffsetPage setPaginationAndSorting(GameReqParamsDTO paramsDTO) {
+        OffsetPage page = new OffsetPage(paramsDTO.getSizeAsInt(), gameFilterService.getGameEntryCount(),
+                Game_.storeId, Page.SortDirection.ASC,
                 Game_.storeId, Game_.steamAppId, Game_.title, Game_.releaseDate,
                 Game_.challengeRating, Game_.averageCompletion, Game_.difficultySpread,
                 Game_.rating);
-    }
-
-    @GetMapping("/games")    // TODO : Add validation for params
-    public String getGames(@RequestParam(name = "page") Optional<Integer> pageOptional,
-                           @RequestParam(name = "size") Optional<Integer> sizeOptional,
-                           @RequestParam(name = "sort") Optional<String> sortOptional,
-                           @RequestParam(name = "search") Optional<String> searchOptional,
-                           @RequestParam(name = "categories") Optional<String> categoryOptional,
-                           @RequestParam(name = "achievements") Optional<Integer> achievementsOptional,
-                           @RequestParam(name = "min_reviews") Optional<Integer> minReviewsOptional,
-                           @RequestParam(name = "max_reviews") Optional<Integer> maxReviewsOptional,
-                           @RequestParam(name = "min_release") Optional<String> minReleaseOptional,
-                           @RequestParam(name = "max_release") Optional<String> maxReleaseOptional,
-                           Model model) {
-        String sortParamValue = sortOptional.orElse(" _" + DEFAULT_SORT_DIRECTION.name());
-        String sortColumn = sortParamValue.split("_")[0].toLowerCase();
-        String sortDirection = sortParamValue.split("_")[1].toLowerCase();
-        // Selected Filters
-        String categoriesParam = categoryOptional.orElse("");
-        SelectedFilterData selectedFilterData = new SelectedFilterData(
-                searchOptional.orElse(""),
-                extractCategoryIds(categoriesParam),
-                achievementsOptional.isPresent(),
-                achievementsOptional.isPresent() && achievementsOptional.get() == 2,
-                DEFAULT_MIN_REVIEWS,
-                DEFAULT_MAX_REVIEWS,
-                minReviewsOptional.orElse(DEFAULT_MIN_REVIEWS),
-                maxReviewsOptional.orElse(DEFAULT_MAX_REVIEWS),
-                DEFAULT_MIN_RELEASE_DATE,
-                DEFAULT_MAX_RELEASE_DATE,
-                minReleaseOptional.orElse(DEFAULT_MIN_RELEASE_DATE),
-                maxReleaseOptional.orElse(DEFAULT_MAX_RELEASE_DATE)
-        );
 
         // Pagination
-        page.setCurrent(pageOptional.orElse(DEFAULT_PAGE_NUMBER));
-        page.setSize(sizeOptional.orElse(DEFAULT_PAGE_SIZE));
+        page.setCurrent(paramsDTO.getPageAsInt());
+        page.setSize(paramsDTO.getSizeAsInt());
+
+        // Sorting
+        String sortColumn = paramsDTO.getSort().split("_")[0].toLowerCase();
+        String sortDirection = paramsDTO.getSort().split("_")[1].toLowerCase();
         page.setSortAttribute(
                 switch (sortColumn) {
                     case "id" -> Game_.storeId;
@@ -89,32 +66,12 @@ public class GameController {
                     case "challenge" -> Game_.challengeRating;
                     case "difficulty" -> Game_.difficultySpread;
                     case "rating" -> Game_.rating;
-                    default -> DEFAULT_SORT_COLUMN;
+                    default -> Game_.challengeRating;
                 }
         );
         page.setSortDirection(sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?
                 Page.SortDirection.ASC : Page.SortDirection.DESC);
 
-        List<Game> games = gameFilterService.getFilteredGames(selectedFilterData, page);
-        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
-        UsefulFilterData usefulFilterData = gameFilterService.getUsefulFilterData();
-
-        model.addAttribute("games", games);
-        model.addAttribute("achievements", achievementsMap);
-        model.addAttribute("usefulFilterData", usefulFilterData);
-        model.addAttribute("selectedFilters", selectedFilterData);
-        model.addAttribute("page", page);
-
-        return "gameTable";
-    }
-
-    private List<Long> extractCategoryIds(String categoryIds) {
-        if (categoryIds.isEmpty())
-            return List.of();
-        if (categoryIds.contains(","))
-            return Arrays.stream(categoryIds.split(","))
-                    .map(Long::valueOf).toList();
-        else
-            return List.of(Long.valueOf(categoryIds));
+        return page;
     }
 }

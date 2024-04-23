@@ -4,7 +4,7 @@ import com.achievementtracker.dao.AchievementDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.Page;
-import com.achievementtracker.dto.SelectedFilterData;
+import com.achievementtracker.dto.GameReqParamsDTO;
 import com.achievementtracker.dto.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
@@ -32,15 +32,15 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public List<Game> getFilteredGames(SelectedFilterData selectedFilterData, Page page) {
-        String searchTerm = selectedFilterData.getSearchTerm();
-        List<Long> categoryIds = selectedFilterData.getCategoryIds();
-        boolean achievements = selectedFilterData.isAchievements();
-        boolean hiddenAchievements = selectedFilterData.isHiddenAchievements();
-        Integer minReviews = selectedFilterData.getMinReviews();
-        Integer maxReviews = selectedFilterData.getMaxReviews();
-        LocalDate minReleaseDate = parseStringDate(selectedFilterData.getMinReleaseDate());
-        LocalDate maxReleaseDate = parseStringDate(selectedFilterData.getMaxReleaseDate());
+    public List<Game> getFilteredGames(GameReqParamsDTO paramsDTO, Page page) {
+        String searchTerm = paramsDTO.getSearch();
+        List<Long> categoryIds = paramsDTO.getCategoriesAsList();
+        boolean achievements = paramsDTO.getAchievements() != null;
+        boolean hiddenAchievements = achievements && (paramsDTO.getAchievementsAsNullableInt() == 2);
+        Integer minReviews = paramsDTO.getMinReviewsAsNullableInt();
+        Integer maxReviews = paramsDTO.getMaxReviewsAsNullableInt();
+        LocalDate minReleaseDate = paramsDTO.getMinReleaseDateAsNullableDate();
+        LocalDate maxReleaseDate = paramsDTO.getMaxReleaseDateAsNullableDate();
 
         if (categoryIds.isEmpty()) { // No categories
             if (achievements) {
@@ -81,12 +81,5 @@ public class GameFilterServiceImpl implements GameFilterService {
                 gameDAO.findMaxReviews(),
                 gameDAO.findMinimumReleaseDate().format(yearMonthFormat)
         );
-    }
-
-    private LocalDate parseStringDate(String date) {
-        if (!date.isEmpty())
-            return LocalDate.parse(date + "-01");
-        else
-            return null;
     }
 }
