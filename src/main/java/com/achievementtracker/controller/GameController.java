@@ -21,27 +21,15 @@ import java.util.Map;
 @Controller
 public class GameController {
     private final GameFilterService gameFilterService;
-    private final OffsetPage page;
 
     @Autowired
     public GameController(GameFilterService gameFilterService) {
         this.gameFilterService = gameFilterService;
-
-        // Most of the values set here don't matter as they will be overridden later ..
-        this.page = new OffsetPage(100, gameFilterService.getGameEntryCount(),
-                Game_.storeId, Page.SortDirection.ASC,
-                Game_.storeId, Game_.title, Game_.releaseDate,
-                Game_.challengeRating, Game_.difficultySpread, Game_.rating);
     }
 
     @GetMapping("/games")
     public String getGames(@Validated @ModelAttribute GameRequestParams params, Model model) {
-        /* Pagination */
-        page.setCurrent(params.getPageAsInt());
-        page.setSize(params.getSizeAsInt());
-        /* Sorting */
-        page.setSortAttribute(params.getSortAttribute());
-        page.setSortDirection(params.getSortDirection());
+        OffsetPage page = setPaginationAndSorting(params);
 
         List<Game> games = gameFilterService.getFilteredGames(params, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
@@ -54,5 +42,22 @@ public class GameController {
         model.addAttribute("page", page);
 
         return "gameTable";
+    }
+
+    private OffsetPage setPaginationAndSorting(GameRequestParams params) {
+        // Most of the values set here don't matter as they will be overridden later ..
+        OffsetPage page = new OffsetPage(100, gameFilterService.getGameEntryCount(),
+                Game_.storeId, Page.SortDirection.ASC,
+                Game_.storeId, Game_.title, Game_.releaseDate,
+                Game_.challengeRating, Game_.difficultySpread, Game_.rating);
+
+        /* Pagination */
+        page.setCurrent(params.getPageAsInt());
+        page.setSize(params.getSizeAsInt());
+        /* Sorting */
+        page.setSortAttribute(params.getSortAttribute());
+        page.setSortDirection(params.getSortDirection());
+
+        return page;
     }
 }
