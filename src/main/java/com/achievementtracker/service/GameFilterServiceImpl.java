@@ -4,7 +4,7 @@ import com.achievementtracker.dao.AchievementDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.Page;
-import com.achievementtracker.dto.GameReqParamsDTO;
+import com.achievementtracker.dto.GameRequestParams;
 import com.achievementtracker.dto.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
@@ -32,15 +32,15 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public List<Game> getFilteredGames(GameReqParamsDTO paramsDTO, Page page) {
-        String searchTerm = paramsDTO.getSearch();
-        List<Long> categoryIds = paramsDTO.getCategoriesAsList();
-        boolean achievements = paramsDTO.getAchievements() != null;
-        boolean hiddenAchievements = achievements && (paramsDTO.getAchievementsAsNullableInt() == 2);
-        Integer minReviews = paramsDTO.getMinReviewsAsNullableInt();
-        Integer maxReviews = paramsDTO.getMaxReviewsAsNullableInt();
-        LocalDate minReleaseDate = paramsDTO.getMinReleaseDateAsNullableDate();
-        LocalDate maxReleaseDate = paramsDTO.getMaxReleaseDateAsNullableDate();
+    public List<Game> getFilteredGames(GameRequestParams params, Page page) {
+        String searchTerm = params.getSearch();
+        List<Long> categoryIds = params.getCategoriesAsList();
+        boolean achievements = params.getAchievements() != null;
+        boolean hiddenAchievements = achievements && (params.getAchievementsAsNullableInt() == 2);
+        Integer minReviews = params.getMinReviewsAsNullableInt();
+        Integer maxReviews = params.getMaxReviewsAsNullableInt();
+        LocalDate minReleaseDate = params.getMinReleaseDateAsNullableDate();
+        LocalDate maxReleaseDate = params.getMaxReleaseDateAsNullableDate();
 
         if (categoryIds.isEmpty()) { // No categories
             if (achievements) {

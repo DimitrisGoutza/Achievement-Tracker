@@ -1,10 +1,15 @@
 package com.achievementtracker.dto;
 
+import com.achievementtracker.dao.Page;
+import com.achievementtracker.entity.Game;
+import com.achievementtracker.entity.Game_;
+import jakarta.persistence.metamodel.SingularAttribute;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-public class GameReqParamsDTO {
+public class GameRequestParams {
     private String page;
     private String size;
     private String sort;
@@ -17,24 +22,25 @@ public class GameReqParamsDTO {
     private String max_release;
 
     /* Default Parameter Values */
-    private final String DEFAULT_PAGE = "1";
-    private final String DEFAULT_PAGE_SIZE = "100";
-    private final String DEFAULT_MIN_REVIEWS = "250";
-    private final String DEFAULT_MAX_REVIEWS = "";
-    private final String DEFAULT_MIN_RELEASE = "";
-    private final String DEFAULT_MAX_RELEASE = "";
+    private final int DEFAULT_PAGE = 1;
+    private final int DEFAULT_PAGE_SIZE = 100;
+    private final SingularAttribute<Game, ?> DEFAULT_SORT_ATTRIBUTE = Game_.challengeRating;
+    private final Page.SortDirection DEFAULT_SORT_DIRECTION = Page.SortDirection.DESC;
+    private final Integer DEFAULT_MIN_REVIEWS = 250;
+    private final Integer DEFAULT_MAX_REVIEWS = null;
+    private final LocalDate DEFAULT_MIN_RELEASE = null;
+    private final LocalDate DEFAULT_MAX_RELEASE = null;
 
-    public GameReqParamsDTO() {
-        /* Default Param Values */
-        this.page = DEFAULT_PAGE;
-        this.size = DEFAULT_PAGE_SIZE;
+    public GameRequestParams() {
+        this.page = "";
+        this.size = "";
         this.search = "";
         this.categories = "";
-        this.sort = "challenge_desc";
-        this.min_reviews = DEFAULT_MIN_REVIEWS;
-        this.max_reviews = DEFAULT_MAX_REVIEWS;
-        this.min_release = DEFAULT_MIN_RELEASE;
-        this.max_release = DEFAULT_MAX_RELEASE;
+        this.sort = "";
+        this.min_reviews = "";
+        this.max_reviews = "";
+        this.min_release = "";
+        this.max_release = "";
     }
 
     public void setPage(String page) {
@@ -82,6 +88,8 @@ public class GameReqParamsDTO {
     }
 
     public Integer getPageAsInt() {
+        if (page == null || page.isEmpty())
+            return DEFAULT_PAGE;
         return Integer.valueOf(page);
     }
 
@@ -90,11 +98,38 @@ public class GameReqParamsDTO {
     }
 
     public Integer getSizeAsInt() {
+        if (size == null || size.isEmpty())
+            return DEFAULT_PAGE_SIZE;
         return Integer.valueOf(size);
     }
 
     public String getSort() {
         return sort;
+    }
+
+    public SingularAttribute<Game, ?> getSortAttribute() {
+        if (sort == null || sort.isEmpty())
+            return DEFAULT_SORT_ATTRIBUTE;
+
+        String sortColumn = sort.split("_")[0];
+        return switch (sortColumn) {
+            case "id" -> Game_.storeId;
+            case "name" -> Game_.title;
+            case "release" -> Game_.releaseDate;
+            case "challenge" -> Game_.challengeRating;
+            case "difficulty" -> Game_.difficultySpread;
+            case "rating" -> Game_.rating;
+            default -> Game_.challengeRating;
+        };
+    }
+
+    public Page.SortDirection getSortDirection() {
+        if (sort == null || sort.isEmpty())
+            return DEFAULT_SORT_DIRECTION;
+
+        String sortDirection = sort.split("_")[1];
+        return sortDirection.equalsIgnoreCase(Page.SortDirection.ASC.name()) ?
+                Page.SortDirection.ASC : Page.SortDirection.DESC;
     }
 
     public String getSearch() {
@@ -131,7 +166,7 @@ public class GameReqParamsDTO {
 
     public Integer getMinReviewsAsNullableInt() {
         if (min_reviews == null || min_reviews.isEmpty())
-            return null;
+            return DEFAULT_MIN_REVIEWS;
         return Integer.valueOf(min_reviews);
     }
 
@@ -141,7 +176,7 @@ public class GameReqParamsDTO {
 
     public Integer getMaxReviewsAsNullableInt() {
         if (max_reviews == null || max_reviews.isEmpty())
-            return null;
+            return DEFAULT_MAX_REVIEWS;
         return Integer.valueOf(max_reviews);
     }
 
@@ -151,7 +186,7 @@ public class GameReqParamsDTO {
 
     public LocalDate getMinReleaseDateAsNullableDate() {
         if (min_release == null || min_release.isEmpty())
-            return null;
+            return DEFAULT_MIN_RELEASE;
         return LocalDate.parse(min_release + "-01");
     }
 
@@ -161,31 +196,39 @@ public class GameReqParamsDTO {
 
     public LocalDate getMaxReleaseDateAsNullableDate() {
         if (max_release == null || max_release.isEmpty())
-            return null;
+            return DEFAULT_MAX_RELEASE;
         return LocalDate.parse(max_release + "-01");
     }
 
-    public String getDEFAULT_PAGE() {
+    public int getDEFAULT_PAGE() {
         return DEFAULT_PAGE;
     }
 
-    public String getDEFAULT_PAGE_SIZE() {
+    public int getDEFAULT_PAGE_SIZE() {
         return DEFAULT_PAGE_SIZE;
     }
 
-    public String getDEFAULT_MIN_REVIEWS() {
+    public SingularAttribute<Game, ?> getDEFAULT_SORT_ATTRIBUTE() {
+        return DEFAULT_SORT_ATTRIBUTE;
+    }
+
+    public Page.SortDirection getDEFAULT_SORT_DIRECTION() {
+        return DEFAULT_SORT_DIRECTION;
+    }
+
+    public Integer getDEFAULT_MIN_REVIEWS() {
         return DEFAULT_MIN_REVIEWS;
     }
 
-    public String getDEFAULT_MAX_REVIEWS() {
+    public Integer getDEFAULT_MAX_REVIEWS() {
         return DEFAULT_MAX_REVIEWS;
     }
 
-    public String getDEFAULT_MIN_RELEASE() {
+    public LocalDate getDEFAULT_MIN_RELEASE() {
         return DEFAULT_MIN_RELEASE;
     }
 
-    public String getDEFAULT_MAX_RELEASE() {
+    public LocalDate getDEFAULT_MAX_RELEASE() {
         return DEFAULT_MAX_RELEASE;
     }
 }

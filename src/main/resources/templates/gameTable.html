@@ -105,7 +105,7 @@
         <!-- Toggle checkboxes -->
         <div>
             <h4 class="filter-title">Preferences</h4>
-            <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievements != null}"> Show only games with achievements</label>
+            <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt != null}"> Show only games with achievements</label>
             <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt == 2}"> hidden achievements only </label>
         </div>
         <!-- Category checkboxes -->
@@ -127,13 +127,13 @@
             <h4 class="filter-title">Reviews</h4>
             <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
                    th:data-default-min="${selectedFilters.DEFAULT_MIN_REVIEWS}"
-                   th:value="${selectedFilters.minReviews}"
+                   th:value="${selectedFilters.minReviewsAsNullableInt}"
                    th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
                    th:size="${#strings.length(usefulFilterData.maxReviews)}">
             -
             <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
                    th:data-default-max="${selectedFilters.DEFAULT_MAX_REVIEWS}"
-                   th:value="${selectedFilters.maxReviews}"
+                   th:value="${selectedFilters.maxReviewsAsNullableInt}"
                    th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
                    th:size="${#strings.length(usefulFilterData.maxReviews)}">
         </div>
@@ -142,11 +142,11 @@
             <h4 class="filter-title">Release Date</h4>
             <label> From <input id="min-release-date" type="month" autocomplete="off"
                                 th:data-default-min="${selectedFilters.DEFAULT_MIN_RELEASE}"
-                                th:value="${selectedFilters.minReleaseDate}"
+                                th:value="${#temporals.format(selectedFilters.minReleaseDateAsNullableDate, 'yyyy-MM')}"
                                 th:min="${usefulFilterData.minReleaseDate}"></label>
             <label> To <input id="max-release-date" type="month" autocomplete="off"
                               th:data-default-max="${selectedFilters.DEFAULT_MAX_RELEASE}"
-                              th:value="${selectedFilters.maxReleaseDate}"
+                              th:value="${#temporals.format(selectedFilters.maxReleaseDateAsNullableDate, 'yyyy-MM')}"
                               th:max="${#dates.format(#dates.createNow(), 'yyyy-MM')}"></label>
         </div>
         <!-- Submit / Reset -->
