@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Event Listeners
+    /* --------------------- Event Listeners --------------------- */
     const gameSearch = document.getElementById("game-search");
     let searchTimeout;
     let previousSearchTerm = "";

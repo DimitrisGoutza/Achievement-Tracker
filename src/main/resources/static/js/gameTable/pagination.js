@@ -1,19 +1,22 @@
+const pageSizeSelect = document.getElementById("page-entries-select");
+const gameSearchInput = document.getElementById("game-search");
+
 document.addEventListener("DOMContentLoaded", () => {
     disableActivePageButton();
-    // Event Listeners
-    const selectPageSizeElement = document.getElementById("page-entries-select");
-    selectPageSizeElement.addEventListener("change", () => changePageSize());
+
+    /* --------------------- Event Listeners --------------------- */
+    pageSizeSelect.addEventListener("change", () => changePageSize());
 });
 
 function changePageSize() {
     const determineEndpointURL = () => {
-        const selectedPageSize = document.getElementById("page-entries-select").value;
-        const searchTerm = document.getElementById("game-search").value;
+        const size = pageSizeSelect.value;
+        const searchTerm = gameSearchInput.value;
 
         const fetchURL = new URL(window.location.href);
 
         const params = new URLSearchParams(fetchURL.searchParams);
-        params.set("size", selectedPageSize);
+        params.set("size", size);
         params.set("search", searchTerm);
 
         fetchURL.search = params.toString();
@@ -30,12 +33,12 @@ function changePageSize() {
 
 function changePageNumber(requestedPageNumber) {
     const determineEndpointURL = () => {
-        const selectedPageSize = document.getElementById("page-entries-select").value;
-        const searchTerm = document.getElementById("game-search").value;
+        const pageSize = pageSizeSelect.value;
+        const searchTerm = gameSearchInput.value;
 
         const fetchURL = new URL(window.location.href);
         const params = new URLSearchParams(fetchURL.searchParams);
-        params.set("size", selectedPageSize);
+        params.set("size", pageSize);
         params.set("page", requestedPageNumber);
         params.set("search", searchTerm);
 
@@ -48,7 +51,7 @@ function changePageNumber(requestedPageNumber) {
         .then(html => {
             updateTableContent(html);
             disableActivePageButton();
-            scrollToTop();
+            scrollToTopOfTable();
         })
         .catch(error => console.error("Error: "+error));
 }
@@ -64,13 +67,12 @@ function updateTableContent(html) {
 }
 
 function disableActivePageButton() {
-    const activeButton = document.querySelector("button.selected");
-    const activePageNumber = activeButton.innerText;
-    if (activeButton.getAttribute("onclick").includes("changePageNumber("+activePageNumber+")"))
+    const activeButton = document.getElementById("pagination-footer").querySelector("button.selected");
+    if (activeButton)
         activeButton.removeAttribute("onclick");
 }
 
-function scrollToTop() {
+function scrollToTopOfTable() {
     const table = document.querySelector("table");
     const tableTopOffset = table.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({

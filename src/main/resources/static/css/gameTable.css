@@ -1,12 +1,12 @@
-.sorted-default::before {
-    content: "⬆⬇";
+.sorted-default::after {
+    content: "↑↓";
 }
-.sorted-asc::before {
-    content: "⬆";
+.sorted-asc::after {
+    content: "↑";
 }
 
-.sorted-desc::before {
-    content: "⬇";
+.sorted-desc::after {
+    content: "↓";
 }
 
 .selected {

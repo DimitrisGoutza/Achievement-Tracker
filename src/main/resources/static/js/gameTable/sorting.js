@@ -53,7 +53,7 @@ function sortTable(targetHeader) {
 
 function getNextSortState(currentSortState) {
     /*
-    Returns the next element from SORT_CLASSES[],
+    Returns the next element from SortClasses[],
     resets to the start when reaching the end of the Array
     */
     const indexOfCurrentState = Object.keys(SortClasses).indexOf(currentSortState);

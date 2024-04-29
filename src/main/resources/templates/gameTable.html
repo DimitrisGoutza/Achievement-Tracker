@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Achievement Tracker - Home</title>
-    <script type="text/javascript" src="/js/sorting.js" defer></script>
-    <script type="text/javascript" src="/js/pagination.js" defer></script>
-    <script type="text/javascript" src="/js/filters.js" defer></script>
-    <script type="text/javascript" src="/js/search.js" defer></script>
+    <script type="text/javascript" src="/js/gameTable/sorting.js" defer></script>
+    <script type="text/javascript" src="/js/gameTable/pagination.js" defer></script>
+    <script type="text/javascript" src="/js/gameTable/filters.js" defer></script>
+    <script type="text/javascript" src="/js/gameTable/search.js" defer></script>
     <link rel="stylesheet" href="/css/gameTable.css">
 </head>
 <body>
@@ -74,7 +74,7 @@
     <!-- Pagination -->
     <div id="pagination-footer">
         <!-- Previous Page Button -->
-        <button type="button" th:attr="disabled = ${!page.previousAvailable}"
+        <button type="button" th:disabled="${!page.previousAvailable}"
                 th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
         <!-- First Page -->
         <button type="button" th:text="${page.first}" th:classappend="${page.first == page.current} ? 'selected' : null"
@@ -95,7 +95,7 @@
                 th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
         </th:block>
         <!-- Next Page Button -->
-        <button type="button" th:attr="disabled = ${!page.nextAvailable}"
+        <button type="button" th:disabled="${!page.nextAvailable}"
                 th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
         <!-- Page Entry Information -->
         <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
