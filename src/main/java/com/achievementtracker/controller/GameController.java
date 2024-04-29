@@ -1,7 +1,6 @@
 package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
-import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.GameRequestParams;
 import com.achievementtracker.dto.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
@@ -45,18 +44,11 @@ public class GameController {
     }
 
     private OffsetPage setPaginationAndSorting(GameRequestParams params) {
-        // Most of the values set here don't matter as they will be overridden later ..
-        OffsetPage page = new OffsetPage(100, gameFilterService.getGameEntryCount(),
-                Game_.storeId, Page.SortDirection.ASC,
+        OffsetPage page = new OffsetPage(params.getSizeAsInt(), gameFilterService.getGameEntryCount(),
+                params.getSortAttribute(), params.getSortDirection(),
                 Game_.storeId, Game_.title, Game_.releaseDate,
                 Game_.challengeRating, Game_.difficultySpread, Game_.rating);
-
-        /* Pagination */
         page.setCurrent(params.getPageAsInt());
-        page.setSize(params.getSizeAsInt());
-        /* Sorting */
-        page.setSortAttribute(params.getSortAttribute());
-        page.setSortDirection(params.getSortDirection());
 
         return page;
     }
