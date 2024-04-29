@@ -5,27 +5,10 @@ const SortClasses = {
 };
 const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
 
-document.addEventListener("DOMContentLoaded", function attachSortStates() {
-    const params = new URLSearchParams(window.location.search);
-    const sortParam = params.get("sort");
-    if (sortParam) {
-        const columnName = sortParam.split("_")[0];
-        const sortDirection = sortParam.split("_")[1];
+document.addEventListener("DOMContentLoaded", () => {
+    attachSortStates();
 
-        const targetHeader = document.querySelector(`th[data-column-name='${columnName}']`);
-        targetHeader.querySelector("span.sort-direction").classList.add(SortClasses[sortDirection]);
-
-        document.querySelectorAll("th").forEach(th => {
-           if (th !== targetHeader)
-               th.querySelector("span.sort-direction").classList.add(SortClasses.default);
-        });
-    } else {
-        document.querySelectorAll("th").forEach(th =>
-           th.querySelector("span.sort-direction").classList.add(SortClasses.default)
-        );
-    }
-
-    // Event Listeners
+    /* --------------------- Event Listeners --------------------- */
     const allHeaders = document.querySelectorAll("th");
     allHeaders.forEach(th => th.addEventListener("click", () => sortTable(th)));
 });
@@ -109,4 +92,25 @@ function generateVisibleURL(sortColumnName, requestedSortState, requestedSortCla
 
     newVisibleURL.search = params.toString();
     return newVisibleURL;
+}
+
+function attachSortStates() {
+    const params = new URLSearchParams(window.location.search);
+    const sortParam = params.get("sort");
+    if (sortParam) {
+        const columnName = sortParam.split("_")[0];
+        const sortDirection = sortParam.split("_")[1];
+
+        const targetHeader = document.querySelector(`th[data-column-name='${columnName}']`);
+        targetHeader.querySelector("span.sort-direction").classList.add(SortClasses[sortDirection]);
+
+        document.querySelectorAll("th").forEach(th => {
+            if (th !== targetHeader)
+                th.querySelector("span.sort-direction").classList.add(SortClasses.default);
+        });
+    } else {
+        document.querySelectorAll("th").forEach(th =>
+            th.querySelector("span.sort-direction").classList.add(SortClasses.default)
+        );
+    }
 }
