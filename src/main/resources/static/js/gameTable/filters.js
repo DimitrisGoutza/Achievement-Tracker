@@ -79,8 +79,8 @@ function applyFilters() {
     });
 
     // Review inputs
-    const minReviews = minReviewsInput.value;
-    const maxReviews = maxReviewsInput.value;
+    const minReviews = minReviewsInput.value.trim();
+    const maxReviews = maxReviewsInput.value.trim();
 
     // Release Date inputs
     const minReleaseDate = minReleaseDateInput.value;
@@ -170,7 +170,7 @@ function formDataHasChanged() {
     }
     // Review inputs
     const minReviewsParam = params.get("min_reviews");
-    const currentMinReviews = minReviewsInput.value;
+    const currentMinReviews = minReviewsInput.value.trim();
     if (minReviewsParam) { // First check if the user previously typed a minimum
         if (minReviewsParam !== currentMinReviews) // and compare it to the current input
             return true;
@@ -179,7 +179,7 @@ function formDataHasChanged() {
     }
 
     const maxReviewsParam = params.get("max_reviews");
-    const currentMaxReviews = maxReviewsInput.value;
+    const currentMaxReviews = maxReviewsInput.value.trim();
     if (maxReviewsParam) { // First check if the user previously typed a maximum
         if (maxReviewsParam !== currentMaxReviews) // and compare it to the current input
             return true;
@@ -282,8 +282,8 @@ function setMaxAndMinDateRanges() {
 function filterInputsAreValid() {
     // TODO : build a function that shows an error modal with a different message depending on the validation error
     /* Reviews */
-    const minReviewsValue = minReviewsInput.value;
-    const maxReviewsValue = maxReviewsInput.value;
+    const minReviewsValue = minReviewsInput.value.trim();
+    const maxReviewsValue = maxReviewsInput.value.trim();
     const reviewInputPattern = /^\d+$/; // \d+ matches one or more digits (0-9)
 
     // Check 1 : Pass the regex test while not being empty (cause empty means no limit)

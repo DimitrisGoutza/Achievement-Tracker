@@ -116,10 +116,10 @@ public class GameRequestParams {
         return switch (sortColumn) {
             case "id" -> Game_.storeId;
             case "name" -> Game_.title;
-            case "release" -> Game_.releaseDate;
             case "challenge" -> Game_.challengeRating;
             case "difficulty" -> Game_.difficultySpread;
             case "rating" -> Game_.rating;
+            case "release" -> Game_.releaseDate;
             default -> DEFAULT_SORT_ATTRIBUTE;
         };
     }
