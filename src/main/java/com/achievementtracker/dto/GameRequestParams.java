@@ -4,21 +4,31 @@ import com.achievementtracker.dao.Page;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 public class GameRequestParams {
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "Must be a positive (not zero) integer")
     private String page;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "Must be a positive (not zero) integer")
     private String size;
+    @Pattern(regexp = "^[a-zA-Z]+_(asc|desc)$", message = "Must be in format \"(columnName)_(asc|desc)\" ")
     private String sort;
     private String search;
+    @Pattern(regexp = "^([1-9][0-9]*)(,[1-9][0-9]*)*$", message = "Categories must be at least 1 positive integer separated by commas, example \"(15,35,23)\" ")
     private String categories;
+    @Pattern(regexp = "^[12]$", message = "Must either be 2 (hidden achievements) OR 1 (just achievements)")
     private String achievements;
+    @Pattern(regexp = "^[0-9]+$", message = "Must be a positive (not zero) integer or empty")
     private String min_reviews;
+    @Pattern(regexp = "^[0-9]+$", message = "Must be a positive (not zero) integer or empty")
     private String max_reviews;
+    @Pattern(regexp = "^[0-9]{4}-(0[1-9]|1[0-2])$", message = "Must be in format \"YYYY-MM\" ")
     private String min_release;
+    @Pattern(regexp = "^[0-9]{4}-(0[1-9]|1[0-2])$", message = "Must be in format \"YYYY-MM\" ")
     private String max_release;
 
     /* Default Parameter Values */
@@ -32,15 +42,6 @@ public class GameRequestParams {
     private final LocalDate DEFAULT_MAX_RELEASE = null;
 
     public GameRequestParams() {
-        this.page = "";
-        this.size = "";
-        this.search = "";
-        this.categories = "";
-        this.sort = "";
-        this.min_reviews = "";
-        this.max_reviews = "";
-        this.min_release = "";
-        this.max_release = "";
     }
 
     public void setPage(String page) {
@@ -88,7 +89,7 @@ public class GameRequestParams {
     }
 
     public Integer getPageAsInt() {
-        if (page == null || page.isEmpty())
+        if (page == null)
             return DEFAULT_PAGE;
         return Integer.valueOf(page);
     }
@@ -98,7 +99,7 @@ public class GameRequestParams {
     }
 
     public Integer getSizeAsInt() {
-        if (size == null || size.isEmpty())
+        if (size == null)
             return DEFAULT_PAGE_SIZE;
         return Integer.valueOf(size);
     }
@@ -108,7 +109,7 @@ public class GameRequestParams {
     }
 
     public SingularAttribute<Game, ?> getSortAttribute() {
-        if (sort == null || sort.isEmpty())
+        if (sort == null)
             return DEFAULT_SORT_ATTRIBUTE;
 
         String sortColumn = sort.split("_")[0];
@@ -119,12 +120,12 @@ public class GameRequestParams {
             case "challenge" -> Game_.challengeRating;
             case "difficulty" -> Game_.difficultySpread;
             case "rating" -> Game_.rating;
-            default -> Game_.challengeRating;
+            default -> DEFAULT_SORT_ATTRIBUTE;
         };
     }
 
     public Page.SortDirection getSortDirection() {
-        if (sort == null || sort.isEmpty())
+        if (sort == null)
             return DEFAULT_SORT_DIRECTION;
 
         String sortDirection = sort.split("_")[1];
@@ -141,7 +142,7 @@ public class GameRequestParams {
     }
 
     public List<Long> getCategoriesAsList() {
-        if (categories.isEmpty())
+        if (categories == null)
             return List.of();
         if (categories.contains(","))
             return Arrays.stream(categories.split(","))
@@ -155,7 +156,7 @@ public class GameRequestParams {
     }
 
     public Integer getAchievementsAsNullableInt() {
-        if (achievements == null || achievements.isEmpty())
+        if (achievements == null)
             return null;
         return Integer.valueOf(achievements);
     }
@@ -165,7 +166,7 @@ public class GameRequestParams {
     }
 
     public Integer getMinReviewsAsNullableInt() {
-        if (min_reviews == null || min_reviews.isEmpty())
+        if (min_reviews == null)
             return DEFAULT_MIN_REVIEWS;
         return Integer.valueOf(min_reviews);
     }
@@ -175,7 +176,7 @@ public class GameRequestParams {
     }
 
     public Integer getMaxReviewsAsNullableInt() {
-        if (max_reviews == null || max_reviews.isEmpty())
+        if (max_reviews == null )
             return DEFAULT_MAX_REVIEWS;
         return Integer.valueOf(max_reviews);
     }
@@ -185,7 +186,7 @@ public class GameRequestParams {
     }
 
     public LocalDate getMinReleaseDateAsNullableDate() {
-        if (min_release == null || min_release.isEmpty())
+        if (min_release == null)
             return DEFAULT_MIN_RELEASE;
         return LocalDate.parse(min_release + "-01");
     }
@@ -195,7 +196,7 @@ public class GameRequestParams {
     }
 
     public LocalDate getMaxReleaseDateAsNullableDate() {
-        if (max_release == null || max_release.isEmpty())
+        if (max_release == null)
             return DEFAULT_MAX_RELEASE;
         return LocalDate.parse(max_release + "-01");
     }

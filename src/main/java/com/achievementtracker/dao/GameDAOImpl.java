@@ -318,7 +318,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
                     // g.releaseDate <= maxRelease
                     cb.lessThanOrEqualTo(gameRoot.get(Game_.releaseDate), maxRelease));
         }
-        if (!searchTerm.isEmpty()) {
+        if (searchTerm != null) {
             finalPredicate = cb.and(finalPredicate,
                     // g.title LIKE '%term%'
                     cb.like(gameRoot.get(Game_.title), "%" +searchTerm+ "%"));
