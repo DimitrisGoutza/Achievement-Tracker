@@ -3,155 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <title>Achievement Tracker - Home</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- JS scripts -->
     <script type="text/javascript" src="/js/gameTable/sorting.js" defer></script>
     <script type="text/javascript" src="/js/gameTable/pagination.js" defer></script>
     <script type="text/javascript" src="/js/gameTable/filters.js" defer></script>
     <script type="text/javascript" src="/js/gameTable/search.js" defer></script>
+    <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/css/gameTable.css">
 </head>
 <body>
-    <!-- Page Size Select -->
-    <label for="page-entries-select">Entries per Page :</label>
-    <select id="page-entries-select">
-        <option value="25" th:attr="selected=${page.size == 25}">25</option>
-        <option value="50" th:attr="selected=${page.size == 50}">50</option>
-        <option value="100" th:attr="selected=${page.size == 100}">100</option>
-        <option value="250" th:attr="selected=${page.size == 250}">250</option>
-        <option value="500" th:attr="selected=${page.size == 500}">500</option>
-        <option value="1000" th:attr="selected=${page.size == 1000}">1K</option>
-    </select>
-    <!-- Game Search -->
-    <input id="game-search" type="search" placeholder="Search any game" autocomplete="off">
-    <!-- Results -->
-    <table>
-        <thead>
-        <tr>
-            <th data-column-name="id">
-                <span class="column-name">ID</span>
-                <span class="sort-direction"></span>
-            </th>
-            <th data-column-name="name">
-                <span class="column-name">Name</span>
-                <span class="sort-direction"></span>
-            </th>
-            <th data-column-name="release">
-                <span class="column-name">Release</span>
-                <span class="sort-direction"></span>
-            </th>
-            <th data-column-name="challenge">
-                <span class="column-name">Challenge Rating</span>
-                <span class="sort-direction"></span>
-            </th>
-            <th data-column-name="difficulty">
-                <span class="column-name">Difficulty Spread</span>
-                <span class="sort-direction"></span>
-            </th>
-            <th data-column-name="rating">
-                <span class="column-name">Rating</span>
-                <span class="sort-direction"></span>
-            </th>
-        </tr>
-        </thead>
-        <tbody id="table-content">
-        <tr th:each="game : ${games}">
-            <td><img th:src="${game.images.capsuleImageURL}" alt="Game Image"></td>
-            <td>
-                <span th:text="${game.title}"></span>
-                <div>
-                    <img th:each="achievement : ${achievements.get(game.storeId)}" class="achievement-icon"
-                         th:src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}"
-                         th:title="${achievement.hidden ? achievement.displayName + ' (hidden)' : achievement.description} + ' - ' + ${achievement.percentage} + '%'"
-                         alt="Achievement Icon">
+    <div id="main-container">
+        <div id="main-container-header">
+            <label>Entries per Page <select id="page-entries-select">
+                <option value="25" th:attr="selected=${page.size == 25}">25</option>
+                <option value="50" th:attr="selected=${page.size == 50}">50</option>
+                <option value="100" th:attr="selected=${page.size == 100}">100</option>
+                <option value="250" th:attr="selected=${page.size == 250}">250</option>
+                <option value="500" th:attr="selected=${page.size == 500}">500</option>
+                <option value="1000" th:attr="selected=${page.size == 1000}">1K</option>
+            </select></label>
+            <input id="game-search" type="search" placeholder="Search any game" autocomplete="off">
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th data-column-name="id">
+                    <span class="column-name">ID</span>
+                    <span class="sort-direction"></span>
+                </th>
+                <th data-column-name="name">
+                    <span class="column-name">Name</span>
+                    <span class="sort-direction"></span>
+                </th>
+                <th data-column-name="challenge">
+                    <span class="column-name">Challenge Rating</span>
+                    <span class="sort-direction"></span>
+                </th>
+                <th data-column-name="difficulty">
+                    <span class="column-name">Difficulty Spread</span>
+                    <span class="sort-direction"></span>
+                </th>
+                <th data-column-name="rating">
+                    <span class="column-name">Rating</span>
+                    <span class="sort-direction"></span>
+                </th>
+                <th data-column-name="release">
+                    <span class="column-name">Release</span>
+                    <span class="sort-direction"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody id="table-content">
+            <tr th:each="game : ${games}">
+                <td><a target="_blank" th:href="'https://store.steampowered.com/app/' + ${game.storeId}"><img class="game-banner-img" th:data-actual-src="${game.images.capsuleImageURL}" src="/img/game-banner-placeholder.png" alt="Game Image"></a></td>
+                <td>
+                    <div class="title-achievements-container">
+                        <a class="game-title" target="_blank" th:href="'https://store.steampowered.com/app/' + ${game.storeId}" th:text="${game.title}"></a>
+                        <div class="top-achievements-container">
+                            <img th:each="achievement : ${achievements.get(game.storeId)}" th:data-actual-src="${achievement.hidden ? achievement.iconURL : achievement.iconURL}"
+                                 class="achievement-icon" src="/img/achievement-icon-placeholder.png"
+                                 th:title="${achievement.hidden ? achievement.displayName + ' (hidden)' : achievement.description} + ' - ' + ${achievement.percentage} + '%'"
+                                 alt="icon">
+                        </div>
+                    </div>
+                </td>
+                <td><span class="text-column challenge-rating" th:text="${game.challengeRating} + ' points'"></span></td>
+                <td><span class="text-column difficulty-spread" th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + ' %'}"></span></td>
+                <td><span class="text-column rating" th:text="${game.rating == null ? 'N/A' : game.rating + ' %'}"></span></td>
+                <td><span class="text-column release-date" th:text="${game.releaseDate == null ? 'N/A' : #temporals.format(game.releaseDate, 'MMM yyyy')}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="main-container-footer">
+            <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
+            <div id="page-buttons-container">
+                <!-- Previous Page Button -->
+                <button type="button" class="page-buttons" th:disabled="${!page.previousAvailable}"
+                        th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
+                <!-- First Page -->
+                <button type="button" class="page-buttons" th:text="${page.first}" th:classappend="${page.first == page.current} ? 'selected-page-button' : null"
+                        th:onclick="'changePageNumber(' + ${page.first} + ')'"/>
+
+                <!-- Middle Pages -->
+                <th:block th:if="${page.moreThanOneAvailable}">
+                <th:block th:each="pageNumber : ${page.pageNumbers.subList(1, page.pageNumbers.size() - 1)}">
+                    <span th:if="${pageNumber == page.current - 2}"> ... </span>
+                    <button type="button" class="page-buttons" th:if="${pageNumber >= page.current - 1 && pageNumber <= page.current + 1}"
+                            th:text="${pageNumber}" th:classappend="${pageNumber == page.current} ? 'selected-page-button' : null"
+                            th:onclick="'changePageNumber(' + ${pageNumber} + ')'"/>
+                    <span th:if="${pageNumber == page.current + 2}"> ... </span>
+                </th:block>
+
+                <!-- Last Page -->
+                <button type="button" class="page-buttons" th:text="${page.last}" th:classappend="${page.last == page.current} ? 'selected-page-button' : null"
+                        th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
+                </th:block>
+                <!-- Next Page Button -->
+                <button type="button" class="page-buttons" th:disabled="${!page.nextAvailable}"
+                        th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
+            </div>
+        </div>
+        <form id="filter-form" method="GET">
+            <div id="achievements-filter">
+                <h4 class="filter-header">Preferences</h4>
+                <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt != null}"> Show only games with achievements </label>
+                <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt == 2}"> hidden achievements only </label>
+            </div>
+            <div id="category-filter">
+                <h4 class="filter-header">Categories</h4>
+                <input id="category-search" type="search" placeholder="Search">
+                <ul id="category-list">
+                    <li class="category-item" th:each="category, index : ${usefulFilterData.categories}" th:data-pos="${index.count}">
+                        <label class="category-name" th:inline="text">
+                            <input class="category-checkbox" type="checkbox" th:value="${category.id}"
+                                   th:checked="${selectedFilters.categoriesAsList.contains(category.id)}">
+                            [[${category.name}]]
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            <div id="reviews-filter">
+                <h4 class="filter-header">Reviews</h4>
+                <div id="reviews-inputs-container">
+                    <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
+                           th:data-default-min="${selectedFilters.DEFAULT_MIN_REVIEWS}"
+                           th:value="${selectedFilters.minReviewsAsNullableInt}"
+                           th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
+                           th:size="${#strings.length(usefulFilterData.maxReviews)}">
+                    <img id="range-separator" src="/img/range-indicator.png">
+                    <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
+                           th:data-default-max="${selectedFilters.DEFAULT_MAX_REVIEWS}"
+                           th:value="${selectedFilters.maxReviewsAsNullableInt}"
+                           th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
+                           th:size="${#strings.length(usefulFilterData.maxReviews)}">
                 </div>
-            </td>
-            <td th:text="${game.releaseDate}"></td>
-            <td th:text="${game.challengeRating} + ' score'"></td>
-            <td th:text="${game.difficultySpread == null ? '-' : game.difficultySpread + '%'}"></td>
-            <td th:text="${game.rating == null ? 'N/A' : game.rating + '%'}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <!-- Pagination -->
-    <div id="pagination-footer">
-        <!-- Previous Page Button -->
-        <button type="button" th:disabled="${!page.previousAvailable}"
-                th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
-        <!-- First Page -->
-        <button type="button" th:text="${page.first}" th:classappend="${page.first == page.current} ? 'selected' : null"
-                th:onclick="'changePageNumber(' + ${page.first} + ')'"/>
-
-        <!-- Middle Pages -->
-        <th:block th:if="${page.moreThanOneAvailable}">
-        <th:block th:each="pageNumber : ${page.pageNumbers.subList(1, page.pageNumbers.size() - 1)}">
-            <span th:if="${pageNumber == page.current - 2}"> ... </span>
-            <button type="button" th:if="${pageNumber >= page.current - 1 && pageNumber <= page.current + 1}"
-                    th:text="${pageNumber}" th:classappend="${pageNumber == page.current} ? 'selected' : null"
-                    th:onclick="'changePageNumber(' + ${pageNumber} + ')'"/>
-            <span th:if="${pageNumber == page.current + 2}"> ... </span>
-        </th:block>
-
-        <!-- Last Page -->
-        <button type="button" th:text="${page.last}" th:classappend="${page.last == page.current} ? 'selected' : null"
-                th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
-        </th:block>
-        <!-- Next Page Button -->
-        <button type="button" th:disabled="${!page.nextAvailable}"
-                th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
-        <!-- Page Entry Information -->
-        <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
+            </div>
+            <div id="release-date-filter">
+                <h4 class="filter-header">Release Date</h4>
+                <div id="release-inputs-container">
+                    <label id="min" for="min-release-date"> From </label><input id="min-release-date" type="month" autocomplete="off"
+                                        th:data-default-min="${selectedFilters.DEFAULT_MIN_RELEASE}"
+                                        th:value="${#temporals.format(selectedFilters.minReleaseDateAsNullableDate, 'yyyy-MM')}"
+                                        th:min="${usefulFilterData.minReleaseDate}">
+                    <label for="max-release-date"> To </label><input id="max-release-date" type="month" autocomplete="off"
+                                      th:data-default-max="${selectedFilters.DEFAULT_MAX_RELEASE}"
+                                      th:value="${#temporals.format(selectedFilters.maxReleaseDateAsNullableDate, 'yyyy-MM')}"
+                                      th:max="${#dates.format(#dates.createNow(), 'yyyy-MM')}">
+                </div>
+            </div>
+            <div id="form-buttons-container">
+                <button id="filter-submit-button" type="button" disabled>Apply Selected Filters</button>
+                <button type="reset">Clear Filters</button>
+            </div>
+        </form>
     </div>
-    <!-- Filters -->
-    <form id="filter-form" method="GET">
-        <!-- Toggle checkboxes -->
-        <div>
-            <h4 class="filter-title">Preferences</h4>
-            <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt != null}"> Show only games with achievements</label>
-            <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt == 2}"> hidden achievements only </label>
-        </div>
-        <!-- Category checkboxes -->
-        <div id="category-filter">
-            <h4 class="filter-title">Categories</h4>
-            <input id="category-search" type="search" placeholder="Search">
-            <ul id="category-list">
-                <li class="category-item" th:each="category, index : ${usefulFilterData.categories}" th:data-pos="${index.count}">
-                    <label class="category-name" th:inline="text">
-                        <input class="category-checkbox" type="checkbox" th:value="${category.id}"
-                               th:checked="${selectedFilters.categoriesAsList.contains(category.id)}">
-                        [[${category.name}]]
-                    </label>
-                </li>
-            </ul>
-        </div>
-        <!-- Reviews range inputs -->
-        <div id="reviews-filter">
-            <h4 class="filter-title">Reviews</h4>
-            <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
-                   th:data-default-min="${selectedFilters.DEFAULT_MIN_REVIEWS}"
-                   th:value="${selectedFilters.minReviewsAsNullableInt}"
-                   th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
-                   th:size="${#strings.length(usefulFilterData.maxReviews)}">
-            -
-            <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
-                   th:data-default-max="${selectedFilters.DEFAULT_MAX_REVIEWS}"
-                   th:value="${selectedFilters.maxReviewsAsNullableInt}"
-                   th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
-                   th:size="${#strings.length(usefulFilterData.maxReviews)}">
-        </div>
-        <!-- Release Date inputs -->
-        <div id="release-date-filter">
-            <h4 class="filter-title">Release Date</h4>
-            <label> From <input id="min-release-date" type="month" autocomplete="off"
-                                th:data-default-min="${selectedFilters.DEFAULT_MIN_RELEASE}"
-                                th:value="${#temporals.format(selectedFilters.minReleaseDateAsNullableDate, 'yyyy-MM')}"
-                                th:min="${usefulFilterData.minReleaseDate}"></label>
-            <label> To <input id="max-release-date" type="month" autocomplete="off"
-                              th:data-default-max="${selectedFilters.DEFAULT_MAX_RELEASE}"
-                              th:value="${#temporals.format(selectedFilters.maxReleaseDateAsNullableDate, 'yyyy-MM')}"
-                              th:max="${#dates.format(#dates.createNow(), 'yyyy-MM')}"></label>
-        </div>
-        <!-- Submit / Reset -->
-        <button id="filter-submit-button" type="button" disabled>Apply Selected Filters</button>
-        <button type="reset">Clear Filters</button>
-    </form>
 </body>
 </html>

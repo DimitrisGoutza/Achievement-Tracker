@@ -2,6 +2,7 @@ const pageSizeSelect = document.getElementById("page-entries-select");
 const gameSearchInput = document.getElementById("game-search");
 
 document.addEventListener("DOMContentLoaded", () => {
+    replacePlaceholderImages();
     disableActivePageButton();
 
     /* --------------------- Event Listeners --------------------- */
@@ -27,6 +28,7 @@ function changePageSize() {
         .then(response => response.text())
         .then(html => {
             updateTableContent(html);
+            replacePlaceholderImages();
         })
         .catch(error => console.error("Error: "+error));
 }
@@ -50,6 +52,7 @@ function changePageNumber(requestedPageNumber) {
         .then(response => response.text())
         .then(html => {
             updateTableContent(html);
+            replacePlaceholderImages();
             disableActivePageButton();
             scrollToTopOfTable();
         })
@@ -59,24 +62,35 @@ function changePageNumber(requestedPageNumber) {
 function updateTableContent(html) {
     const fragment = document.createRange().createContextualFragment(html);
     const updatedTableBody = fragment.getElementById("table-content");
-    const updatedPageFooter = fragment.getElementById("pagination-footer");
+    const updatedPageFooter = fragment.getElementById("main-container-footer");
 
     // update the relevant elements only
     document.getElementById("table-content").innerHTML = updatedTableBody.innerHTML;
-    document.getElementById("pagination-footer").innerHTML = updatedPageFooter.innerHTML;
+    document.getElementById("main-container-footer").innerHTML = updatedPageFooter.innerHTML;
+}
+
+function replacePlaceholderImages() {
+    const imageElements = document.querySelectorAll('.game-banner-img, .achievement-icon');
+    imageElements.forEach(image => {
+        const actualSrc = image.dataset.actualSrc;
+
+        const img = new Image();
+        img.onload = () => image.setAttribute('src', actualSrc);
+        img.src = actualSrc;
+    })
 }
 
 function disableActivePageButton() {
-    const activeButton = document.getElementById("pagination-footer").querySelector("button.selected");
+    const activeButton = document.getElementById("main-container-footer").querySelector("button.selected-page-button");
     if (activeButton)
         activeButton.removeAttribute("onclick");
 }
 
 function scrollToTopOfTable() {
-    const table = document.querySelector("table");
-    const tableTopOffset = table.getBoundingClientRect().top + window.scrollY;
+    const table = document.querySelector("#main-container-header");
+    const topOffset = table.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({
-        top: tableTopOffset,
+        top: topOffset,
         behavior: "smooth"
     });
 }

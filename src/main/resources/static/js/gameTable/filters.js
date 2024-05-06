@@ -190,7 +190,7 @@ function formDataHasChanged() {
     const minReleaseParam = params.get("min_release");
     const currentMinRelease = minReleaseDateInput.value;
     if (minReleaseParam) { // First check if the user previously typed a minimum
-        if (minReviewsParam !== currentMinRelease) // and compare it to the current input
+        if (minReleaseParam !== currentMinRelease) // and compare it to the current input
             return true
     } else if (currentMinRelease !== DEFAULT_MIN_RELEASE_DATE) { // Else compare the current input to the default one
         return true;
@@ -222,10 +222,19 @@ function toggleHiddenAchievementsSubChoice() {
 
     if (achievementsCheckbox.checked) {
         hiddenAchievementsElement.style.display = "block";
+        drawLineConnectingCheckboxes();
     } else {
         hiddenAchievementsCheckbox.checked = false;
         hiddenAchievementsElement.style.display = "none";
+        eraseLineConnectingCheckboxes();
     }
+}
+
+function drawLineConnectingCheckboxes() {
+    // TODO: build line connecting checkboxes (later)
+}
+
+function eraseLineConnectingCheckboxes() {
 }
 
 function searchCategories(input) {
@@ -266,8 +275,8 @@ function moveCheckedCategoriesToTop() {
 }
 
 function setMaxAndMinDateRanges() {
-    minReleaseDateInput.setAttribute("max", maxReleaseDateInput.value);
-    maxReleaseDateInput.setAttribute("min", minReleaseDateInput.value);
+    minReleaseDateInput.setAttribute("max", maxReleaseDateInput.value ? maxReleaseDateInput.value : maxReleaseDateInput.getAttribute("max"));
+    maxReleaseDateInput.setAttribute("min", minReleaseDateInput.value ? minReleaseDateInput.value : minReleaseDateInput.getAttribute("min"));
 }
 
 function filterInputsAreValid() {

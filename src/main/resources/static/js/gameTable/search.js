@@ -55,6 +55,7 @@ function searchGames(searchTerm) {
         .then(response => response.text())
         .then(html => {
             updateTableContent(html);
+            replacePlaceholderImages();
         })
         .catch(error => console.error("Error: "+error));
 }

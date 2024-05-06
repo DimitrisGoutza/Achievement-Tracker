@@ -43,6 +43,7 @@ function sortTable(targetHeader) {
         .then(response => response.text())
         .then(html => {
             updateTableContent(html);
+            replacePlaceholderImages();
             toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState);
             resetSortClassesForOtherColumns(targetHeader);
 

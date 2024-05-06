@@ -1,33 +1,400 @@
+body {
+    background-color: #1B2837;
+    color: #E0E0E0;
+    font-family: Roboto, sans-serif;
+}
+
+/* Layout Containers - Main */
+#main-container {
+    display: grid;
+    justify-content: center;
+    align-items: start;
+    gap: 1em;
+}
+#main-container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    grid-area: 1/1;
+}
+table {
+    grid-area: 2/1;
+}
+.title-achievements-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-achievements-container {
+    display: flex;
+    gap: 0.5em;
+}
+#main-container-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-area: 3/1;
+}
+#page-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+/* Layout Containers - Filters */
+#filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    grid-area: 2/2;
+    margin-top: 1em;
+}
+#achievements-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+#category-filter {
+    display: flex;
+    flex-direction: column;
+}
+#reviews-inputs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#release-inputs-container {
+    display: grid;
+    align-items: center;
+    justify-content: normal;
+    gap: 0.5em;
+}
+label[for='min-release-date'] {
+    grid-area: 1/1;
+}
+label[for='max-release-date'] {
+    grid-area: 2/1;
+}
+#min-release-date {
+    grid-area: 1/2;
+}
+#max-release-date {
+    grid-area: 2/2;
+}
+#form-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    max-width: 16.125em; /* + 2em (padding: 1em) + 0.125em (border: thin) */
+}
+#category-filter, #reviews-filter, #release-date-filter {
+    max-width: 14em;
+}
+
+/* Table */
+table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 65.6em;
+}
 .sorted-default::after {
+    font-family: sans-serif;
     content: "↑↓";
 }
 .sorted-asc::after {
+    font-family: sans-serif;
     content: "↑";
 }
-
 .sorted-desc::after {
+    font-family: sans-serif;
     content: "↓";
 }
-
-.selected {
-    background-color: #808080;
+th, td {
+    text-align: center;
+    padding: 0;
+}
+th:hover {
+    cursor: pointer;
+}
+th:hover > span.column-name {
+    text-decoration: underline;
+}
+th:nth-of-type(1) {
+    width: 12.5em;
+}
+th:nth-of-type(2) {
+    width: 24.5em;
+}
+th:nth-of-type(3) {
+    width: 8.8em;
+}
+th:nth-of-type(4) {
+    width: 9.5em;
+}
+th:nth-of-type(5) {
+    width: 4.5em;
+}
+th:nth-of-type(6) {
+    width: 5.8em;
+}
+td:has(img.game-banner-img) {
+    line-height: 0;
+}
+td:has(.title-achievements-container) {
+    padding-left: 1em;
+}
+thead > tr {
+}
+tbody > tr {
+    border-bottom: 0.4em solid #1B2837;
+    border-top: 0.4em solid #1B2837;
+    background-color: #16202C;
+}
+tbody > tr:hover {
+    background-color: #101821;
 }
 
-#category-list {
-    padding: 1vh 0 0 0;
-    margin: 0;
-    list-style-type: none;
-    overflow: auto;
-    max-height: 30vh;
-    max-width: 22vh;
+/* Page-Size & Search */
+#page-entries-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("../img/dropdown-indicator.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 10px auto;
+    background-origin: content-box;
+    background-color: #1B2837;
+    text-align: start;
+    color: inherit;
+    border: solid thin #549FC8;
+    border-radius: 5px;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0.1em 0.3em;
+    width: 3.4em;
+    cursor: pointer;
+}
+#page-entries-select > option {
+    background-color: #1B2837;
+    color: inherit;
+}
+#game-search {
+    font-family: inherit;
+    font-size: inherit;
+    border: solid thin #9FBBCA;
+    color: #101821;
+    border-radius: 5px;
+    padding-left: 0.5em;
+}
+#game-search::placeholder {
+    font-family: inherit;
+    font-size: inherit;
+    color: #101821;
 }
 
+/* Table-Data elements */
+.text-column {
+    display: block;
+    margin: auto;
+}
+.game-banner-img {
+    max-width: 200px;
+    background-color: #101821;
+}
+.game-title {
+    color: inherit;
+    text-align: start;
+    text-decoration: none;
+    max-width: 14em;
+}
+.game-title:hover {
+    text-decoration: underline;
+}
 .achievement-icon {
-    height: 2em;
-    width: auto;
+    max-height: 35px;
+    max-width: 35px;
+    border-radius: 2px;
+    border: solid thin #DAB842;
+    background-color: #101821;
 }
 
-.filter-title {
-    padding: 0.3em;
-    margin: 0;
+/* Pagination Footer */
+.page-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.5em;
+    height: 2em;
+    border: transparent;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    background-color: transparent;
+    color: #9FBBCA;
+}
+.page-buttons:hover {
+    border: solid thin #323E4B;
+    cursor: pointer;
+}
+.page-buttons:disabled {
+    color: #3f4c53;
+}
+.page-buttons:disabled:hover {
+    cursor: default;
+    border-width: 0;
+}
+.selected-page-button {
+    background-color: #549FC8;
+    border: solid thin #549FC8;
+    color: inherit;
+}
+.selected-page-button:hover {
+    border: inherit;
+}
+
+/* Filters */
+#filter-form {
+    max-width: 21em;
+    color: #9FBBCA;
+}
+.filter-header {
+    padding: 0;
+    margin: 0 0 1em 0;
+    color: #E0E0E0;
+}
+#achievements-filter, #category-filter, #reviews-filter, #release-date-filter {
+    border-radius: 15px;
+    border: solid thin #323E4B;
+    padding: 1em;
+}
+#achievements-filter {
+    border: 0;
+}
+input[type='checkbox'] {
+    accent-color: white;
+}
+label:has(#hidden-achievements-checkbox) {
+    margin-left: 2em;
+}
+#filter-form label:hover,#filter-form input[type='checkbox'] {
+    cursor: pointer;
+}
+#filter-form label:has(input[type='checkbox']:checked) {
+    font-weight: bold;
+    color: #E0E0E0;
+}
+#category-search {
+    font-size: inherit;
+    font-family: inherit;
+    border: solid thin #9FBBCA;
+    border-radius: 5px;
+    color: #101821;
+}
+#category-search::placeholder {
+    font-family: inherit;
+    font-size: inherit;
+    color: #101821;
+}
+#category-list {
+    border: solid thin #323E4B;
+    border-radius: 5px;
+    padding: 0;
+    margin: 0.3em 0 0 0;
+    list-style-type: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 19em;
+    background-color: #1B2837;
+}
+#category-list::-webkit-scrollbar {
+    width: 0.5em;
+}
+#category-list::-webkit-scrollbar-track {
+    border-left: solid thin #323E4B;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #1B2837;
+}
+#category-list::-webkit-scrollbar-thumb {
+    background-color: #9FBBCA;
+    border-radius: 5px;
+}
+#category-list::-webkit-scrollbar-thumb:hover {
+    background-color: #549FC8;
+}
+.category-name {
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 0.3em;
+    padding: 0.2em;
+}
+.category-item:hover {
+    background-color: #323E4B;
+}
+.category-item:has(input[type='checkbox']:checked) {
+    background-color: #549FC8;
+}
+#min-reviews-input, #max-reviews-input {
+    text-align: center;
+    font-size: inherit;
+    font-family: inherit;
+    border-radius: 5px;
+    border: solid thin #9FBBCA;
+    color: #101821;
+}
+#min-reviews-input::placeholder, #max-reviews-input::placeholder {
+    font-family: inherit;
+    font-size: inherit;
+    color: #101821;
+}
+#range-separator {
+    height: 14px;
+}
+#min-release-date, #max-release-date {
+    text-align: center;
+    font-size: inherit;
+    font-family: inherit;
+    border-radius: 5px;
+    border: solid thin #9FBBCA;
+    color: #101821;
+}
+#min-release-date::-webkit-calendar-picker-indicator, #max-release-date::-webkit-calendar-picker-indicator {
+    color: #E0E0E0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+#filter-submit-button {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    color: #E0E0E0;
+    background-color: #549FC8;
+    border: 0;
+    border-radius: 5px;
+    padding: 0.3em 0;
+}
+#filter-submit-button:disabled {
+    cursor: not-allowed;
+    font-weight: normal;
+    color: #9FBBCA;
+    background-color: transparent;
+}
+#filter-form button[type='reset'] {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    color: #9FBBCA;
+    background-color: #323E4B;
+    border: 0;
+    border-radius: 5px;
+    padding: 0.3em 0;
+}
+#filter-submit-button:hover, #filter-form button[type='reset']:hover {
+    text-decoration: underline;
 }
