@@ -1,4 +1,5 @@
 body {
+    /* TODO: consider using var for this */
     background-color: #1B2837;
     color: #E0E0E0;
     font-family: Roboto, sans-serif;
