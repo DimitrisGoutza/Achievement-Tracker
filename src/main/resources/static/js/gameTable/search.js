@@ -1,8 +1,9 @@
+const MIN_SEARCH_CHARACTER_LENGTH = 2;
 document.addEventListener("DOMContentLoaded", () => {
     /* --------------------- Event Listeners --------------------- */
     const gameSearch = document.getElementById("game-search");
     let searchTimeout;
-    let previousSearchTerm = "";
+    let prevEligibleSearch = "";
 
     gameSearch.addEventListener("input", (event) => {
         const searchTerm = event.target.value.trim();
@@ -10,9 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
         clearTimeout(searchTimeout);
         const timeoutDuration = (searchTerm === "" ? 0 : 300);
         searchTimeout = setTimeout(() => {
-            if (searchIsEligible(searchTerm, previousSearchTerm)) {
+            if (searchIsEligible(searchTerm, prevEligibleSearch)) {
                 searchGames(searchTerm);
-                previousSearchTerm = searchTerm;
+                prevEligibleSearch = searchTerm;
             }
         }, timeoutDuration);
     });
@@ -28,7 +29,6 @@ function searchIsEligible(currentSearch, previousSearch) {
     if (previousSearch === currentSearch)
         return false;
 
-    const MIN_SEARCH_CHARACTER_LENGTH = 2;
     if (currentSearch.length < MIN_SEARCH_CHARACTER_LENGTH && previousSearch.length < MIN_SEARCH_CHARACTER_LENGTH)
         return false;
 
@@ -38,9 +38,8 @@ function searchIsEligible(currentSearch, previousSearch) {
 }
 
 function searchGames(searchTerm) {
+    const selectedPageSize = pageSizeSelect.value;
     const determineEndpointURL = () => {
-        const selectedPageSize = document.getElementById("page-entries-select").value;
-
         const fetchURL = new URL(window.location.href);
 
         const params = new URLSearchParams(fetchURL.searchParams);
@@ -54,8 +53,19 @@ function searchGames(searchTerm) {
     fetch(determineEndpointURL())
         .then(response => response.text())
         .then(html => {
-            updateTableContent(html);
+            updateTableContentForSearch(html);
             replacePlaceholderImages();
+            attachEventListenersToPageButtons();
         })
         .catch(error => console.error("Error: "+error));
+}
+
+function updateTableContentForSearch(html) {
+    const fragment = document.createRange().createContextualFragment(html);
+    // Update table body
+    const updatedTableBody = fragment.getElementById("table-content");
+    existingTableBody.innerHTML = updatedTableBody.innerHTML;
+    // Update pagination footer
+    const updatedPageFooter = fragment.getElementById("main-container-footer");
+    existingPaginationFooter.innerHTML = updatedPageFooter.innerHTML;
 }

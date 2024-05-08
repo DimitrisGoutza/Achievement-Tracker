@@ -80,31 +80,26 @@
         </table>
         <div id="main-container-footer">
             <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
-            <div id="page-buttons-container">
+            <div id="page-buttons-container" th:data-current-page="${page.current}">
                 <!-- Previous Page Button -->
-                <button type="button" class="page-buttons" th:disabled="${!page.previousAvailable}"
-                        th:onclick="'changePageNumber(' + ${page.previous} + ')'"> &lt; </button>
+                <button id="page-prev-button" type="button" class="page-buttons" th:disabled="${!page.previousAvailable}"> &lt; </button>
                 <!-- First Page -->
-                <button type="button" class="page-buttons" th:text="${page.first}" th:classappend="${page.first == page.current} ? 'selected-page-button' : null"
-                        th:onclick="'changePageNumber(' + ${page.first} + ')'"/>
+                <button type="button" class="page-buttons" th:text="${page.first}" th:classappend="${page.first == page.current} ? 'selected-page-button' : null"/>
 
                 <!-- Middle Pages -->
                 <th:block th:if="${page.moreThanOneAvailable}">
                 <th:block th:each="pageNumber : ${page.pageNumbers.subList(1, page.pageNumbers.size() - 1)}">
                     <span th:if="${pageNumber == page.current - 2}"> ... </span>
                     <button type="button" class="page-buttons" th:if="${pageNumber >= page.current - 1 && pageNumber <= page.current + 1}"
-                            th:text="${pageNumber}" th:classappend="${pageNumber == page.current} ? 'selected-page-button' : null"
-                            th:onclick="'changePageNumber(' + ${pageNumber} + ')'"/>
+                            th:text="${pageNumber}" th:classappend="${pageNumber == page.current} ? 'selected-page-button' : null"/>
                     <span th:if="${pageNumber == page.current + 2}"> ... </span>
                 </th:block>
 
                 <!-- Last Page -->
-                <button type="button" class="page-buttons" th:text="${page.last}" th:classappend="${page.last == page.current} ? 'selected-page-button' : null"
-                        th:onclick="'changePageNumber(' + ${page.last} + ')'"/>
+                <button type="button" class="page-buttons" th:text="${page.last}" th:classappend="${page.last == page.current} ? 'selected-page-button' : null"/>
                 </th:block>
                 <!-- Next Page Button -->
-                <button type="button" class="page-buttons" th:disabled="${!page.nextAvailable}"
-                        th:onclick="'changePageNumber(' + ${page.next} + ')'"> &gt; </button>
+                <button id="page-next-button" type="button" class="page-buttons" th:disabled="${!page.nextAvailable}"> &gt; </button>
             </div>
         </div>
         <form id="filter-form" method="GET">

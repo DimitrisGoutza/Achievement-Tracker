@@ -4,6 +4,7 @@ const SortClasses = {
     desc: "sorted-desc"
 };
 const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
+// TODO : avoid hardcoded CSS classes, make use of data-sorted attr
 
 document.addEventListener("DOMContentLoaded", () => {
     attachSortStates();
@@ -22,14 +23,15 @@ function sortTable(targetHeader) {
     const requestedSortState = getNextSortState(currentSortState);
     const requestedSortClass = SortClasses[requestedSortState];
 
+    const selectedPageSize = pageSizeSelect.value;
+    const searchTerm = gameSearchInput.value;
     const determineEndpointURL = () => {
-        const selectedPageSize = document.getElementById("page-entries-select").value;
-        const searchTerm = document.getElementById("game-search").value;
-
         const fetchURL = new URL(window.location.href);
+
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
-        params.set("search", searchTerm);
+        if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
+            params.set("search", searchTerm);
         if (requestedSortClass === SortClasses.default)
             params.delete("sort");
         else
@@ -42,7 +44,8 @@ function sortTable(targetHeader) {
     fetch(determineEndpointURL())
         .then(response => response.text())
         .then(html => {
-            updateTableContent(html);
+            const currentPageNumber = parseInt(document.querySelector("div#page-buttons-container").dataset.currentPage);
+            updateTableContentForSort(html, currentPageNumber !== 1);
             replacePlaceholderImages();
             toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState);
             resetSortClassesForOtherColumns(targetHeader);
@@ -50,6 +53,18 @@ function sortTable(targetHeader) {
             window.history.replaceState({}, "", generateVisibleURL(sortColumnName, requestedSortState, requestedSortClass));
         })
         .catch(error => console.error("Error: "+error));
+}
+
+function updateTableContentForSort(html, updatePaginationFooter) {
+    const fragment = document.createRange().createContextualFragment(html);
+    // Update table body
+    const updatedTableBody = fragment.getElementById("table-content");
+    existingTableBody.innerHTML = updatedTableBody.innerHTML;
+    if (updatePaginationFooter) {
+        // Update pagination footer
+        const updatedPaginationFooter = fragment.getElementById("main-container-footer");
+        existingPaginationFooter.innerHTML = updatedPaginationFooter.innerHTML;
+    }
 }
 
 function getNextSortState(currentSortState) {
