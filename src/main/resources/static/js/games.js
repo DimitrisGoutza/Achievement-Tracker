@@ -314,8 +314,8 @@ function setSortStates (targetHeader, requestedSortState) {
     if (targetHeader instanceof Element)
         targetHeader.dataset.sorted = requestedSortState;
     // Reset state for the rest of the columns
-    const allHeadersExceptTarget = document.querySelectorAll("th");
-    allHeadersExceptTarget.forEach(header => {
+    const allHeaders = document.querySelectorAll("th");
+    allHeaders.forEach(header => {
         if (header !== targetHeader)
             header.dataset.sorted = SortClasses[0];
     });
