@@ -40,7 +40,7 @@ public class GameController {
         model.addAttribute("selectedFilters", params);
         model.addAttribute("page", page);
 
-        return "gameTable";
+        return "games";
     }
 
     private OffsetPage setPaginationAndSorting(GameRequestParams params) {
