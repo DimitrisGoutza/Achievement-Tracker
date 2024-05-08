@@ -98,15 +98,15 @@ table {
     border-collapse: collapse;
     width: 65.6em;
 }
-.sorted-default::after {
+th[data-sorted='default'] > span.sort-direction::after {
     font-family: sans-serif;
     content: "↑↓";
 }
-.sorted-asc::after {
+th[data-sorted='asc'] > span.sort-direction::after {
     font-family: sans-serif;
     content: "↑";
 }
-.sorted-desc::after {
+th[data-sorted='desc'] > span.sort-direction::after {
     font-family: sans-serif;
     content: "↓";
 }

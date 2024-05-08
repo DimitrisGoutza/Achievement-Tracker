@@ -25,11 +25,7 @@ const maxReleaseDateInput = document.getElementById("max-release-date");
 let previousSize = parseInt(pageSizeSelect.value);
 //endregion
 //region Sorting
-const SortClasses = {
-    default: "sorted-default",
-    desc: "sorted-desc",
-    asc: "sorted-asc"
-};
+const SortClasses = ["default","asc","desc"];
 const SORT_PARAM_FORMAT = "{column}_{sortDirection}";   // name_desc
 //endregion
 //region Search
@@ -48,7 +44,7 @@ const DEFAULT_MAX_RELEASE_DATE = (maxReleaseDateInput.dataset.defaultMax) ?? "";
 replacePlaceholderImages();
 //endregion
 //region Sorting
-attachSortStates();
+setSortStatesAccordingToURL();
 //endregion
 //region Filters
 toggleHiddenAchievementsSubChoice();
@@ -257,13 +253,9 @@ function updateTableContentForPageSize(html, updateAllRows, currentSize) {
 //endregion
 //region Sorting
 function sortTable(targetHeader) {
-    const sortDirectionElement = targetHeader.querySelector("span.sort-direction");
     const sortColumnName = targetHeader.dataset.columnName;
-
-    const currentSortState = Object.keys(SortClasses).find(sortState =>
-        sortDirectionElement.classList.contains(SortClasses[sortState]));
+    const currentSortState = targetHeader.dataset.sorted;
     const requestedSortState = getNextSortState(currentSortState);
-    const requestedSortClass = SortClasses[requestedSortState];
 
     const selectedPageSize = pageSizeSelect.value;
     const searchTerm = gameSearchInput.value;
@@ -274,7 +266,7 @@ function sortTable(targetHeader) {
         params.set("size", selectedPageSize);
         if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
             params.set("search", searchTerm);
-        if (requestedSortClass === SortClasses.default)
+        if (requestedSortState === SortClasses[0] /* = default */)
             params.delete("sort");
         else
             params.set("sort", SORT_PARAM_FORMAT.replace("{column}", sortColumnName).replace("{sortDirection}", requestedSortState));
@@ -289,10 +281,8 @@ function sortTable(targetHeader) {
             const currentPageNumber = parseInt(document.querySelector("div#page-buttons-container").dataset.currentPage);
             updateTableContentForSort(html, currentPageNumber !== 1);
             replacePlaceholderImages();
-            toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState);
-            resetSortClassesForOtherColumns(targetHeader);
-
-            window.history.replaceState({}, "", generateVisibleURL(sortColumnName, requestedSortState, requestedSortClass));
+            setSortStates(targetHeader, requestedSortState);
+            generateVisibleURL(sortColumnName, requestedSortState);
         })
         .catch(error => console.error("Error: "+error));
 }
@@ -314,63 +304,50 @@ function getNextSortState(currentSortState) {
     Returns the next element from SortClasses[],
     resets to the start when reaching the end of the Array
     */
-    const indexOfCurrentState = Object.keys(SortClasses).indexOf(currentSortState);
-    const size = Object.keys(SortClasses).length;
-    return Object.keys(SortClasses)[(indexOfCurrentState + 1) % size];
+    const indexOfCurrentState = SortClasses.indexOf(currentSortState);
+    const size = SortClasses.length;
+    return SortClasses[(indexOfCurrentState + 1) % size];
 }
 
-function toggleSortDirection(sortDirectionElement, currentSortState, requestedSortState) {
-    sortDirectionElement.classList.remove(SortClasses[currentSortState]);
-    sortDirectionElement.classList.add(SortClasses[requestedSortState]);
-}
-
-function resetSortClassesForOtherColumns(excludedHeader) {
-    const allHeaders = document.querySelectorAll("th");
-
-    allHeaders.forEach(header => {
-        // for every other header
-        if (header !== excludedHeader) {
-            const sortDirectionElement = header.querySelector("span.sort-direction");
-            // clear it from all appended sort classes (if any)
-            Object.values(SortClasses).forEach(sortClass => sortDirectionElement.classList.remove(sortClass));
-            // add the default sort class
-            sortDirectionElement.classList.add(SortClasses.default);
-        }
+function setSortStates (targetHeader, requestedSortState) {
+    // if statement makes the function still usable whenever we pass the target header as undefined
+    if (targetHeader instanceof Element)
+        targetHeader.dataset.sorted = requestedSortState;
+    // Reset state for the rest of the columns
+    const allHeadersExceptTarget = document.querySelectorAll("th");
+    allHeadersExceptTarget.forEach(header => {
+        if (header !== targetHeader)
+            header.dataset.sorted = SortClasses[0];
     });
 }
 
-function generateVisibleURL(sortColumnName, requestedSortState, requestedSortClass) {
+function generateVisibleURL(sortColumnName, requestedSortState) {
     const newVisibleURL = new URL(window.location.href);
 
     const params = new URLSearchParams(newVisibleURL.searchParams);
-    if (requestedSortClass === SortClasses.default)
+    if (requestedSortState === SortClasses[0] /* = default */)
         params.delete("sort");
     else
         params.set("sort", SORT_PARAM_FORMAT.replace("{column}", sortColumnName).replace("{sortDirection}", requestedSortState));
 
     newVisibleURL.search = params.toString();
-    return newVisibleURL;
+
+    window.history.replaceState({}, "", newVisibleURL);
 }
 
-function attachSortStates() {
+function setSortStatesAccordingToURL() {
+    let targetHeader;
+    let sortDirection;
+
     const params = new URLSearchParams(window.location.search);
     const sortParam = params.get("sort");
     if (sortParam) {
+        sortDirection = sortParam.split("_")[1];
         const columnName = sortParam.split("_")[0];
-        const sortDirection = sortParam.split("_")[1];
-
-        const targetHeader = document.querySelector(`th[data-column-name='${columnName}']`);
-        targetHeader.querySelector("span.sort-direction").classList.add(SortClasses[sortDirection]);
-
-        document.querySelectorAll("th").forEach(th => {
-            if (th !== targetHeader)
-                th.querySelector("span.sort-direction").classList.add(SortClasses.default);
-        });
-    } else {
-        document.querySelectorAll("th").forEach(th =>
-            th.querySelector("span.sort-direction").classList.add(SortClasses.default)
-        );
+        targetHeader = document.querySelector(`th[data-column-name='${columnName}']`);
     }
+
+    setSortStates(targetHeader, sortDirection);
 }
 //endregion
 //region Search
