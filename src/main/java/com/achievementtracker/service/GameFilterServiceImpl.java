@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-// TODO : make this also prepare the String and Date attributes for View, or do it in JS
 @Service
 public class GameFilterServiceImpl implements GameFilterService {
     private final GameDAO gameDAO;
@@ -67,11 +66,6 @@ public class GameFilterServiceImpl implements GameFilterService {
     public Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Game> games) {
         List<Long> gameIds = games.stream().map(Game::getStoreId).toList();
         return achievementDAO.getTopXAchievementsForGames(topAmount, gameIds);
-    }
-
-    @Override
-    public Long getGameEntryCount() {
-        return gameDAO.getCount();
     }
 
     @Override

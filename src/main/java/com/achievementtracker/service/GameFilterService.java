@@ -12,6 +12,5 @@ import java.util.Map;
 public interface GameFilterService {
     List<Game> getFilteredGames(GameRequestParams params, Page page);
     Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Game> games);
-    Long getGameEntryCount();
     UsefulFilterData getUsefulFilterData();
 }

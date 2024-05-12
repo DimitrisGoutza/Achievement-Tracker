@@ -17,7 +17,7 @@ public abstract class Page {
 
     // value of -1 means "no limit, show all records"
     protected int size = -1;
-    protected long totalRecords;
+    protected long totalRecords = 0;
     protected SingularAttribute sortAttribute;
     protected SortDirection sortDirection;
     protected SingularAttribute[] allowedAttributes;
@@ -27,6 +27,14 @@ public abstract class Page {
                    SingularAttribute... allowedAttributes) {
         this.size = size;
         this.totalRecords = totalRecords;
+        this.sortDirection = defaultDirection;
+        this.allowedAttributes = allowedAttributes;
+        setSortAttribute(defaultAttribute);
+    }
+
+    protected Page(int size, SingularAttribute defaultAttribute, SortDirection defaultDirection,
+                   SingularAttribute... allowedAttributes) {
+        this.size = size;
         this.sortDirection = defaultDirection;
         this.allowedAttributes = allowedAttributes;
         setSortAttribute(defaultAttribute);
