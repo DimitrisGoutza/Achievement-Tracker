@@ -243,7 +243,7 @@ function updateTableContentForPageSize(html, currentSize, calculatedPageNumber) 
 
     // Table Body
     if (currentSize > previousSize) {
-        if (calculatedPageNumber === 1) {
+        if (calculatedPageNumber === 1 && currentPage !== 1) {
             // Update all rows
             existingTableBody.innerHTML = updatedTableBody.innerHTML;
         } else {
