@@ -76,8 +76,10 @@
             </tbody>
         </table>
         <div id="main-container-footer">
-            <span th:text="'Showing '+${page.totalRecords != 0 ? page.rangeStartInteger : 0}+' to '+${page.rangeEndInteger}+' out of '+${page.totalRecords}+' entries'"></span>
-            <div id="page-buttons-container" th:data-current-page="${page.current}">
+            <div id="page-information" th:data-current-page="${page.current}">
+                Showing <span id="page-range-start" th:text="${page.totalRecords != 0 ? page.rangeStartInteger : 0}"/> to <span id="page-range-end" th:text="${page.rangeEndInteger}"/> out of <span id="page-total-entries" th:text="${page.totalRecords}"/> entries
+            </div>
+            <div id="page-buttons-container">
                 <!-- Previous Page Button -->
                 <button id="page-prev-button" type="button" class="page-buttons" th:disabled="${!page.previousAvailable}"> &lt; </button>
                 <!-- First Page -->
