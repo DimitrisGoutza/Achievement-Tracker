@@ -1,6 +1,6 @@
 package com.achievementtracker.deserializer;
 
-import com.achievementtracker.dto.StoreAppListDTO;
+import com.achievementtracker.dto.steam_api.StoreAppListDTO;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

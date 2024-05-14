@@ -3,7 +3,7 @@ package com.achievementtracker.service;
 import com.achievementtracker.dao.CategorizedGameDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
-import com.achievementtracker.dto.*;
+import com.achievementtracker.dto.steam_api.*;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.CategorizedGame;
 import com.achievementtracker.entity.Category;

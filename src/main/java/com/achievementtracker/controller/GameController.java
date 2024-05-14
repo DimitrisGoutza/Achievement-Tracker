@@ -1,8 +1,8 @@
 package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
-import com.achievementtracker.dto.GameRequestParams;
-import com.achievementtracker.dto.UsefulFilterData;
+import com.achievementtracker.dto.games_endpoint.GameRequestParams;
+import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;

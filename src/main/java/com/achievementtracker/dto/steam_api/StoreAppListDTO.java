@@ -1,4 +1,4 @@
-package com.achievementtracker.dto;
+package com.achievementtracker.dto.steam_api;
 
 import com.achievementtracker.deserializer.StoreAppListDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

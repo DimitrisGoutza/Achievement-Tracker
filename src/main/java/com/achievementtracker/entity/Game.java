@@ -1,7 +1,7 @@
 package com.achievementtracker.entity;
 
-import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
-import com.achievementtracker.dto.GameDetailDTO;
+import com.achievementtracker.dto.steam_api.GameCategoriesAndReviewsDTO;
+import com.achievementtracker.dto.steam_api.GameDetailDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 

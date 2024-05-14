@@ -1,6 +1,6 @@
 package com.achievementtracker.proxy;
 
-import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
+import com.achievementtracker.dto.steam_api.GameCategoriesAndReviewsDTO;
 import feign.FeignException;
 import feign.RetryableException;
 import org.springframework.cloud.openfeign.FeignClient;

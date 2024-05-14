@@ -1,4 +1,4 @@
-package com.achievementtracker.dto;
+package com.achievementtracker.dto.games_endpoint;
 
 import com.achievementtracker.entity.Category;
 

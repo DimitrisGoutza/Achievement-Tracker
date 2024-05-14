@@ -1,10 +1,10 @@
 package com.achievementtracker.service;
 
 import com.achievementtracker.dao.*;
-import com.achievementtracker.dto.AchievementStatsDTO;
-import com.achievementtracker.dto.GameCategoriesAndReviewsDTO;
-import com.achievementtracker.dto.GameDetailDTO;
-import com.achievementtracker.dto.GameSchemaDTO;
+import com.achievementtracker.dto.steam_api.AchievementStatsDTO;
+import com.achievementtracker.dto.steam_api.GameCategoriesAndReviewsDTO;
+import com.achievementtracker.dto.steam_api.GameDetailDTO;
+import com.achievementtracker.dto.steam_api.GameSchemaDTO;
 import com.achievementtracker.entity.*;
 import com.achievementtracker.proxy.SteamGlobalStatsProxy;
 import com.achievementtracker.proxy.SteamSpyProxy;
