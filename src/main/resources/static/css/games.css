@@ -98,17 +98,26 @@ table {
     border-collapse: collapse;
     width: 65.6em;
 }
-th[data-sorted='default'] > span.sort-direction::after {
-    font-family: sans-serif;
-    content: "↑↓";
+span.column-name {
+    vertical-align: middle;
 }
-th[data-sorted='asc'] > span.sort-direction::after {
-    font-family: sans-serif;
-    content: "↑";
+span.sort-direction {
+    display: inline-block;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    background-size: 12px auto;
+    background-position: center;
+    width: 16px;
+    height: 16px;
 }
-th[data-sorted='desc'] > span.sort-direction::after {
-    font-family: sans-serif;
-    content: "↓";
+th[data-sorted='default'] > span.sort-direction {
+    background-image: url("../img/sort-default.png");
+}
+th[data-sorted='asc'] > span.sort-direction {
+    background-image: url("../img/sort-ascending.png");
+}
+th[data-sorted='desc'] > span.sort-direction {
+    background-image: url("../img/sort-descending.png");
 }
 th, td {
     text-align: center;
