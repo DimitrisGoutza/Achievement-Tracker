@@ -15,6 +15,8 @@ public class GameRequestParams {
     private String page;
     @Pattern(regexp = "^[1-9][0-9]*$", message = "Must be a positive (not zero) integer")
     private String size;
+    @Pattern(regexp = "^[1-9][0-9]*$", message = "Must be a positive (not zero) integer")
+    private String entries;
     @Pattern(regexp = "^[a-zA-Z]+_(asc|desc)$", message = "Must be in format \"(columnName)_(asc|desc)\" ")
     private String sort;
     private String search;
@@ -50,6 +52,10 @@ public class GameRequestParams {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public void setEntries(String entries) {
+        this.entries = entries;
     }
 
     public void setSort(String sort) {
@@ -102,6 +108,16 @@ public class GameRequestParams {
         if (size == null)
             return DEFAULT_PAGE_SIZE;
         return Integer.valueOf(size);
+    }
+
+    public String getEntries() {
+        return entries;
+    }
+
+    public Integer getEntriesAsInt() {
+        if (entries == null)
+            return 0;
+        return Integer.valueOf(entries);
     }
 
     public String getSort() {

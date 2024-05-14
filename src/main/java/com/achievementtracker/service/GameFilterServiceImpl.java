@@ -41,23 +41,30 @@ public class GameFilterServiceImpl implements GameFilterService {
         LocalDate minReleaseDate = params.getMinReleaseDateAsNullableDate();
         LocalDate maxReleaseDate = params.getMaxReleaseDateAsNullableDate();
 
+        /*
+        If the client sent us the totalEntries as a param, it means the User wants to perform an action that
+        does not require updating the page#totalRecords attribute (sorting OR changing page size/number) with
+        a count query.
+        */
+        boolean countQuery = (params.getEntries() == null);
+
         if (categoryIds.isEmpty()) { // No categories
             if (achievements) {
                 if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
                 else
-                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
             } else {
-                return gameDAO.findAllGames(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                return gameDAO.findAllGames(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
             }
         } else { // Categorized
             if (achievements) {
                 if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
                 else
-                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
             } else {
-                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
             }
         }
     }

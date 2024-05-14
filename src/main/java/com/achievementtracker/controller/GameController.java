@@ -44,8 +44,10 @@ public class GameController {
     }
 
     private OffsetPage setPaginationAndSorting(GameRequestParams params) {
-        OffsetPage page = new OffsetPage(params.getSizeAsInt(), params.getSortAttribute(), params.getSortDirection(),
-                Game_.storeId, Game_.title, Game_.releaseDate, Game_.challengeRating, Game_.difficultySpread, Game_.rating);
+        OffsetPage page = new OffsetPage(params.getSizeAsInt(), params.getEntriesAsInt(),
+                params.getSortAttribute(), params.getSortDirection(),
+                Game_.storeId, Game_.title, Game_.releaseDate,
+                Game_.challengeRating, Game_.difficultySpread, Game_.rating);
 
         page.setCurrent(params.getPageAsInt());
 

@@ -77,7 +77,7 @@
             </tbody>
         </table>
         <div id="main-container-footer">
-            <div id="page-information" th:data-current-page="${page.current}">
+            <div id="page-information" th:data-total-entries="${page.totalRecords}" th:data-current-page="${page.current}">
                 Showing <span id="page-range-start" th:text="${page.totalRecords != 0 ? page.rangeStartInteger : 0}"/> to <span id="page-range-end" th:text="${page.rangeEndInteger}"/> out of <span id="page-total-entries" th:text="${page.totalRecords}"/> entries
             </div>
             <div id="page-buttons-container">

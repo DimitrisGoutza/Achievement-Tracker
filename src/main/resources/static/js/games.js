@@ -174,6 +174,7 @@ function changePageSize() {
     const pageSize = pageSizeSelect.value;
     const pageNumber = calculatePageNumberForNewSize(parseInt(pageSize)).toString();
     const searchTerm = gameSearchInput.value;
+    const totalEntries = document.getElementById("page-information").dataset.totalEntries;
 
     const determineEndpointURL = () => {
         const fetchURL = new URL(window.location.href);
@@ -181,6 +182,7 @@ function changePageSize() {
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", pageSize);
         params.set("page", pageNumber);
+        params.set("entries", totalEntries); // avoid count query
         if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
             params.set("search", searchTerm);
 
@@ -204,6 +206,7 @@ function changePageSize() {
 function changePageNumber(requestedPageNumber) {
     const pageSize = pageSizeSelect.value;
     const searchTerm = gameSearchInput.value;
+    const totalEntries = document.getElementById("page-information").dataset.totalEntries;
 
     const determineEndpointURL = () => {
         const fetchURL = new URL(window.location.href);
@@ -211,6 +214,7 @@ function changePageNumber(requestedPageNumber) {
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", pageSize);
         params.set("page", requestedPageNumber);
+        params.set("entries", totalEntries); // avoid count query
         if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
             params.set("search", searchTerm);
 
@@ -270,11 +274,13 @@ function sortTable(targetHeader) {
 
     const selectedPageSize = pageSizeSelect.value;
     const searchTerm = gameSearchInput.value;
+    const totalEntries = document.getElementById("page-information").dataset.totalEntries;
     const determineEndpointURL = () => {
         const fetchURL = new URL(window.location.href);
 
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
+        params.set("entries", totalEntries); // avoid count query
         if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
             params.set("search", searchTerm);
         if (requestedSortState === SortStates[0] /* = default */)

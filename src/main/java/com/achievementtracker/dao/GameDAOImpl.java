@@ -64,20 +64,23 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game g
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(g.storeId)
-        cqForCount.select(cb.count(gameRootForCount.get(Game_.storeId)));
-        // WHERE .. (common predicates)
-        Predicate finalPredicateForCount = cb.conjunction();
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long resultCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(resultCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game g
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(g.storeId)
+            cqForCount.select(cb.count(gameRootForCount.get(Game_.storeId)));
+            // WHERE .. (common predicates)
+            Predicate finalPredicateForCount = cb.conjunction();
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long resultCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(resultCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
@@ -100,21 +103,24 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findOnlyGamesWithAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findOnlyGamesWithAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game g
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(g.storeId)
-        cqForCount.select(cb.count(gameRootForCount.get(Game_.storeId)));
-        // WHERE g.CHALLENGE_RATING != 0 (means the Game has achievements)
-        Predicate finalPredicateForCount = cb.notEqual(gameRootForCount.get(Game_.challengeRating), 0);
-        // AND .. (common predicates)
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long resultCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(resultCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game g
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(g.storeId)
+            cqForCount.select(cb.count(gameRootForCount.get(Game_.storeId)));
+            // WHERE g.CHALLENGE_RATING != 0 (means the Game has achievements)
+            Predicate finalPredicateForCount = cb.notEqual(gameRootForCount.get(Game_.challengeRating), 0);
+            // AND .. (common predicates)
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long resultCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(resultCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
@@ -138,23 +144,26 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(DISTINCT g.storeId)
-        cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
-        // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
-        Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
-        // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
-        Predicate finalPredicateForCount = cb.and(categoryPredicatesForCount);
-        // AND .. (common predicates)
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(totalRecordCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(DISTINCT g.storeId)
+            cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
+            // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
+            Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
+            // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
+            Predicate finalPredicateForCount = cb.and(categoryPredicatesForCount);
+            // AND .. (common predicates)
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(totalRecordCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
@@ -181,25 +190,28 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findOnlyGamesWithAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findOnlyGamesWithAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(DISTINCT g.storeId)
-        cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
-        // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
-        Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
-        // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
-        Predicate finalPredicateForCount = cb.and(cb.and(categoryPredicatesForCount),
-                // AND g.CHALLENGE_RATING != 0 (means the Game has achievements)
-                cb.notEqual(gameRootForCount.get(Game_.challengeRating), 0));
-        // AND .. (common predicates)
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(totalRecordCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(DISTINCT g.storeId)
+            cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
+            // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
+            Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
+            // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
+            Predicate finalPredicateForCount = cb.and(cb.and(categoryPredicatesForCount),
+                    // AND g.CHALLENGE_RATING != 0 (means the Game has achievements)
+                    cb.notEqual(gameRootForCount.get(Game_.challengeRating), 0));
+            // AND .. (common predicates)
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(totalRecordCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
@@ -228,23 +240,26 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findOnlyGamesWithHiddenAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findOnlyGamesWithHiddenAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game g
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(g.storeId)
-        cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
-        // JOIN Achievement a
-        Join<Game, Achievement> achievementJoinForCount = gameRootForCount.join(Game_.achievements, JoinType.INNER);
-        // WHERE a.hidden = true
-        Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
-        // AND .. (common predicates)
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long resultCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(resultCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game g
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(g.storeId)
+            cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
+            // JOIN Achievement a
+            Join<Game, Achievement> achievementJoinForCount = gameRootForCount.join(Game_.achievements, JoinType.INNER);
+            // WHERE a.hidden = true
+            Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
+            // AND .. (common predicates)
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long resultCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(resultCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
@@ -271,27 +286,30 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<GameDTO> findOnlyGamesWithHiddenAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
-        /* Count query */
+    public List<GameDTO> findOnlyGamesWithHiddenAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
-        // FROM Game
-        Root<Game> gameRootForCount = cqForCount.from(Game.class);
-        // SELECT COUNT(DISTINCT g.storeId)
-        cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
-        // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
-        Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
-        // JOIN Achievement a
-        Join<Game, Achievement> achievementJoinForCount = gameRootForCount.join(Game_.achievements, JoinType.INNER);
-        // WHERE a.hidden = true
-        Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
-        // AND cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
-        finalPredicateForCount = cb.and(finalPredicateForCount, cb.and(categoryPredicatesForCount));
-        // AND .. (common predicates)
-        finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
-        cqForCount.where(finalPredicateForCount);
-        long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
-        page.setTotalRecords(totalRecordCount);
+
+        /* Count query */
+        if (countQuery) {
+            CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
+            // FROM Game
+            Root<Game> gameRootForCount = cqForCount.from(Game.class);
+            // SELECT COUNT(DISTINCT g.storeId)
+            cqForCount.select(cb.countDistinct(gameRootForCount.get(Game_.storeId)));
+            // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
+            Predicate[] categoryPredicatesForCount = buildCategorizedGameJoin(cb, gameRootForCount, categoryIds);
+            // JOIN Achievement a
+            Join<Game, Achievement> achievementJoinForCount = gameRootForCount.join(Game_.achievements, JoinType.INNER);
+            // WHERE a.hidden = true
+            Predicate finalPredicateForCount = cb.isTrue(achievementJoinForCount.get(Achievement_.hidden));
+            // AND cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
+            finalPredicateForCount = cb.and(finalPredicateForCount, cb.and(categoryPredicatesForCount));
+            // AND .. (common predicates)
+            finalPredicateForCount = buildCommonPredicates(cb, gameRootForCount, finalPredicateForCount, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
+            cqForCount.where(finalPredicateForCount);
+            long totalRecordCount = em.createQuery(cqForCount).getSingleResult();
+            page.setTotalRecords(totalRecordCount);
+        }
 
         /* Main query */
         CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);

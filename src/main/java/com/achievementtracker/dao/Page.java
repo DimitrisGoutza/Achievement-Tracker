@@ -32,14 +32,6 @@ public abstract class Page {
         setSortAttribute(defaultAttribute);
     }
 
-    protected Page(int size, SingularAttribute defaultAttribute, SortDirection defaultDirection,
-                   SingularAttribute... allowedAttributes) {
-        this.size = size;
-        this.sortDirection = defaultDirection;
-        this.allowedAttributes = allowedAttributes;
-        setSortAttribute(defaultAttribute);
-    }
-
     public int getSize() {
         return size;
     }
