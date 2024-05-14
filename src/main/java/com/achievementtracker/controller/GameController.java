@@ -1,10 +1,10 @@
 package com.achievementtracker.controller;
 
 import com.achievementtracker.dao.OffsetPage;
+import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class GameController {
     public String getGames(@Validated @ModelAttribute GameRequestParams params, Model model) {
         OffsetPage page = setPaginationAndSorting(params);
 
-        List<Game> games = gameFilterService.getFilteredGames(params, page);
+        List<GameDTO> games = gameFilterService.getFilteredGames(params, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
         UsefulFilterData usefulFilterData = gameFilterService.getUsefulFilterData();
 

@@ -1,5 +1,6 @@
 package com.achievementtracker.dao;
 
+import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.entity.*;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -63,7 +64,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<Game> findAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -79,19 +80,27 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(resultCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game g
         Root<Game> gameRoot = cq.from(Game.class);
+        // SELECT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                gameRoot.get(Game_.title),
+                gameRoot.get(Game_.releaseDate),
+                gameRoot.get(Game_.rating),
+                gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                gameRoot.get(Game_.challengeRating),
+                gameRoot.get(Game_.difficultySpread));
         // WHERE .. (common predicates)
         Predicate finalPredicate = cb.conjunction();
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findOnlyGamesWithAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findOnlyGamesWithAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -108,20 +117,28 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(resultCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game g
         Root<Game> gameRoot = cq.from(Game.class);
+        // SELECT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                gameRoot.get(Game_.title),
+                gameRoot.get(Game_.releaseDate),
+                gameRoot.get(Game_.rating),
+                gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                gameRoot.get(Game_.challengeRating),
+                gameRoot.get(Game_.difficultySpread));
         // WHERE g.CHALLENGE_RATING != 0 (means the Game has achievements)
         Predicate finalPredicate = cb.notEqual(gameRoot.get(Game_.challengeRating), 0);
         // AND .. (common predicates)
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -140,11 +157,18 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(totalRecordCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game
         Root<Game> gameRoot = cq.from(Game.class);
-        // SELECT DISTINCT g
-        cq.distinct(true);
+        // SELECT DISTINCT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                        gameRoot.get(Game_.title),
+                        gameRoot.get(Game_.releaseDate),
+                        gameRoot.get(Game_.rating),
+                        gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                        gameRoot.get(Game_.challengeRating),
+                        gameRoot.get(Game_.difficultySpread))
+                .distinct(true);
         // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
         Predicate[] categoryPredicates = buildCategorizedGameJoin(cb, gameRoot, categoryIds);
         // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
@@ -152,12 +176,12 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         // AND .. (common predicates)
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findOnlyGamesWithAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findOnlyGamesWithAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -178,11 +202,18 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(totalRecordCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game
         Root<Game> gameRoot = cq.from(Game.class);
-        // SELECT DISTINCT g
-        cq.distinct(true);
+        // SELECT DISTINCT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                        gameRoot.get(Game_.title),
+                        gameRoot.get(Game_.releaseDate),
+                        gameRoot.get(Game_.rating),
+                        gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                        gameRoot.get(Game_.challengeRating),
+                        gameRoot.get(Game_.difficultySpread))
+                .distinct(true);
         // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
         Predicate[] categoryPredicates = buildCategorizedGameJoin(cb, gameRoot, categoryIds);
         // WHERE cg1.category.id = categoryId1 AND cg2.category.id = categoryId2 AND cg3 ..
@@ -192,12 +223,12 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         // AND .. (common predicates)
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findOnlyGamesWithHiddenAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findOnlyGamesWithHiddenAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -216,11 +247,18 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(resultCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game g
         Root<Game> gameRoot = cq.from(Game.class);
-        // SELECT DISTINCT g
-        cq.distinct(true);
+        // SELECT DISTINCT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                        gameRoot.get(Game_.title),
+                        gameRoot.get(Game_.releaseDate),
+                        gameRoot.get(Game_.rating),
+                        gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                        gameRoot.get(Game_.challengeRating),
+                        gameRoot.get(Game_.difficultySpread))
+                .distinct(true);
         // JOIN Achievement a
         Join<Game, Achievement> achievementJoin = gameRoot.join(Game_.achievements, JoinType.INNER);
         // WHERE a.hidden = true
@@ -228,12 +266,12 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         // AND .. (common predicates)
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 
     @Override
-    public List<Game> findOnlyGamesWithHiddenAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
+    public List<GameDTO> findOnlyGamesWithHiddenAchievementsByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cqForCount = cb.createQuery(Long.class);
@@ -256,11 +294,18 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         page.setTotalRecords(totalRecordCount);
 
         /* Main query */
-        CriteriaQuery<Game> cq = cb.createQuery(Game.class);
+        CriteriaQuery<GameDTO> cq = cb.createQuery(GameDTO.class);
         // FROM Game
         Root<Game> gameRoot = cq.from(Game.class);
-        // SELECT DISTINCT g
-        cq.distinct(true);
+        // SELECT DISTINCT g.(only needed columns)
+        cq.multiselect(gameRoot.get(Game_.storeId),
+                        gameRoot.get(Game_.title),
+                        gameRoot.get(Game_.releaseDate),
+                        gameRoot.get(Game_.rating),
+                        gameRoot.get(Game_.images).get(Image_.capsuleImageURL),
+                        gameRoot.get(Game_.challengeRating),
+                        gameRoot.get(Game_.difficultySpread))
+                .distinct(true);
         // JOIN CategorizedGame cg1, cg1 JOIN CategorizedGame cg2, cg2 ..
         Predicate[] categoryPredicates = buildCategorizedGameJoin(cb, gameRoot, categoryIds);
         // JOIN Achievement a
@@ -272,7 +317,7 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
         // AND .. (common predicates)
         finalPredicate = buildCommonPredicates(cb, gameRoot, finalPredicate, searchTerm, minReviews, maxReviews, minRelease, maxRelease);
         cq.where(finalPredicate);
-        TypedQuery<Game> query = page.createQuery(em, cq, gameRoot);
+        TypedQuery<GameDTO> query = page.createQuery(em, cq, gameRoot);
         return query.getResultList();
     }
 

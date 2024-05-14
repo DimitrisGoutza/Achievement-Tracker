@@ -4,10 +4,10 @@ import com.achievementtracker.dao.AchievementDAO;
 import com.achievementtracker.dao.CategoryDAO;
 import com.achievementtracker.dao.GameDAO;
 import com.achievementtracker.dao.Page;
+import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public List<Game> getFilteredGames(GameRequestParams params, Page page) {
+    public List<GameDTO> getFilteredGames(GameRequestParams params, Page page) {
         String searchTerm = params.getSearch();
         List<Long> categoryIds = params.getCategoriesAsList();
         boolean achievements = params.getAchievements() != null;
@@ -63,8 +63,8 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<Game> games) {
-        List<Long> gameIds = games.stream().map(Game::getStoreId).toList();
+    public Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<GameDTO> games) {
+        List<Long> gameIds = games.stream().map(GameDTO::getStoreId).toList();
         return achievementDAO.getTopXAchievementsForGames(topAmount, gameIds);
     }
 
