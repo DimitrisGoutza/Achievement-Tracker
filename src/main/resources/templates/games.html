@@ -61,9 +61,8 @@
                     <div class="title-achievements-container">
                         <a class="game-title" target="_blank" th:href="'https://store.steampowered.com/app/' + ${game.storeId}" th:text="${game.title}"></a>
                         <div class="top-achievements-container">
-                            <!-- TODO : add different color border for hidden achievements -->
                             <img th:each="achievement : ${achievements.get(game.storeId)}" th:data-actual-src="${achievement.hidden ? achievement.iconURL : achievement.iconURL}"
-                                 class="achievement-icon" src="/img/achievement-icon-placeholder.png"
+                                 class="achievement-icon" src="/img/achievement-icon-placeholder.png" th:classappend="${achievement.hidden ? 'hidden-achievement-icon' : null }"
                                  th:title="${achievement.hidden ? achievement.displayName + ' (hidden)' : achievement.description} + ' - ' + ${achievement.percentage} + '%'"
                                  alt="icon">
                         </div>
