@@ -301,6 +301,7 @@ function sortTable(targetHeader) {
             replacePlaceholderImages();
             setSortStates(targetHeader, requestedSortState);
             generateVisibleURL(sortColumnName, requestedSortState);
+            attachEventListenersToPageButtons();
         })
         .catch(error => console.error("Error: "+error));
 }
