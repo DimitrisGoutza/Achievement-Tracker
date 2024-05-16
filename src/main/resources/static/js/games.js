@@ -396,7 +396,8 @@ function searchGames(searchTerm) {
 
         const params = new URLSearchParams(fetchURL.searchParams);
         params.set("size", selectedPageSize);
-        params.set("search", searchTerm);
+        if (searchTerm.length >= MIN_SEARCH_CHARACTER_LENGTH)
+            params.set("search", searchTerm);
 
         fetchURL.search = params.toString();
         return fetchURL;
