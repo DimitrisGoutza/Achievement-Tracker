@@ -1,6 +1,7 @@
 package com.achievementtracker.dao;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -152,6 +153,24 @@ public class OffsetPage extends Page {
         );
 
         TypedQuery<T> query = em.createQuery(criteriaQuery);
+
+        // Set the offset of the query (zero based index)
+        query.setFirstResult(getRangeStartInteger() - 1);
+
+        // Set the size of the page
+        if (getSize() != -1)
+            query.setMaxResults(getSize());
+
+        return query;
+    }
+
+    @Override
+    public Query createNativeQuery(EntityManager em, String sql, String sortTableAlias, String sortColumn) {
+
+        // ORDER BY clause
+        sql += "ORDER BY " + sortTableAlias + "." + sortColumn + " " + sortDirection.name();
+
+        Query query = em.createNativeQuery(sql);
 
         // Set the offset of the query (zero based index)
         query.setFirstResult(getRangeStartInteger() - 1);

@@ -42,31 +42,56 @@ public class GameFilterServiceImpl implements GameFilterService {
         LocalDate maxReleaseDate = params.getMaxReleaseDateAsNullableDate();
 
         /*
-        If the client sent us the totalEntries as a param, it means the User wants to perform an action that
-        does not require updating the page#totalRecords attribute (sorting OR changing page size/number) with
-        a count query.
+        If the client sent us the totalEntries as a param, it means the User wants to perform an action
+        (sorting OR changing page size/number) that does not require updating the page#totalRecords attribute
+        with a count query.
         */
         boolean countQuery = (params.getEntries() == null);
 
-        if (categoryIds.isEmpty()) { // No categories
-            if (achievements) {
-                if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
-                else
-                    return gameDAO.findOnlyGamesWithAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+        List<GameDTO> games;
+        if (searchTerm == null || searchTerm.isEmpty()) {
+            if (categoryIds.isEmpty()) {
+                if (achievements) {
+                    if (hiddenAchievements)
+                        games = gameDAO.findOnlyGamesWithHiddenAchievements(minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                    else
+                        games = gameDAO.findOnlyGamesWithAchievements(minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                } else {
+                    games = gameDAO.findAllGames(minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                }
             } else {
-                return gameDAO.findAllGames(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                if (achievements) {
+                    if (hiddenAchievements)
+                        games = gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                    else
+                        games = gameDAO.findOnlyGamesWithAchievementsByCategoryId(categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                } else {
+                    games = gameDAO.findAllGamesByCategoryId(categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                }
             }
-        } else { // Categorized
-            if (achievements) {
-                if (hiddenAchievements)
-                    return gameDAO.findOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
-                else
-                    return gameDAO.findOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+        } else {
+            if (categoryIds.isEmpty()) {
+                if (achievements) {
+                    if (hiddenAchievements)
+                        games = gameDAO.searchOnlyGamesWithHiddenAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    else
+                        games = gameDAO.searchOnlyGamesWithAchievements(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                } else {
+                    games = gameDAO.searchAllGames(searchTerm, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                }
             } else {
-                return gameDAO.findAllGamesByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page, countQuery);
+                if (achievements) {
+                    if (hiddenAchievements)
+                        games = gameDAO.searchOnlyGamesWithHiddenAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                    else
+                        games = gameDAO.searchOnlyGamesWithAchievementsByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                } else {
+                    games = gameDAO.searchAllGamesByCategoryId(searchTerm, categoryIds, minReviews, maxReviews, minReleaseDate, maxReleaseDate, page);
+                }
             }
         }
+
+        return games;
     }
 
     @Override

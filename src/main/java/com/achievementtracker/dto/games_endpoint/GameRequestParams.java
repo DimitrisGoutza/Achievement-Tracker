@@ -130,6 +130,7 @@ public class GameRequestParams {
 
         String sortColumn = sort.split("_")[0];
         return switch (sortColumn) {
+            // note : if you add or remove columns/attributes from here, you need to also do that in #GameDAOImpl<transformAttributeToNativeSQL()>
             case "id" -> Game_.storeId;
             case "name" -> Game_.title;
             case "challenge" -> Game_.challengeRating;

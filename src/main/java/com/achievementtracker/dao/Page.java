@@ -1,6 +1,7 @@
 package com.achievementtracker.dao;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
@@ -106,5 +107,12 @@ public abstract class Page {
             EntityManager em,
             CriteriaQuery<T> criteriaQuery,
             Path attributePath
+    );
+
+    abstract public Query createNativeQuery(
+            EntityManager em,
+            String sql,
+            String sortTableAlias,
+            String sortColumn
     );
 }
