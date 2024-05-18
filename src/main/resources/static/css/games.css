@@ -98,6 +98,9 @@ table {
     border-collapse: collapse;
     width: 65.6em;
 }
+table:has(tr.no-results) {
+    min-height: 100%;
+}
 span.column-name {
     vertical-align: middle;
 }
@@ -152,6 +155,9 @@ td:has(img.game-banner-img) {
 }
 td:has(.title-achievements-container) {
     padding-left: 1em;
+}
+tr.no-results, tr.no-results:hover {
+    background-color: unset;
 }
 thead > tr {
 }

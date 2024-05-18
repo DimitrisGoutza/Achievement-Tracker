@@ -55,6 +55,7 @@
             </tr>
             </thead>
             <tbody id="table-content">
+            <tr th:if="${page.totalRecords == 0}" class="no-results"><td colspan="6">No matching results to show.</td></tr>
             <tr th:each="game : ${games}">
                 <td><a target="_blank" th:href="'https://store.steampowered.com/app/' + ${game.storeId}"><img class="game-banner-img" th:data-actual-src="${game.capsuleImageURL}" src="/img/game-banner-placeholder.png" alt="Game Image"></a></td>
                 <td>
