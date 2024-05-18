@@ -47,7 +47,7 @@ CREATE TABLE `GAME` (
 
 CREATE TABLE `ACHIEVEMENT` (
     `ID` bigint NOT NULL AUTO_INCREMENT,
-    `NAME` varchar(125) NOT NULL, /* TODO: make this column take more characters */
+    `NAME` varchar(300) NOT NULL,
     `DISPLAY_NAME` text NOT NULL,
     `DESCRIPTION` text,
     `HIDDEN` tinyint(1) NOT NULL,
