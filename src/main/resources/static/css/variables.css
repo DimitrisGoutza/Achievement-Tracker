@@ -1,0 +1,10 @@
+:root {
+    --main-background-color : #1B2837;
+    --main-font-color: #E0E0E0;
+    --alt-font-color: #9FBBCA;
+    --active-element-color: #549FC8;
+    --highlight-element-color: #323E4B;
+    --dark-color-accent: #101821;
+    --table-content-color: #16202C;
+    --font-family: Roboto, sans-serif;
+}

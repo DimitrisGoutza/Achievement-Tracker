@@ -1,8 +1,7 @@
 body {
-    /* TODO: consider using var for this */
-    background-color: #1B2837;
-    color: #E0E0E0;
-    font-family: Roboto, sans-serif;
+    background-color: var(--main-background-color);
+    color: var(--main-font-color);
+    font-family: var(--font-family);
 }
 
 /* Layout Containers - Main */
@@ -162,12 +161,12 @@ tr.no-results, tr.no-results:hover {
 thead > tr {
 }
 tbody > tr {
-    border-bottom: 0.4em solid #1B2837;
-    border-top: 0.4em solid #1B2837;
-    background-color: #16202C;
+    border-bottom: 0.4em solid var(--main-background-color);
+    border-top: 0.4em solid var(--main-background-color);
+    background-color: var(--table-content-color);
 }
 tbody > tr:hover {
-    background-color: #101821;
+    background-color: var(--dark-color-accent);
 }
 
 /* Page-Size & Search */
@@ -180,33 +179,31 @@ tbody > tr:hover {
     background-position: right center;
     background-size: 10px auto;
     background-origin: content-box;
-    background-color: #1B2837;
+    background-color: transparent;
     text-align: start;
     color: inherit;
-    border: solid thin #549FC8;
+    border-color: var(--highlight-element-color);
+    border-style: solid;
+    border-width: 1px;
     border-radius: 5px;
     font-size: inherit;
     font-family: inherit;
-    padding: 0.2em 0.3em;
+    padding: 0.25em 0.3em;
     width: 3.4em;
     cursor: pointer;
 }
+#page-entries-select:focus {
+    outline: none;
+    border-color: var(--active-element-color);
+}
 #page-entries-select > option {
-    background-color: #1B2837;
+    background-color: var(--main-background-color);
     color: inherit;
 }
 #game-search {
     font-family: inherit;
     font-size: inherit;
-    border: solid thin #9FBBCA;
-    color: #101821;
-    border-radius: 5px;
     padding: 0 0.8em;
-}
-#game-search::placeholder {
-    font-family: inherit;
-    font-size: inherit;
-    color: #101821;
 }
 
 /* Table-Data elements */
@@ -216,7 +213,7 @@ tbody > tr:hover {
 }
 .game-banner-img {
     max-width: 200px;
-    background-color: #101821;
+    background-color: var(--dark-color-accent);
 }
 .game-title {
     color: inherit;
@@ -232,7 +229,7 @@ tbody > tr:hover {
     width: 35px;
     border-radius: 2px;
     border: solid thin #DAB842;
-    background-color: #101821;
+    background-color: var(--dark-color-accent);
 }
 .hidden-achievement-icon {
     border-color: grey;
@@ -251,10 +248,10 @@ tbody > tr:hover {
     font-size: inherit;
     font-weight: bold;
     background-color: transparent;
-    color: #9FBBCA;
+    color: var(--alt-font-color);
 }
 .page-buttons:hover {
-    border: solid thin #323E4B;
+    border: solid thin var(--highlight-element-color);
     cursor: pointer;
 }
 .page-buttons:disabled {
@@ -265,8 +262,8 @@ tbody > tr:hover {
     border-width: 0;
 }
 .selected-page-button {
-    background-color: #549FC8;
-    border: solid thin #549FC8;
+    background-color: var(--active-element-color);
+    border: solid thin var(--active-element-color);
     color: inherit;
 }
 .selected-page-button:hover {
@@ -276,20 +273,35 @@ tbody > tr:hover {
 /* Filters */
 #filter-form {
     max-width: 21em;
-    color: #9FBBCA;
+    color: var(--alt-font-color);
 }
 .filter-header {
     padding: 0;
     margin: 0 0 1em 0;
-    color: #E0E0E0;
+    color: var(--main-font-color);
 }
 #achievements-filter, #category-filter, #reviews-filter, #release-date-filter {
     border-radius: 15px;
-    border: solid thin #323E4B;
+    border: solid thin var(--highlight-element-color);
     padding: 1em;
 }
 #achievements-filter {
     border: 0;
+}
+input {
+    border-color: var(--highlight-element-color);
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: var(--main-font-color);
+    color: var(--main-background-color);
+}
+input:focus {
+    outline: none;
+    border-color: var(--active-element-color);
+}
+input::placeholder {
+    color: inherit;
 }
 input[type='checkbox'] {
     accent-color: white;
@@ -302,22 +314,15 @@ label:has(#hidden-achievements-checkbox) {
 }
 #filter-form label:has(input[type='checkbox']:checked) {
     font-weight: bold;
-    color: #E0E0E0;
+    color: var(--main-font-color);
 }
 #category-search {
     font-size: inherit;
     font-family: inherit;
-    border: solid thin #9FBBCA;
-    border-radius: 5px;
-    color: #101821;
-}
-#category-search::placeholder {
-    font-family: inherit;
-    font-size: inherit;
-    color: #101821;
+    padding-left: 0.5em;
 }
 #category-list {
-    border: solid thin #323E4B;
+    border: solid thin var(--highlight-element-color);
     border-radius: 5px;
     padding: 0;
     margin: 0.3em 0 0 0;
@@ -325,23 +330,22 @@ label:has(#hidden-achievements-checkbox) {
     overflow-x: hidden;
     overflow-y: scroll;
     max-height: 19em;
-    background-color: #1B2837;
+    background-color: var(--main-background-color);
 }
 #category-list::-webkit-scrollbar {
     width: 0.5em;
 }
 #category-list::-webkit-scrollbar-track {
-    border-left: solid thin #323E4B;
+    border-left: solid thin var(--highlight-element-color);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    background-color: #1B2837;
 }
 #category-list::-webkit-scrollbar-thumb {
-    background-color: #9FBBCA;
+    background-color: var(--alt-font-color);
     border-radius: 5px;
 }
 #category-list::-webkit-scrollbar-thumb:hover {
-    background-color: #549FC8;
+    background-color: var(--active-element-color);
 }
 .category-name {
     display: flex;
@@ -351,23 +355,15 @@ label:has(#hidden-achievements-checkbox) {
     padding: 0.2em;
 }
 .category-item:hover {
-    background-color: #323E4B;
+    background-color: var(--highlight-element-color);
 }
 .category-item:has(input[type='checkbox']:checked) {
-    background-color: #549FC8;
+    background-color: var(--active-element-color);
 }
 #min-reviews-input, #max-reviews-input {
     text-align: center;
     font-size: inherit;
     font-family: inherit;
-    border-radius: 5px;
-    border: solid thin #9FBBCA;
-    color: #101821;
-}
-#min-reviews-input::placeholder, #max-reviews-input::placeholder {
-    font-family: inherit;
-    font-size: inherit;
-    color: #101821;
 }
 #range-separator {
     height: 14px;
@@ -376,12 +372,9 @@ label:has(#hidden-achievements-checkbox) {
     text-align: center;
     font-size: inherit;
     font-family: inherit;
-    border-radius: 5px;
-    border: solid thin #9FBBCA;
-    color: #101821;
 }
 #min-release-date::-webkit-calendar-picker-indicator, #max-release-date::-webkit-calendar-picker-indicator {
-    color: #E0E0E0;
+    color: var(--main-font-color);
     font-size: inherit;
     font-family: inherit;
     cursor: pointer;
@@ -391,8 +384,8 @@ label:has(#hidden-achievements-checkbox) {
     font-size: inherit;
     font-weight: bold;
     cursor: pointer;
-    color: #E0E0E0;
-    background-color: #549FC8;
+    color: var(--main-font-color);
+    background-color: var(--active-element-color);
     border: 0;
     border-radius: 5px;
     padding: 0.3em 0;
@@ -400,7 +393,7 @@ label:has(#hidden-achievements-checkbox) {
 #filter-submit-button:disabled {
     cursor: not-allowed;
     font-weight: normal;
-    color: #9FBBCA;
+    color: unset;
     background-color: transparent;
 }
 #filter-form button[type='reset'] {
@@ -408,8 +401,8 @@ label:has(#hidden-achievements-checkbox) {
     font-size: inherit;
     font-weight: bold;
     cursor: pointer;
-    color: #9FBBCA;
-    background-color: #323E4B;
+    color: unset;
+    background-color: var(--highlight-element-color);
     border: 0;
     border-radius: 5px;
     padding: 0.3em 0;
