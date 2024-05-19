@@ -28,7 +28,11 @@ public class GameController {
 
     @GetMapping("/games")
     public String getGames(@Validated @ModelAttribute GameRequestParams params, Model model) {
-        OffsetPage page = setPaginationAndSorting(params);
+        OffsetPage page = new OffsetPage(params.getSizeAsInt(), params.getEntriesAsInt(),
+                params.getSortAttribute(), params.getSortDirection(),
+                Game_.storeId, Game_.title, Game_.releaseDate,
+                Game_.challengeRating, Game_.difficultySpread, Game_.rating);
+        page.setCurrent(params.getPageAsInt());
 
         List<GameDTO> games = gameFilterService.getFilteredGames(params, page);
         Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
@@ -37,20 +41,9 @@ public class GameController {
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);
         model.addAttribute("usefulFilterData", usefulFilterData);
-        model.addAttribute("selectedFilters", params);
+        model.addAttribute("prevRequestParams", params);
         model.addAttribute("page", page);
 
         return "games";
-    }
-
-    private OffsetPage setPaginationAndSorting(GameRequestParams params) {
-        OffsetPage page = new OffsetPage(params.getSizeAsInt(), params.getEntriesAsInt(),
-                params.getSortAttribute(), params.getSortDirection(),
-                Game_.storeId, Game_.title, Game_.releaseDate,
-                Game_.challengeRating, Game_.difficultySpread, Game_.rating);
-
-        page.setCurrent(params.getPageAsInt());
-
-        return page;
     }
 }

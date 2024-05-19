@@ -106,8 +106,8 @@
         <form id="filter-form" method="GET">
             <div id="achievements-filter">
                 <h4 class="filter-header">Preferences</h4>
-                <label><input id="achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt != null}"> Show only games with achievements </label>
-                <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${selectedFilters.achievementsAsNullableInt == 2}"> hidden achievements only </label>
+                <label><input id="achievements-checkbox" type="checkbox" th:checked="${prevRequestParams.achievementsAsNullableInt != null}"> Show only games with achievements </label>
+                <label style="display: none"><input id="hidden-achievements-checkbox" type="checkbox" th:checked="${prevRequestParams.achievementsAsNullableInt == 2}"> hidden achievements only </label>
             </div>
             <div id="category-filter">
                 <h4 class="filter-header">Categories</h4>
@@ -116,7 +116,7 @@
                     <li class="category-item" th:each="category, index : ${usefulFilterData.categories}" th:data-pos="${index.count}">
                         <label class="category-name" th:inline="text">
                             <input class="category-checkbox" type="checkbox" th:value="${category.id}"
-                                   th:checked="${selectedFilters.categoriesAsList.contains(category.id)}">
+                                   th:checked="${prevRequestParams.categoriesAsList.contains(category.id)}">
                             [[${category.name}]]
                         </label>
                     </li>
@@ -126,14 +126,14 @@
                 <h4 class="filter-header">Reviews</h4>
                 <div id="reviews-inputs-container">
                     <input id="min-reviews-input" type="text" placeholder="e.g. 500" autocomplete="off"
-                           th:data-default-min="${selectedFilters.DEFAULT_MIN_REVIEWS}"
-                           th:value="${selectedFilters.minReviewsAsNullableInt}"
+                           th:data-default-min="${prevRequestParams.DEFAULT_MIN_REVIEWS}"
+                           th:value="${prevRequestParams.minReviewsAsNullableInt}"
                            th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
                            th:size="${#strings.length(usefulFilterData.maxReviews)}">
                     <img id="range-separator" src="/img/range-indicator.png">
                     <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
-                           th:data-default-max="${selectedFilters.DEFAULT_MAX_REVIEWS}"
-                           th:value="${selectedFilters.maxReviewsAsNullableInt}"
+                           th:data-default-max="${prevRequestParams.DEFAULT_MAX_REVIEWS}"
+                           th:value="${prevRequestParams.maxReviewsAsNullableInt}"
                            th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
                            th:size="${#strings.length(usefulFilterData.maxReviews)}">
                 </div>
@@ -142,12 +142,12 @@
                 <h4 class="filter-header">Release Date</h4>
                 <div id="release-inputs-container">
                     <label id="min" for="min-release-date"> From </label><input id="min-release-date" type="month" autocomplete="off"
-                                        th:data-default-min="${selectedFilters.DEFAULT_MIN_RELEASE}"
-                                        th:value="${#temporals.format(selectedFilters.minReleaseDateAsNullableDate, 'yyyy-MM')}"
+                                        th:data-default-min="${prevRequestParams.DEFAULT_MIN_RELEASE}"
+                                        th:value="${#temporals.format(prevRequestParams.minReleaseDateAsNullableDate, 'yyyy-MM')}"
                                         th:min="${usefulFilterData.minReleaseDate}">
                     <label for="max-release-date"> To </label><input id="max-release-date" type="month" autocomplete="off"
-                                      th:data-default-max="${selectedFilters.DEFAULT_MAX_RELEASE}"
-                                      th:value="${#temporals.format(selectedFilters.maxReleaseDateAsNullableDate, 'yyyy-MM')}"
+                                      th:data-default-max="${prevRequestParams.DEFAULT_MAX_RELEASE}"
+                                      th:value="${#temporals.format(prevRequestParams.maxReleaseDateAsNullableDate, 'yyyy-MM')}"
                                       th:max="${#dates.format(#dates.createNow(), 'yyyy-MM')}">
                 </div>
             </div>
