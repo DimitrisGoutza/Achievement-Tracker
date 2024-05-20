@@ -8,14 +8,14 @@ public enum AchievementRarity {
     LEGENDARY(5, 1, 50, "#CEAE39"),
     MYTHIC(1, 0, 100, "#FF4F29");
 
-    private final double minPercentage;
     private final double maxPercentage;
+    private final double minPercentage;
     private final int weight;
     private final String colorHex;
 
-    AchievementRarity(double minPercentage, double maxPercentage, int weight, String colorHex) {
-        this.minPercentage = minPercentage;
+    AchievementRarity(double maxPercentage, double minPercentage, int weight, String colorHex) {
         this.maxPercentage = maxPercentage;
+        this.minPercentage = minPercentage;
         this.weight = weight;
         this.colorHex = colorHex;
     }
@@ -30,7 +30,7 @@ public enum AchievementRarity {
 
     public static AchievementRarity fromPercentage(double percentage) {
         for (AchievementRarity rarity : AchievementRarity.values()) {
-            if (percentage >= rarity.maxPercentage && percentage < rarity.minPercentage)
+            if (percentage >= rarity.minPercentage && percentage < rarity.maxPercentage)
                 return rarity;
         }
         return AchievementRarity.COMMON;
