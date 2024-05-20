@@ -37,6 +37,10 @@ public class Achievement {
     @NotNull
     @Column(name = "POS")
     private int position;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RARITY")
+    private AchievementRarity rarity;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "GAME_ID")
@@ -54,12 +58,14 @@ public class Achievement {
         this.iconURL = achievementDetailsDTO.getIconUrl();
         this.iconGrayURL = achievementDetailsDTO.getIconGrayUrl();
         this.percentage = achievementStatsDTO.getAchievements().get(this.name);
+        this.rarity = AchievementRarity.fromPercentage(this.percentage);
 
         this.game = game;
     }
 
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
+        this.rarity = AchievementRarity.fromPercentage(this.percentage);
     }
 
     public void setPosition(int position) {
@@ -102,6 +108,10 @@ public class Achievement {
         return position;
     }
 
+    public AchievementRarity getRarity() {
+        return rarity;
+    }
+
     public Game getGame() {
         return game;
     }
@@ -118,6 +128,7 @@ public class Achievement {
                 ", iconGrayURL='" + iconGrayURL + '\'' +
                 ", percentage=" + percentage +
                 ", position=" + position +
+                ", rarity=" + rarity +
                 '}';
     }
 

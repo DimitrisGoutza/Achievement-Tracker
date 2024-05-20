@@ -1,6 +1,7 @@
 package com.achievementtracker.service;
 
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.AchievementRarity;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class AchievementAnalyticsServiceImpl implements AchievementAnalyticsServ
 
         int score = 0;
         for (Achievement achievement : achievements) {
-            score += calculateWeight(achievement.getPercentage());
+            score += AchievementRarity.fromPercentage(achievement.getPercentage()).getWeight();
         }
         return score;
     }
@@ -42,20 +43,5 @@ public class AchievementAnalyticsServiceImpl implements AchievementAnalyticsServ
         double difficultySpread = highestPercentage - lowestPercentage;
 
         return Math.round(difficultySpread * 100.0) / 100.0;
-    }
-
-    private int calculateWeight(Double percentage) {
-        if (percentage <= 100 && percentage >= 50)
-            return 1;
-        else if (percentage <= 50 && percentage >= 25)
-            return 2;
-        else if (percentage <=25 && percentage >= 10)
-            return 5;
-        else if (percentage <=10 && percentage >= 5)
-            return 10;
-        else if (percentage <= 5 && percentage >= 1)
-            return 50;
-        else
-            return 100;
     }
 }
