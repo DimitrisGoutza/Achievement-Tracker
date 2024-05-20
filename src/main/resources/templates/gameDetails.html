@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:inline="text">Achievement-Tracker | [[${game.title}]]</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/gameDetails.css">
+</head>
+<body>
+    <!-- TODO: figure out the layout  -->
+    <img th:src="${game.images.capsuleImageURL}">
+    <h1 th:text="${game.title}"></h1>
+    <p th:text="${game.shortDescription}"></p>
+</body>
+</html>

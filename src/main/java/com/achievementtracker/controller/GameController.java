@@ -5,6 +5,7 @@ import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -45,5 +47,15 @@ public class GameController {
         model.addAttribute("page", page);
 
         return "games";
+    }
+
+    @GetMapping("/games/{gameId}")
+    public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
+
+        Game game = gameFilterService.findGameWithDetails(gameId);
+
+        model.addAttribute("game", game);
+
+        return "gameDetails";
     }
 }

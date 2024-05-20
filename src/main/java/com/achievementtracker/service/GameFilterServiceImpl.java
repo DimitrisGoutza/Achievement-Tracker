@@ -8,6 +8,7 @@ import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,6 +99,11 @@ public class GameFilterServiceImpl implements GameFilterService {
     public Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<GameDTO> games) {
         List<Long> gameIds = games.stream().map(GameDTO::getStoreId).toList();
         return achievementDAO.getTopXAchievementsForGames(topAmount, gameIds);
+    }
+
+    @Override
+    public Game findGameWithDetails(Long gameId) {
+        return gameDAO.findByIdWithCollections(gameId);
     }
 
     @Override
