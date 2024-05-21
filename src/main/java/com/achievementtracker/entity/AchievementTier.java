@@ -1,6 +1,6 @@
 package com.achievementtracker.entity;
 
-public enum AchievementRarity {
+public enum AchievementTier {
     COMMON(100, 50, 1, "#A8A8A8"),
     UNCOMMON(50, 25, 2, "#006616"),
     RARE(25, 10, 5, "#50A7D3"),
@@ -13,7 +13,7 @@ public enum AchievementRarity {
     private final int weight;
     private final String colorHex;
 
-    AchievementRarity(double maxPercentage, double minPercentage, int weight, String colorHex) {
+    AchievementTier(double maxPercentage, double minPercentage, int weight, String colorHex) {
         this.maxPercentage = maxPercentage;
         this.minPercentage = minPercentage;
         this.weight = weight;
@@ -28,11 +28,11 @@ public enum AchievementRarity {
         return colorHex;
     }
 
-    public static AchievementRarity fromPercentage(double percentage) {
-        for (AchievementRarity rarity : AchievementRarity.values()) {
-            if (percentage >= rarity.minPercentage && percentage < rarity.maxPercentage)
-                return rarity;
+    public static AchievementTier fromPercentage(double percentage) {
+        for (AchievementTier tier : AchievementTier.values()) {
+            if (percentage >= tier.minPercentage && percentage < tier.maxPercentage)
+                return tier;
         }
-        return AchievementRarity.COMMON;
+        return AchievementTier.COMMON;
     }
 }

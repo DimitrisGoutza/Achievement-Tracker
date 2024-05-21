@@ -1,7 +1,7 @@
 package com.achievementtracker.service;
 
 import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.AchievementRarity;
+import com.achievementtracker.entity.AchievementTier;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -28,7 +28,7 @@ public class AchievementAnalyticsServiceImpl implements AchievementAnalyticsServ
 
         int score = 0;
         for (Achievement achievement : achievements) {
-            score += AchievementRarity.fromPercentage(achievement.getPercentage()).getWeight();
+            score += AchievementTier.fromPercentage(achievement.getPercentage()).getWeight();
         }
         return score;
     }

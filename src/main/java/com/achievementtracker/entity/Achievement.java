@@ -39,8 +39,8 @@ public class Achievement {
     private int position;
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "RARITY")
-    private AchievementRarity rarity;
+    @Column(name = "TIER")
+    private AchievementTier tier;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "GAME_ID")
@@ -58,14 +58,14 @@ public class Achievement {
         this.iconURL = achievementDetailsDTO.getIconUrl();
         this.iconGrayURL = achievementDetailsDTO.getIconGrayUrl();
         this.percentage = achievementStatsDTO.getAchievements().get(this.name);
-        this.rarity = AchievementRarity.fromPercentage(this.percentage);
+        this.tier = AchievementTier.fromPercentage(this.percentage);
 
         this.game = game;
     }
 
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
-        this.rarity = AchievementRarity.fromPercentage(this.percentage);
+        this.tier = AchievementTier.fromPercentage(this.percentage);
     }
 
     public void setPosition(int position) {
@@ -108,8 +108,8 @@ public class Achievement {
         return position;
     }
 
-    public AchievementRarity getRarity() {
-        return rarity;
+    public AchievementTier getTier() {
+        return tier;
     }
 
     public Game getGame() {
@@ -128,7 +128,7 @@ public class Achievement {
                 ", iconGrayURL='" + iconGrayURL + '\'' +
                 ", percentage=" + percentage +
                 ", position=" + position +
-                ", rarity=" + rarity +
+                ", tier=" + tier +
                 '}';
     }
 
