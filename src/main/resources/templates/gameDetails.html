@@ -7,24 +7,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- JS scripts -->
+    <script type="text/javascript" src="/js/gameDetails.js" defer></script>
     <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/gameDetails.css">
 </head>
 <body>
-    <!-- TODO: add table scrolling functionality and also make it not show tiers that are empty  -->
-    <img th:src="${game.images.capsuleImageURL}">
-    <h1 th:text="${game.title}"></h1>
+    <!-- TODO: add table scrolling functionality -->
+    <div id="game-information">
+        <h1 th:text="${game.title}"></h1>
+        <img th:src="${game.images.capsuleImageURL}">
+        <p th:text="${game.shortDescription}"></p>
+    </div>
     <div id="achievement-tier-table">
         <th:block th:each="tier : ${tiers}">
             <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
                 <span th:text="${tier.name()}"></span>
                 <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
             </div>
-            <div class="achievements-container">
+            <div class="achievements-container" th:inline="text">
+                <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
                 <img class="achievement-icon" th:each="achievement : ${achievements}" th:if="${achievement.tier.equals(tier)}"
-                     th:data-actual-src="${achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
-                     th:title="${achievement.percentage}"/>
+                     th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
+                     th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}"/>
             </div>
         </th:block>
     </div>

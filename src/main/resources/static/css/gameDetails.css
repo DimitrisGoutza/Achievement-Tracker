@@ -21,11 +21,14 @@ body {
 .achievements-container {
     grid-column: 2;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     gap: 1em;
     padding: 0 1em;
     overflow-x: auto;
+}
+.achievements-container:has(img.achievement-icon) {
+    justify-content: flex-start;
 }
 
 /* Achievement Tier Table */
@@ -41,13 +44,6 @@ body {
 }
 .tier-container > span:last-of-type {
     font-style: italic;
-}
-.achievement-icon {
-    height: 40px;
-    width: 40px;
-    border-radius: 5px;
-    border-style: solid;
-    border-width: 2px;
 }
 .achievements-container {
     border-bottom: solid thin var(--highlight-element-color);
@@ -67,4 +63,16 @@ body {
 }
 .achievements-container::-webkit-scrollbar-thumb:hover {
     background-color: var(--active-element-color);
+}
+.achievement-icon {
+    height: 40px;
+    width: 40px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 2px;
+}
+.empty-tier-message {
+    text-align: center;
+    font-style: italic;
+    color: var(--alt-font-color);
 }
