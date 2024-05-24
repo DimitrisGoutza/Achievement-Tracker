@@ -102,8 +102,8 @@ public class GameFilterServiceImpl implements GameFilterService {
     }
 
     @Override
-    public Game findGameWithDetails(Long gameId) {
-        return gameDAO.findByIdWithCollections(gameId);
+    public Game findGameByIdWithAchievements(Long gameId) {
+        return gameDAO.findByIdWithAchievements(gameId);
     }
 
     @Override

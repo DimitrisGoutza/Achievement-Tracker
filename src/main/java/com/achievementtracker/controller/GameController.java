@@ -5,6 +5,7 @@ import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.AchievementTier;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
 import com.achievementtracker.service.GameFilterService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +54,12 @@ public class GameController {
     @GetMapping("/games/{gameId}")
     public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
 
-        Game game = gameFilterService.findGameWithDetails(gameId);
+        Game game = gameFilterService.findGameByIdWithAchievements(gameId);
+        List<Achievement> sortedAchievements = game.getAchievements().stream().sorted(Comparator.comparingDouble(Achievement::getPercentage)).toList();
 
         model.addAttribute("game", game);
+        model.addAttribute("achievements", sortedAchievements);
+        model.addAttribute("tiers", AchievementTier.values());
 
         return "gameDetails";
     }

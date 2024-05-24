@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:inline="text">Achievement-Tracker | [[${game.title}]]</title>
+    <title th:text="${game.title}"/>
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,9 +12,21 @@
     <link rel="stylesheet" href="/css/gameDetails.css">
 </head>
 <body>
-    <!-- TODO: figure out the layout  -->
+    <!-- TODO: add table scrolling functionality and also make it not show tiers that are empty  -->
     <img th:src="${game.images.capsuleImageURL}">
     <h1 th:text="${game.title}"></h1>
-    <p th:text="${game.shortDescription}"></p>
+    <div id="achievement-tier-table">
+        <th:block th:each="tier : ${tiers}">
+            <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
+                <span th:text="${tier.name()}"></span>
+                <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
+            </div>
+            <div class="achievements-container">
+                <img class="achievement-icon" th:each="achievement : ${achievements}" th:if="${achievement.tier.equals(tier)}"
+                     th:data-actual-src="${achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
+                     th:title="${achievement.percentage}"/>
+            </div>
+        </th:block>
+    </div>
 </body>
 </html>

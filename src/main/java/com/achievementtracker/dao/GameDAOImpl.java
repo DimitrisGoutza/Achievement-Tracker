@@ -383,12 +383,9 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public Game findByIdWithCollections(Long gameId) {
-        // TODO : improve the implementation
-        TypedQuery<Game> query = em.createQuery("SELECT DISTINCT g FROM Game g " +
-                "JOIN FETCH Achievement a ON a.game.storeId = g.storeId " +
-                "JOIN FETCH CategorizedGame cg ON cg.game.storeId = g.storeId " +
-                "WHERE g.storeId = :gameId", Game.class);
+    public Game findByIdWithAchievements(Long gameId) {
+        TypedQuery<Game> query = em.createQuery("SELECT g FROM Game g " +
+                "LEFT JOIN FETCH g.achievements WHERE g.storeId = :gameId", Game.class);
         query.setParameter("gameId", gameId);
         return query.getSingleResult();
     }

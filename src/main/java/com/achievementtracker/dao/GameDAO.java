@@ -17,7 +17,7 @@ public interface GameDAO extends GenericDAO<Game, Long> {
     List<GameDTO> findOnlyGamesWithAchievementsByCategoryId(List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findOnlyGamesWithHiddenAchievements(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findOnlyGamesWithHiddenAchievementsByCategoryId(List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
-    Game findByIdWithCollections(Long gameId);
+    Game findByIdWithAchievements(Long gameId);
 
     /* -------------------------- Native Full-Text search queries -------------------------- */
     List<GameDTO> searchAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page);

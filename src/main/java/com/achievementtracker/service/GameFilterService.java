@@ -13,6 +13,6 @@ import java.util.Map;
 public interface GameFilterService {
     List<GameDTO> getFilteredGames(GameRequestParams params, Page page);
     Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<GameDTO> games);
-    Game findGameWithDetails(Long gameId);
+    Game findGameByIdWithAchievements(Long gameId);
     UsefulFilterData getUsefulFilterData();
 }

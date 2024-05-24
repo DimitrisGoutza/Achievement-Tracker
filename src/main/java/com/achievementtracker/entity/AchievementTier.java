@@ -20,11 +20,19 @@ public enum AchievementTier {
         this.colorHex = colorHex;
     }
 
+    public double getMaxPercentage() {
+        return maxPercentage;
+    }
+
+    public double getMinPercentage() {
+        return minPercentage;
+    }
+
     public int getWeight() {
         return weight;
     }
 
-    public String getHexColor() {
+    public String getColorHex() {
         return colorHex;
     }
 
