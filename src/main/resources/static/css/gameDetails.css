@@ -8,7 +8,7 @@ body {
 #achievement-tier-table {
     display: grid;
     grid-template-rows: repeat(6, 5em);
-    grid-template-columns: 12em minmax(auto, 49.75em);
+    grid-template-columns: 12em minmax(auto, 51.25em);
 }
 .tier-container {
     grid-column: 1;
@@ -18,17 +18,18 @@ body {
     align-items: center;
     gap: 0.3em;
 }
-.achievements-container {
+#achievements-carousel-wrapper {
     grid-column: 2;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    position: relative;
+}
+.achievements-container {
+    display: flex;
     align-items: center;
     gap: 1em;
-    padding: 0 1em;
+    padding: 0 2.5em;
     overflow-x: auto;
-}
-.achievements-container:has(img.achievement-icon) {
-    justify-content: flex-start;
 }
 
 /* Achievement Tier Table */
@@ -36,7 +37,7 @@ body {
     border-bottom: solid thin var(--highlight-element-color);
     border-left: solid thin var(--highlight-element-color);
 }
-.tier-container:first-of-type, .achievements-container:nth-of-type(2) {
+.tier-container:first-of-type, #achievements-carousel-wrapper:first-of-type {
     border-top: solid thin var(--highlight-element-color);
 }
 .tier-container > span:first-of-type {
@@ -45,7 +46,7 @@ body {
 .tier-container > span:last-of-type {
     font-style: italic;
 }
-.achievements-container {
+#achievements-carousel-wrapper {
     border-bottom: solid thin var(--highlight-element-color);
     border-right: solid thin var(--highlight-element-color);
 }
@@ -63,6 +64,39 @@ body {
 }
 .achievements-container::-webkit-scrollbar-thumb:hover {
     background-color: var(--active-element-color);
+}
+.carousel-scroll-button {
+    position: absolute;
+    top: 22%;
+    z-index: 1;
+    background-image: url("../img/carousel-scroll-right.png");
+    background-color: rgba(50, 62, 75, 0.4); /* --highlight-element-color: #323E4B */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-origin: content-box;
+    border: 0;
+    border-radius: 20px;
+    height: 3em;
+    width: 3em;
+}
+.carousel-scroll-button[data-direction='left'] {
+    transform: scaleX(-1);
+    left: 0;
+}
+.carousel-scroll-button[data-direction='right'] {
+    right: 0;
+}
+.carousel-scroll-button:hover {
+    background-color: rgba(50, 62, 75, 0.7); /* --highlight-element-color: #323E4B */
+}
+.carousel-scroll-button:disabled {
+    background-image: url("../img/carousel-scroll-right-disabled.png");
+}
+.carousel-scroll-button[data-direction='left']:disabled {
+    transform: scaleX(-1);
+}
+.carousel-scroll-button:disabled, .carousel-scroll-button:disabled:hover {
+    background-color: transparent;
 }
 .achievement-icon {
     height: 40px;

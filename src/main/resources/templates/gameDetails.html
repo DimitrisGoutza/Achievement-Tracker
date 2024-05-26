@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="/css/gameDetails.css">
 </head>
 <body>
-    <!-- TODO: add table scrolling functionality -->
     <div id="game-information">
         <h1 th:text="${game.title}"></h1>
         <img th:src="${game.images.capsuleImageURL}">
@@ -26,11 +25,15 @@
                 <span th:text="${tier.name()}"></span>
                 <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
             </div>
-            <div class="achievements-container" th:inline="text">
-                <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
-                <img class="achievement-icon" th:each="achievement : ${achievements}" th:if="${achievement.tier.equals(tier)}"
-                     th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
-                     th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}"/>
+            <div id="achievements-carousel-wrapper">
+                <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
+                <div class="achievements-container" th:inline="text">
+                    <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
+                    <img class="achievement-icon" th:each="achievement : ${achievements}" th:if="${achievement.tier.equals(tier)}"
+                         th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
+                         th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}"/>
+                </div>
+                <button data-direction="right" class="carousel-scroll-button" style="display: none"></button>
             </div>
         </th:block>
     </div>
