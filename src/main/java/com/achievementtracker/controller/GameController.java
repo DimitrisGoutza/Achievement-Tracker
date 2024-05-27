@@ -8,7 +8,7 @@ import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.AchievementTier;
 import com.achievementtracker.entity.Game;
 import com.achievementtracker.entity.Game_;
-import com.achievementtracker.service.GameFilterService;
+import com.achievementtracker.service.GameProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,17 +17,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class GameController {
-    private final GameFilterService gameFilterService;
+    private final GameProcessingService gameProcessingService;
 
     @Autowired
-    public GameController(GameFilterService gameFilterService) {
-        this.gameFilterService = gameFilterService;
+    public GameController(GameProcessingService gameProcessingService) {
+        this.gameProcessingService = gameProcessingService;
     }
 
     @GetMapping("/games")
@@ -38,9 +37,9 @@ public class GameController {
                 Game_.challengeRating, Game_.difficultySpread, Game_.rating);
         page.setCurrent(params.getPageAsInt());
 
-        List<GameDTO> games = gameFilterService.getFilteredGames(params, page);
-        Map<Long, List<Achievement>> achievementsMap = gameFilterService.getTopXAchievementsForGames(3, games);
-        UsefulFilterData usefulFilterData = gameFilterService.getUsefulFilterData();
+        List<GameDTO> games = gameProcessingService.getFilteredGames(params, page);
+        Map<Long, List<Achievement>> achievementsMap = gameProcessingService.getTopXAchievementsForGames(3, games);
+        UsefulFilterData usefulFilterData = gameProcessingService.getUsefulFilterData();
 
         model.addAttribute("games", games);
         model.addAttribute("achievements", achievementsMap);
@@ -54,12 +53,12 @@ public class GameController {
     @GetMapping("/games/{gameId}")
     public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
 
-        Game game = gameFilterService.findGameByIdWithAchievements(gameId);
-        List<Achievement> sortedAchievements = game.getAchievements().stream().sorted(Comparator.comparingDouble(Achievement::getPercentage)).toList();
+        Game game = gameProcessingService.findGameByIdWithAchievements(gameId);
+        Map<AchievementTier, Integer> tierCountMap = gameProcessingService.getAchievementCountPerTier(game.getAchievementsAsList());
 
         model.addAttribute("game", game);
-        model.addAttribute("achievements", sortedAchievements);
         model.addAttribute("tiers", AchievementTier.values());
+        model.addAttribute("tierCountMap", tierCountMap);
 
         return "gameDetails";
     }

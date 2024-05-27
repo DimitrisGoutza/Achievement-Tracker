@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "GAME")
@@ -173,6 +171,12 @@ public class Game {
 
     public Set<Achievement> getAchievements() {
         return achievements;
+    }
+
+    public List<Achievement> getAchievementsAsList() {
+        return achievements.stream()
+                .sorted(Comparator.comparingInt(Achievement::getPosition))
+                .toList();
     }
 
     public Set<CategorizedGame> getCategorizedGames() {

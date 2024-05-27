@@ -5,14 +5,16 @@ import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.AchievementTier;
 import com.achievementtracker.entity.Game;
 
 import java.util.List;
 import java.util.Map;
 
-public interface GameFilterService {
+public interface GameProcessingService {
     List<GameDTO> getFilteredGames(GameRequestParams params, Page page);
     Map<Long, List<Achievement>> getTopXAchievementsForGames(int topAmount, List<GameDTO> games);
     Game findGameByIdWithAchievements(Long gameId);
     UsefulFilterData getUsefulFilterData();
+    Map<AchievementTier, Integer> getAchievementCountPerTier(List<Achievement> achievements);
 }

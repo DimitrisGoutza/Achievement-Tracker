@@ -8,24 +8,26 @@ import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
 import com.achievementtracker.entity.Achievement;
+import com.achievementtracker.entity.AchievementTier;
 import com.achievementtracker.entity.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class GameFilterServiceImpl implements GameFilterService {
+public class GameProcessingServiceImpl implements GameProcessingService {
     private final GameDAO gameDAO;
     private final CategoryDAO categoryDAO;
     private final AchievementDAO achievementDAO;
     private final DateTimeFormatter yearMonthFormat = DateTimeFormatter.ofPattern("yyyy-MM");
 
     @Autowired
-    public GameFilterServiceImpl(GameDAO gameDAO, CategoryDAO categoryDAO, AchievementDAO achievementDAO) {
+    public GameProcessingServiceImpl(GameDAO gameDAO, CategoryDAO categoryDAO, AchievementDAO achievementDAO) {
         this.gameDAO = gameDAO;
         this.categoryDAO = categoryDAO;
         this.achievementDAO = achievementDAO;
@@ -113,5 +115,19 @@ public class GameFilterServiceImpl implements GameFilterService {
                 gameDAO.findMaxReviews(),
                 gameDAO.findMinimumReleaseDate().format(yearMonthFormat)
         );
+    }
+
+    @Override
+    public Map<AchievementTier, Integer> getAchievementCountPerTier(List<Achievement> achievements) {
+        Map<AchievementTier, Integer> countMap = new HashMap<>();
+
+        for (AchievementTier tier : AchievementTier.values())
+            countMap.put(tier, 0);
+        for (Achievement achievement : achievements) {
+            AchievementTier currentTier = achievement.getTier();
+            countMap.put(currentTier, countMap.get(currentTier) + 1);
+        }
+
+        return countMap;
     }
 }

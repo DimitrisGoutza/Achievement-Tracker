@@ -29,7 +29,7 @@
                 <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
                 <div class="achievements-container" th:inline="text">
                     <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
-                    <img class="achievement-icon" th:each="achievement : ${achievements}" th:if="${achievement.tier.equals(tier)}"
+                    <img class="achievement-icon" th:each="achievement : ${game.achievementsAsList}" th:if="${achievement.tier.equals(tier)}"
                          th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
                          th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}"/>
                 </div>
@@ -38,10 +38,11 @@
         </th:block>
     </div>
     <th:block th:each="tier : ${tiers}">
-        <h2 class="tier-title" th:text="${tier.name()}"/>
+        <h2 class="tier-title" th:inline="text">[[${tier.name()}]] ([[${tierCountMap.get(tier)}]])</h2>
         <table class="achievement-details-table">
             <tbody>
-            <tr th:each="achievement : ${achievements.reversed()}" th:if="${achievement.tier.equals(tier)}">
+            <tr th:if="${tierCountMap.get(tier) == 0}"><td colspan="3" style="font-style: italic">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
+            <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}">
                 <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
                 <td><div class="achievement-text-details"><h3 class="achievement-title" th:text="${achievement.displayName}"/><p class="achievement-description" th:text="${achievement.description}"></p></div></td>
                 <td><span class="achievement-percentage" th:text="${achievement.percentage} + '%'"></span></td>
@@ -49,4 +50,5 @@
             </tbody>
         </table>
     </th:block>
+</body>
 </html>
