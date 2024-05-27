@@ -16,7 +16,7 @@
 <body>
     <div id="game-information">
         <h1 th:text="${game.title}"></h1>
-        <img th:src="${game.images.capsuleImageURL}">
+        <img th:src="${game.images.headerImageURL}">
         <p th:text="${game.shortDescription}"></p>
     </div>
     <div id="achievement-tier-table">
@@ -37,5 +37,16 @@
             </div>
         </th:block>
     </div>
-</body>
+    <th:block th:each="tier : ${tiers}">
+        <h2 class="tier-title" th:text="${tier.name()}"/>
+        <table class="achievement-details-table">
+            <tbody>
+            <tr th:each="achievement : ${achievements.reversed()}" th:if="${achievement.tier.equals(tier)}">
+                <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
+                <td><div class="achievement-text-details"><h3 class="achievement-title" th:text="${achievement.displayName}"/><p class="achievement-description" th:text="${achievement.description}"></p></div></td>
+                <td><span class="achievement-percentage" th:text="${achievement.percentage} + '%'"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </th:block>
 </html>

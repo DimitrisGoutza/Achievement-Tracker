@@ -32,6 +32,21 @@ body {
     overflow-x: auto;
 }
 
+/* Layout Containers - Achievement Details Tables */
+/* TODO : put borders on this and maybe coloring for the percentage amount, then move on to making it a dropdown centering the whole page with a background */
+.achievement-text-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 1em;
+}
+
+/* Game Details */
+#game-title, #game-description {
+    margin: 0;
+}
+
 /* Achievement Tier Table */
 .tier-container {
     border-bottom: solid thin var(--highlight-element-color);
@@ -109,4 +124,13 @@ body {
     text-align: center;
     font-style: italic;
     color: var(--alt-font-color);
+}
+
+/* Achievement Details */
+.achievement-title, .achievement-description {
+    margin: 0;
+}
+.achievement-icon-big {
+    width: 64px;
+    height: 64px;
 }

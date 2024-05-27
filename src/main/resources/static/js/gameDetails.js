@@ -42,7 +42,7 @@ achievementContainers.forEach(container => container.addEventListener("scroll", 
 //endregion
 /* ---------------------- Function Declarations ---------------------- */
 function replacePlaceholderImages() {
-    const imageElements = document.querySelectorAll("img.achievement-icon");
+    const imageElements = document.querySelectorAll("img.achievement-icon, img.achievement-icon-big");
     imageElements.forEach(image => {
         const actualSrc = image.dataset.actualSrc;
 
