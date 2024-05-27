@@ -18,7 +18,7 @@ body {
     align-items: center;
     gap: 0.3em;
 }
-#achievements-carousel-wrapper {
+.achievements-carousel-wrapper {
     grid-column: 2;
     display: flex;
     justify-content: flex-start;
@@ -52,7 +52,7 @@ body {
     border-bottom: solid thin var(--highlight-element-color);
     border-left: solid thin var(--highlight-element-color);
 }
-.tier-container:first-of-type, #achievements-carousel-wrapper:first-of-type {
+.tier-container:first-of-type, .achievements-carousel-wrapper:nth-of-type(2) {
     border-top: solid thin var(--highlight-element-color);
 }
 .tier-container > span:first-of-type {
@@ -61,7 +61,7 @@ body {
 .tier-container > span:last-of-type {
     font-style: italic;
 }
-#achievements-carousel-wrapper {
+.achievements-carousel-wrapper {
     border-bottom: solid thin var(--highlight-element-color);
     border-right: solid thin var(--highlight-element-color);
 }

@@ -25,7 +25,7 @@
                 <span th:text="${tier.name()}"></span>
                 <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
             </div>
-            <div id="achievements-carousel-wrapper">
+            <div class="achievements-carousel-wrapper">
                 <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
                 <div class="achievements-container" th:inline="text">
                     <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
