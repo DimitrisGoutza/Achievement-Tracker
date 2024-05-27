@@ -120,7 +120,7 @@ filterForm.addEventListener("reset", () => clearFilters());
 /* ---------------------- Function Declarations ---------------------- */
 //region General
 function replacePlaceholderImages() {
-    const imageElements = document.querySelectorAll('.game-banner-img, .achievement-icon');
+    const imageElements = document.querySelectorAll('img.game-capsule, img.achievement-icon');
     imageElements.forEach(image => {
         const actualSrc = image.dataset.actualSrc;
 

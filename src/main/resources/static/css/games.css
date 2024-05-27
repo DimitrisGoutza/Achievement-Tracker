@@ -149,7 +149,7 @@ th:nth-of-type(5) {
 th:nth-of-type(6) {
     width: 5.8em;
 }
-td:has(img.game-banner-img) {
+td:has(img.game-capsule) {
     line-height: 0;
 }
 td:has(.title-achievements-container) {
@@ -211,7 +211,7 @@ tbody > tr:hover {
     display: block;
     margin: auto;
 }
-.game-banner-img {
+.game-capsule {
     max-width: 200px;
     background-color: var(--dark-color-accent);
 }
