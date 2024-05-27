@@ -33,7 +33,7 @@ body {
 }
 
 /* Layout Containers - Achievement Details Tables */
-/* TODO : put borders on this and maybe coloring for the percentage amount, then move on to making it a dropdown centering the whole page with a background */
+/* TODO : put borders on this and maybe coloring for the percentage amount, then move on to centering the whole page with a background */
 .achievement-text-details {
     display: flex;
     flex-direction: column;

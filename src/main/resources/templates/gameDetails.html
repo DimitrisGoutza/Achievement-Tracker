@@ -38,6 +38,7 @@
         </th:block>
     </div>
     <th:block th:each="tier : ${tiers}">
+        <!-- TODO: add arrow icon and make it a dropdown -->
         <h2 class="tier-title" th:inline="text">[[${tier.name()}]] ([[${tierCountMap.get(tier)}]])</h2>
         <table class="achievement-details-table">
             <tbody>
