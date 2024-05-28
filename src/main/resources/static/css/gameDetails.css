@@ -2,13 +2,15 @@ body {
     background-color: var(--main-background-color);
     color: var(--main-font-color);
     font-family: var(--font-family);
+    width: 70%;
+    margin: auto;
 }
 
 /* Layout Containers - Achievement Tier Table */
 #achievement-tier-table {
     display: grid;
     grid-template-rows: repeat(6, 5em);
-    grid-template-columns: 12em minmax(24.75em, 51.25em);
+    grid-template-columns: 12em minmax(0, 1fr);
 }
 .tier-container {
     grid-column: 1;
@@ -33,13 +35,39 @@ body {
 }
 
 /* Layout Containers - Achievement Details Tables */
-/* TODO : put borders on this and maybe coloring for the percentage amount, then move on to centering the whole page with a background */
+/* TODO : center the whole page with a background */
+.achievement-details-table {
+    width: 100%;
+}
+.achievement-details-table td {
+    padding: 0.5em 1em;
+}
+td:has(img.achievement-icon-big) {
+    line-height: 0;
+}
+td:has(img.achievement-icon-big), td:has(.achievement-percentage) {
+    width: auto;
+}
+td:has(.achievement-text-details) {
+    width: 100%;
+}
 .achievement-text-details {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 0 1em;
+}
+.achievement-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
+.achievement-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 }
 
 /* Game Details */
@@ -126,7 +154,21 @@ body {
     color: var(--alt-font-color);
 }
 
-/* Achievement Details */
+/* Achievement Details Tables */
+.achievement-details-table {
+    border-collapse: collapse;
+}
+.achievement-details-table tr {
+    background-color: var(--highlight-element-color);
+    border-bottom: solid 5px var(--main-background-color);
+}
+tr:has(td.no-achievements-cell) {
+    background-color: unset;
+}
+td.no-achievements-cell {
+    font-style: italic;
+    text-align: center;
+}
 .achievement-title, .achievement-description {
     margin: 0;
 }

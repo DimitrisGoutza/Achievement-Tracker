@@ -15,6 +15,7 @@ showMessageForEmptyTiers();
 makeCarouselScrollButtonsVisible();
 disableOrEnableCarouselButtons();
 //endregion
+colorTableRowsAccordingToPercentage();
 /* ---------------------- Event Listeners ---------------------- */
 //region Carousel
 carouselButtons.forEach(button => {
@@ -60,6 +61,18 @@ function showMessageForEmptyTiers() {
             container.parentElement.style.justifyContent = "center";
         }
     })
+}
+function colorTableRowsAccordingToPercentage() {
+    const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--active-element-color');
+
+    const achievementTables = document.querySelectorAll("table.achievement-details-table");
+    achievementTables.forEach(table => {
+        const backgroundColor = getComputedStyle(table.querySelector("tr")).backgroundColor;
+        table.querySelectorAll("tr").forEach(row => {
+            const percentage = parseFloat(row.dataset.percentage);
+            row.style.background = `linear-gradient(to right, ${activeColor} ${percentage}%, ${backgroundColor} ${percentage}%, ${backgroundColor} 100%)`;
+        });
+    });
 }
 //region Carousel
 function scrollAchievementsContainer(button, scrollAmount, scrollBehavior) {
