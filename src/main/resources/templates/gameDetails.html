@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/gameDetails.css">
 </head>
-<body>
+<body th:style="'background-image: url(' + ${game.images.backgroundImageURL} + ')'">
     <div id="game-information">
         <h1 th:text="${game.title}"></h1>
         <img th:src="${game.images.headerImageURL}">
@@ -39,12 +39,16 @@
     </div>
     <!-- TODO: add a client side search for achievements -->
     <th:block th:each="tier : ${tiers}">
-        <!-- TODO: add arrow icon and make it a dropdown -->
-        <h2 class="tier-title" th:inline="text">[[${tier.name()}]] ([[${tierCountMap.get(tier)}]])</h2>
-        <table class="achievement-details-table">
+        <div class="tier-dropdown-container" th:data-tier="${tier}">
+            <h2 class="tier-title" th:inline="text">[[${#strings.substring(tier.name(),0,1).toUpperCase() + #strings.substring(tier.name().toLowerCase(),1)}]] ([[${tierCountMap.get(tier)}]])</h2>
+            <span data-state="hidden" class="dropdown-indicator"></span>
+        </div>
+        <hr>
+        <table class="achievement-details-table" data-state="hidden" th:data-tier="${tier}">
             <tbody>
-            <tr th:if="${tierCountMap.get(tier) == 0}"><td class="no-achievements-cell" colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
-            <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}" th:data-percentage="${achievement.percentage}">
+            <tr th:if="${tierCountMap.get(tier) == 0}" class="no-achievements-row"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
+            <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
+                th:data-percentage="${achievement.percentage}">
                 <!-- TODO: use a hash here to travel to sections (achievements) -->
                 <!-- TODO: add a "show" button for hidden achievements to prevent spoilers -->
                 <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>

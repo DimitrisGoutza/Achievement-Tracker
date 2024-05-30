@@ -2,11 +2,11 @@ package com.achievementtracker.entity;
 
 public enum AchievementTier {
     COMMON(100, 50, 1, "#A8A8A8"),
-    UNCOMMON(50, 25, 2, "#006616"),
-    RARE(25, 10, 5, "#50A7D3"),
+    UNCOMMON(50, 25, 2, "#0C9321"),
+    RARE(25, 10, 5, "#0091FA"),
     EPIC(10, 5, 10, "#B233C3"),
-    LEGENDARY(5, 1, 50, "#CEAE39"),
-    MYTHIC(1, 0, 100, "#FF4F29");
+    LEGENDARY(5, 1, 50, "#DAB842"),
+    MYTHIC(1, 0, 100, "#FF3246");
 
     private final double maxPercentage;
     private final double minPercentage;

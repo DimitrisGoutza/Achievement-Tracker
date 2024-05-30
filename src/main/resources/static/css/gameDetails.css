@@ -4,6 +4,10 @@ body {
     font-family: var(--font-family);
     width: 70%;
     margin: auto;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: top center;
+    background-size: 100%;
 }
 
 /* Layout Containers - Achievement Tier Table */
@@ -35,9 +39,20 @@ body {
 }
 
 /* Layout Containers - Achievement Details Tables */
-/* TODO : center the whole page with a background */
+.tier-dropdown-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1em;
+}
+.tier-dropdown-container, .achievement-details-table {
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+}
 .achievement-details-table {
-    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5em;
 }
 .achievement-details-table td {
     padding: 0.5em 1em;
@@ -77,11 +92,11 @@ td:has(.achievement-text-details) {
 
 /* Achievement Tier Table */
 .tier-container {
-    border-bottom: solid thin var(--highlight-element-color);
-    border-left: solid thin var(--highlight-element-color);
+    border-bottom: solid thin var(--main-background-color);
+    background: linear-gradient(to right, rgba(27,40,54,1) -60%, rgba(0,0,0,0));
 }
-.tier-container:first-of-type, .achievements-carousel-wrapper:nth-of-type(2) {
-    border-top: solid thin var(--highlight-element-color);
+.achievements-carousel-wrapper:nth-of-type(2) {
+    border-top: solid thin #445265;
 }
 .tier-container > span:first-of-type {
     font-weight: bold;
@@ -90,8 +105,8 @@ td:has(.achievement-text-details) {
     font-style: italic;
 }
 .achievements-carousel-wrapper {
-    border-bottom: solid thin var(--highlight-element-color);
-    border-right: solid thin var(--highlight-element-color);
+    border-bottom: solid thin #445265;
+    border-right: solid thin #445265;
 }
 .achievements-container::-webkit-scrollbar {
     height: 0.2em;
@@ -103,7 +118,6 @@ td:has(.achievement-text-details) {
 }
 .achievements-container::-webkit-scrollbar-thumb {
     background-color: var(--alt-font-color);
-    border-radius: 5px;
 }
 .achievements-container::-webkit-scrollbar-thumb:hover {
     background-color: var(--active-element-color);
@@ -155,17 +169,53 @@ td:has(.achievement-text-details) {
 }
 
 /* Achievement Details Tables */
-.achievement-details-table {
-    border-collapse: collapse;
+.tier-dropdown-container {
+    color: var(--alt-font-color);
 }
-.achievement-details-table tr {
+.tier-dropdown-container:hover {
+    cursor: pointer;
+}
+.tier-title {
+    margin: 0;
+}
+.dropdown-indicator[data-state='extended'], .dropdown-indicator[data-state='hidden'] {
+    background-image: url("../img/dropdown-indicator-big.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 24px auto;
+    width: 2em;
+    height: 2em;
+    transition: transform 0.2s ease-out;
+}
+.dropdown-indicator[data-state='extended'] {
+    transform: rotate(-180deg);
+}
+.tier-dropdown-container:hover, .tier-dropdown-container:has(.dropdown-indicator[data-state='extended']) {
+    color: var(--main-font-color);
+}
+.tier-dropdown-container:hover > .dropdown-indicator, .tier-dropdown-container > .dropdown-indicator[data-state='extended'] {
+    background-image: url("../img/dropdown-indicator-big-hover.png");
+}
+hr {
+    height: 2px;
+    border: none;
+    background: radial-gradient(circle, rgba(68,82,101,1) 90%, rgba(0,0,0,0) 100%);
+}
+.achievement-details-table[data-state='hidden'] tr {
+    display: none;
     background-color: var(--highlight-element-color);
-    border-bottom: solid 5px var(--main-background-color);
 }
-tr:has(td.no-achievements-cell) {
-    background-color: unset;
+.achievement-details-table[data-state='extended'] tr {
+    display: table-row;
 }
-td.no-achievements-cell {
+.achievement-details-table tr.no-achievements-row {
+    background: transparent;
+}
+.achievement-details-table td:has(img.achievement-icon-big) {
+    border-right: solid thin var(--main-background-color);
+}
+.no-achievements-row {
+    color: var(--alt-font-color);
     font-style: italic;
     text-align: center;
 }
