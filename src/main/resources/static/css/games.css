@@ -94,7 +94,8 @@ label[for='max-release-date'] {
 /* Table */
 table {
     table-layout: fixed;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 0.3em;
     width: 65.6em;
 }
 table:has(tr.no-results) {
@@ -109,8 +110,8 @@ span.sort-direction {
     background-repeat: no-repeat;
     background-size: 12px auto;
     background-position: center;
-    width: 16px;
-    height: 16px;
+    width: 1em;
+    height: 1em;
 }
 th[data-sorted='default'] > span.sort-direction {
     background-image: url("../img/sort-default.png");
@@ -158,15 +159,32 @@ td:has(.title-achievements-container) {
 tr.no-results, tr.no-results:hover {
     background-color: unset;
 }
-thead > tr {
+tbody td {
+    border-top: solid thin var(--main-background-color);
+    border-bottom: solid thin var(--main-background-color);
+}
+tbody td:first-of-type {
+    border-left: solid thin var(--main-background-color);
+}
+tbody td:last-of-type {
+    border-right: solid thin var(--main-background-color);
 }
 tbody > tr {
-    border-bottom: 0.4em solid var(--main-background-color);
-    border-top: 0.4em solid var(--main-background-color);
     background-color: var(--table-content-color);
 }
 tbody > tr:hover {
     background-color: var(--dark-color-accent);
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
+}
+tbody > tr:hover td {
+    border-top: solid thin var(--highlight-element-color);
+    border-bottom: solid thin var(--highlight-element-color);
+}
+tbody > tr:hover td:first-of-type {
+    border-left: solid thin var(--highlight-element-color);
+}
+tbody > tr:hover td:last-of-type {
+    border-right: solid thin var(--highlight-element-color);
 }
 
 /* Page-Size & Search */
