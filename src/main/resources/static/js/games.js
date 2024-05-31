@@ -595,7 +595,7 @@ function searchCategories(input) {
     const regex = new RegExp(input, 'i');
 
     allCategories.forEach(category => {
-        const categoryName = category.querySelector("label.category-name").textContent;
+        const categoryName = category.querySelector("label.category-name > span").textContent;
         if (regex.test(categoryName)) {
             category.style.display = "";
         } else {

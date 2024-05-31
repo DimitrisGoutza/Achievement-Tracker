@@ -7,9 +7,14 @@ body {
 /* Layout Containers - Main */
 #main-container {
     display: grid;
+    grid-template-columns: 75% 1fr;
     justify-content: center;
     align-items: start;
     gap: 1em;
+}
+#main-container-header, table, #main-container-footer {
+    width: 90%;
+    justify-self: end;
 }
 #main-container-header {
     display: flex;
@@ -19,15 +24,6 @@ body {
 }
 table {
     grid-area: 2/1;
-}
-.title-achievements-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.top-achievements-container {
-    display: flex;
-    gap: 0.5em;
 }
 #main-container-footer {
     display: flex;
@@ -45,6 +41,7 @@ table {
 #filter-form {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1em;
     grid-area: 2/2;
     margin-top: 1em;
@@ -62,6 +59,7 @@ table {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 #release-inputs-container {
     display: grid;
@@ -85,41 +83,60 @@ label[for='max-release-date'] {
     display: flex;
     flex-direction: column;
     gap: 0.3em;
-    max-width: 16.125em; /* + 2em (padding: 1em) + 0.125em (border: thin) */
+    width: 100%;
 }
 #category-filter, #reviews-filter, #release-date-filter {
-    max-width: 14em;
+    width: 50%;
+}
+#filter-submit-button, #filter-form button[type='reset'] {
+    width: calc(50% + 2em);
 }
 
 /* Table */
 table {
-    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0 0.3em;
-    width: 65.6em;
 }
 table:has(tr.no-results) {
     min-height: 100%;
 }
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.1em;
+}
+.title-achievements-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20%;
+}
+.top-achievements-container {
+    display: flex;
+    gap: 0.5em;
+}
 span.column-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
     vertical-align: middle;
 }
 span.sort-direction {
-    display: inline-block;
-    vertical-align: middle;
     background-repeat: no-repeat;
     background-size: 12px auto;
     background-position: center;
     width: 1em;
     height: 1em;
 }
-th[data-sorted='default'] > span.sort-direction {
+th[data-sorted='default'] span.sort-direction {
     background-image: url("../img/sort-default.png");
 }
-th[data-sorted='asc'] > span.sort-direction {
+th[data-sorted='asc'] span.sort-direction {
     background-image: url("../img/sort-ascending.png");
 }
-th[data-sorted='desc'] > span.sort-direction {
+th[data-sorted='desc'] span.sort-direction {
     background-image: url("../img/sort-descending.png");
 }
 th, td {
@@ -129,35 +146,32 @@ th, td {
 th:hover {
     cursor: pointer;
 }
-th:hover > span.column-name {
+th:hover span.column-name {
     text-decoration: underline;
 }
-th:nth-of-type(1) {
-    width: 12.5em;
+td:nth-of-type(1) {
+    width: 0;
 }
-th:nth-of-type(2) {
-    width: 24.5em;
+td:nth-of-type(2) {
+    width: 35%;
 }
-th:nth-of-type(3) {
-    width: 8.8em;
+td:nth-of-type(3) {
+    width: auto;
 }
-th:nth-of-type(4) {
-    width: 9.5em;
+td:nth-of-type(4) {
+    width: auto;
 }
-th:nth-of-type(5) {
-    width: 4.5em;
+td:nth-of-type(5) {
+    width: 8%;
 }
-th:nth-of-type(6) {
-    width: 5.8em;
+td:nth-of-type(6) {
+    width: 10%;
 }
 td:has(img.game-capsule) {
     line-height: 0;
 }
 td:has(.title-achievements-container) {
     padding-left: 1em;
-}
-tr.no-results, tr.no-results:hover {
-    background-color: unset;
 }
 tbody td {
     border-top: solid thin var(--main-background-color);
@@ -169,21 +183,21 @@ tbody td:first-of-type {
 tbody td:last-of-type {
     border-right: solid thin var(--main-background-color);
 }
-tbody > tr {
+tbody > tr:not(.no-results) {
     background-color: var(--table-content-color);
 }
-tbody > tr:hover {
+tbody > tr:not(.no-results):hover {
     background-color: var(--dark-color-accent);
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
 }
-tbody > tr:hover td {
+tbody > tr:not(.no-results):hover td {
     border-top: solid thin var(--highlight-element-color);
     border-bottom: solid thin var(--highlight-element-color);
 }
-tbody > tr:hover td:first-of-type {
+tbody > tr:not(.no-results):hover td:first-of-type {
     border-left: solid thin var(--highlight-element-color);
 }
-tbody > tr:hover td:last-of-type {
+tbody > tr:not(.no-results):hover td:last-of-type {
     border-right: solid thin var(--highlight-element-color);
 }
 
@@ -234,10 +248,13 @@ tbody > tr:hover td:last-of-type {
     background-color: var(--dark-color-accent);
 }
 .game-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
     color: inherit;
     text-align: start;
     text-decoration: none;
-    max-width: 14em;
 }
 .game-title:hover {
     text-decoration: underline;
@@ -290,7 +307,6 @@ tbody > tr:hover td:last-of-type {
 
 /* Filters */
 #filter-form {
-    max-width: 21em;
     color: var(--alt-font-color);
 }
 .filter-header {
@@ -344,7 +360,6 @@ label:has(#hidden-achievements-checkbox) {
     padding: 0;
     margin: 0.3em 0 0 0;
     list-style-type: none;
-    overflow-x: hidden;
     overflow-y: scroll;
     max-height: 18.139em;
 }
@@ -367,11 +382,17 @@ label:has(#hidden-achievements-checkbox) {
     gap: 0.3em;
     padding: 0.2em;
 }
+.category-name > span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
 .category-item:hover {
     background-color: var(--highlight-element-color);
 }
 .category-item:has(input[type='checkbox']:checked) {
-    background-color: var(--active-element-color);
+    background: linear-gradient(to left, rgba(27,40,54,1) -50%, rgba(84, 159, 200,1));
 }
 #min-reviews-input, #max-reviews-input {
     text-align: center;
@@ -379,7 +400,7 @@ label:has(#hidden-achievements-checkbox) {
     font-family: inherit;
 }
 #range-separator {
-    height: 14px;
+    font-size: 2em;
 }
 #min-release-date, #max-release-date {
     text-align: center;
@@ -398,7 +419,7 @@ label:has(#hidden-achievements-checkbox) {
     font-weight: bold;
     cursor: pointer;
     color: var(--main-font-color);
-    background-color: var(--active-element-color);
+    background: linear-gradient(to top, rgba(27,40,54,1) -150%, rgba(84, 159, 200,1));
     border: 0;
     border-radius: 5px;
     padding: 0.3em 0;
@@ -407,7 +428,7 @@ label:has(#hidden-achievements-checkbox) {
     cursor: not-allowed;
     font-weight: normal;
     color: unset;
-    background-color: transparent;
+    background: transparent;
 }
 #filter-form button[type='reset'] {
     font-family: inherit;

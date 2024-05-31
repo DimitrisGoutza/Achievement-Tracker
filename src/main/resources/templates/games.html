@@ -30,28 +30,40 @@
             <thead>
             <tr>
                 <th data-column-name="id">
-                    <span class="column-name">ID</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">ID</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
                 <th data-column-name="name">
-                    <span class="column-name">Name</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">Name</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
                 <th data-column-name="challenge">
-                    <span class="column-name">Challenge Rating</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">Challenge Rating</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
                 <th data-column-name="difficulty">
-                    <span class="column-name">Difficulty Spread</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">Difficulty Spread</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
                 <th data-column-name="rating">
-                    <span class="column-name">Rating</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">Rating</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
                 <th data-column-name="release">
-                    <span class="column-name">Release</span>
-                    <span class="sort-direction"></span>
+                    <div class="header-container">
+                        <span class="column-name">Release</span>
+                        <span class="sort-direction"></span>
+                    </div>
                 </th>
             </tr>
             </thead>
@@ -114,10 +126,10 @@
                 <input id="category-search" type="search" placeholder="Search">
                 <ul id="category-list">
                     <li class="category-item" th:each="category, index : ${usefulFilterData.categories}" th:data-pos="${index.count}">
-                        <label class="category-name" th:inline="text">
+                        <label class="category-name" th:title="${category.name}">
                             <input class="category-checkbox" type="checkbox" th:value="${category.id}"
                                    th:checked="${prevRequestParams.categoriesAsList.contains(category.id)}">
-                            [[${category.name}]]
+                            <span th:text="${category.name}"/>
                         </label>
                     </li>
                 </ul>
@@ -130,7 +142,7 @@
                            th:value="${prevRequestParams.minReviewsAsNullableInt}"
                            th:maxlength="${#strings.length(usefulFilterData.maxReviews)}"
                            th:size="${#strings.length(usefulFilterData.maxReviews)}">
-                    <img id="range-separator" src="/img/range-indicator.png">
+                    <span id="range-separator">-</span>
                     <input id="max-reviews-input" type="text" placeholder="&infin;" autocomplete="off"
                            th:data-default-max="${prevRequestParams.DEFAULT_MAX_REVIEWS}"
                            th:value="${prevRequestParams.maxReviewsAsNullableInt}"
