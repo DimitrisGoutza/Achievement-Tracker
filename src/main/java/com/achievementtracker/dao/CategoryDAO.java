@@ -10,4 +10,6 @@ public interface CategoryDAO extends GenericDAO<Category, Long> {
     List<Category> findAllSortedByPopularity();
 
     List<Long> findAvailableBasedOnFilteredGames(List<Long> gameIds);
+
+    List<Category> findAllForGame(Long gameId);
 }

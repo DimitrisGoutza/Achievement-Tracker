@@ -57,7 +57,7 @@ dropdownContainers.forEach(container => container.addEventListener("click", () =
 /* ---------------------- Function Declarations ---------------------- */
 //region General
 function replacePlaceholderImages() {
-    const imageElements = document.querySelectorAll("img.achievement-icon, img.achievement-icon-big");
+    const imageElements = document.querySelectorAll("img#game-header ,img.achievement-icon, img.achievement-icon-big");
     imageElements.forEach(image => {
         const actualSrc = image.dataset.actualSrc;
 

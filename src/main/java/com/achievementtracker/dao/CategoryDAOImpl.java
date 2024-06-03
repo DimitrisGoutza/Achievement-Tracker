@@ -39,4 +39,14 @@ public class CategoryDAOImpl extends GenericDAOImpl<Category, Long> implements C
         query.setParameter("gameIds", gameIds);
         return query.getResultList();
     }
+
+    @Override
+    public List<Category> findAllForGame(Long gameId) {
+        TypedQuery<Category> query = em.createQuery("SELECT c FROM CategorizedGame cg " +
+                "JOIN Category c ON cg.category.id = c.id " +
+                "WHERE cg.game.storeId = :gameId " +
+                "ORDER BY cg.votes DESC", Category.class);
+        query.setParameter("gameId", gameId);
+        return query.getResultList();
+    }
 }

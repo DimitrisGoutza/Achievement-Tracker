@@ -4,10 +4,8 @@ import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
-import com.achievementtracker.entity.Achievement;
-import com.achievementtracker.entity.AchievementTier;
-import com.achievementtracker.entity.Game;
-import com.achievementtracker.entity.Game_;
+import com.achievementtracker.entity.*;
+import com.achievementtracker.service.AchievementAnalyticsService;
 import com.achievementtracker.service.GameProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +21,12 @@ import java.util.Map;
 @Controller
 public class GameController {
     private final GameProcessingService gameProcessingService;
+    private final AchievementAnalyticsService achievementAnalyticsService;
 
     @Autowired
-    public GameController(GameProcessingService gameProcessingService) {
+    public GameController(GameProcessingService gameProcessingService, AchievementAnalyticsService achievementAnalyticsService) {
         this.gameProcessingService = gameProcessingService;
+        this.achievementAnalyticsService = achievementAnalyticsService;
     }
 
     @GetMapping("/games")
@@ -54,11 +54,13 @@ public class GameController {
     public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
 
         Game game = gameProcessingService.findGameByIdWithAchievements(gameId);
-        Map<AchievementTier, Integer> tierCountMap = gameProcessingService.getAchievementCountPerTier(game.getAchievementsAsList());
+        Map<AchievementTier, Integer> tierCountMap = achievementAnalyticsService.getAchievementCountPerTier(game.getAchievementsAsList());
+        List<Category> categories = gameProcessingService.getCategoriesForGame(game.getStoreId());
 
         model.addAttribute("game", game);
         model.addAttribute("tiers", AchievementTier.values());
         model.addAttribute("tierCountMap", tierCountMap);
+        model.addAttribute("categories", categories);
 
         return "gameDetails";
     }

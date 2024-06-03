@@ -15,27 +15,42 @@
 </head>
 <body th:style="'background-image: url(' + ${game.images.backgroundImageURL} + ')'">
     <div id="game-information">
-        <h1 th:text="${game.title}"></h1>
-        <img th:src="${game.images.headerImageURL}">
-        <p th:text="${game.shortDescription}"></p>
-    </div>
-    <div id="achievement-tier-table">
-        <th:block th:each="tier : ${tiers}">
-            <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
-                <span th:text="${tier.name()}"></span>
-                <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
+        <img id="game-header" src="/img/game-header-placeholder.png" th:data-actual-src="${game.images.headerImageURL}" alt="header-image">
+        <div id="reviews-release-container">
+            <span>POSITIVE REVIEWS:</span><span th:text="${game.rating} + ' %'" th:title="${#numbers.formatInteger(game.reviews, 3, 'COMMA')} + ' Reviews'"/>
+            <span>RELEASE DATE:</span><span th:text="${#temporals.format(game.releaseDate, 'dd MMM, yyyy')}"/>
+        </div>
+        <div id="game-information-right">
+            <div id="title-container"><h1 id="game-title" th:text="${game.title}"/>
+                <a target="_blank" th:href="'https://store.steampowered.com/app/' + ${game.storeId}" title="Visit Store Page">
+                    <img id="steam-store-logo" src="/img/steam-store-logo.png" alt="steam-store-icon"/>
+                </a>
             </div>
-            <div class="achievements-carousel-wrapper">
-                <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
-                <div class="achievements-container" th:inline="text">
-                    <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
-                    <img class="achievement-icon" th:each="achievement : ${game.achievementsAsList}" th:if="${achievement.tier.equals(tier)}"
-                         th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
-                         th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}"/>
+            <ul id="game-categories">
+                <li th:each="category : ${categories}">
+                    <a th:text="${category.name}" target="_blank" th:href=" '/games?categories=' + ${category.id}"/>
+                </li>
+            </ul>
+            <div id="game-description" th:utext="${game.shortDescription}"></div>
+        </div>
+        <div id="achievement-tier-table">
+            <th:block th:each="tier : ${tiers}">
+                <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
+                    <span th:text="${tier.name()}"></span>
+                    <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
                 </div>
-                <button data-direction="right" class="carousel-scroll-button" style="display: none"></button>
-            </div>
-        </th:block>
+                <div class="achievements-carousel-wrapper">
+                    <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
+                    <div class="achievements-container" th:inline="text">
+                        <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
+                        <img class="achievement-icon" th:each="achievement : ${game.achievementsAsList}" th:if="${achievement.tier.equals(tier)}"
+                             th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
+                             th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}" alt="achievement-icon"/>
+                    </div>
+                    <button data-direction="right" class="carousel-scroll-button" style="display: none"></button>
+                </div>
+            </th:block>
+        </div>
     </div>
     <!-- TODO: add a client side search for achievements -->
     <th:block th:each="tier : ${tiers}">

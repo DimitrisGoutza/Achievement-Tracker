@@ -5,6 +5,9 @@ import com.achievementtracker.entity.AchievementTier;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class AchievementAnalyticsServiceImpl implements AchievementAnalyticsService {
@@ -43,5 +46,19 @@ public class AchievementAnalyticsServiceImpl implements AchievementAnalyticsServ
         double difficultySpread = highestPercentage - lowestPercentage;
 
         return Math.round(difficultySpread * 100.0) / 100.0;
+    }
+
+    @Override
+    public Map<AchievementTier, Integer> getAchievementCountPerTier(List<Achievement> achievements) {
+        Map<AchievementTier, Integer> countMap = new HashMap<>();
+
+        for (AchievementTier tier : AchievementTier.values())
+            countMap.put(tier, 0);
+        for (Achievement achievement : achievements) {
+            AchievementTier currentTier = achievement.getTier();
+            countMap.put(currentTier, countMap.get(currentTier) + 1);
+        }
+
+        return countMap;
     }
 }
