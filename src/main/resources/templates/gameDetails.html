@@ -55,29 +55,33 @@
     <div id="achievement-details">
         <input id="achievement-search" type="search" placeholder="Search achievements by name, description.." autocomplete="off">
         <th:block th:each="tier : ${tiers}">
-            <div class="tier-dropdown-container" th:data-tier="${tier}">
-                <h2 class="tier-title" th:inline="text">[[${#strings.substring(tier.name(),0,1).toUpperCase() + #strings.substring(tier.name().toLowerCase(),1)}]] ([[${tierCountMap.get(tier)}]])</h2>
-                <span data-state="hidden" class="dropdown-indicator"></span>
+            <div class="tier-dropdown-container" data-state="collapsed">
+                <div class="tier-information">
+                    <h2 class="tier-title" th:inline="text">[[${#strings.substring(tier.name(),0,1).toUpperCase() + #strings.substring(tier.name().toLowerCase(),1)}]] (<span data-role="count">0</span>)</h2>
+                    <span class="dropdown-indicator"></span>
+                </div>
+                <hr>
+                <table class="achievement-details-table" data-displayed-amount="0">
+                    <tbody>
+                        <tr class="no-achievements-row" style="display: none" data-state="collapsed"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
+                        <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
+                            th:data-percentage="${achievement.percentage}" style="display: none" data-state="collapsed">
+                            <!-- TODO: use a hash here to travel to sections (achievements) -->
+                            <!-- TODO: add a "show" button for hidden achievements to prevent spoilers -->
+                            <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
+                            <td>
+                                <div class="achievement-text-details">
+                                    <h3 class="achievement-title" th:text="${achievement.displayName}" th:title="${achievement.displayName}"/>
+                                    <p class="achievement-description" th:text="${achievement.description}" th:title="${achievement.description}"></p>
+                                </div>
+                            </td>
+                            <td><span class="achievement-percentage" th:text="${achievement.percentage} + '%'"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="show-less-button" style="display: none"><span>SHOW LESS</span><img src="/img/arrow-up.png"></button>
+                <button class="show-more-button" style="display: none"><span>SHOW MORE</span><img src="/img/arrow-up.png"></button>
             </div>
-            <hr>
-            <table class="achievement-details-table" data-state="hidden" th:data-tier="${tier}">
-                <tbody>
-                <tr th:if="${tierCountMap.get(tier) == 0}" class="no-achievements-row"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
-                <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
-                    th:data-percentage="${achievement.percentage}">
-                    <!-- TODO: use a hash here to travel to sections (achievements) -->
-                    <!-- TODO: add a "show" button for hidden achievements to prevent spoilers -->
-                    <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
-                    <td>
-                        <div class="achievement-text-details">
-                            <h3 class="achievement-title" th:text="${achievement.displayName}" th:title="${achievement.displayName}"/>
-                            <p class="achievement-description" th:text="${achievement.description}" th:title="${achievement.description}"></p>
-                        </div>
-                    </td>
-                    <td><span class="achievement-percentage" th:text="${achievement.percentage} + '%'"></span></td>
-                </tr>
-                </tbody>
-            </table>
         </th:block>
     </div>
 </body>

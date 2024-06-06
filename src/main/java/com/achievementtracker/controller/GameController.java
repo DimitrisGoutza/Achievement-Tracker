@@ -54,12 +54,10 @@ public class GameController {
     public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
 
         Game game = gameProcessingService.findGameByIdWithAchievements(gameId);
-        Map<AchievementTier, Integer> tierCountMap = achievementAnalyticsService.getAchievementCountPerTier(game.getAchievementsAsList());
         List<Category> categories = gameProcessingService.getCategoriesForGame(game.getStoreId());
 
         model.addAttribute("game", game);
         model.addAttribute("tiers", AchievementTier.values());
-        model.addAttribute("tierCountMap", tierCountMap);
         model.addAttribute("categories", categories);
 
         return "gameDetails";
