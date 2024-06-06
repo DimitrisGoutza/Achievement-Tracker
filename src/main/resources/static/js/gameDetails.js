@@ -185,27 +185,35 @@ function displayRowsPaginated(tierContainer) {
     const table = tierContainer.querySelector("table.achievement-details-table");
     const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
 
+    const allRows = Array.from(table.querySelectorAll("tr"));
+    const rowsToBeDisplayed = allRows.slice(currentlyDisplayed, currentlyDisplayed + ACHIEVEMENT_BATCH_SIZE);
+
     tierContainer.dataset.state = DropdownStates.EXPANDED;
-    const rowsToBeDisplayed = Array.from(table.querySelectorAll("tr"))
-        .slice(currentlyDisplayed, currentlyDisplayed + ACHIEVEMENT_BATCH_SIZE);
     rowsToBeDisplayed.forEach(row => {
         row.style.display = "table-row";
         setTimeout(() => row.dataset.state = DropdownStates.EXPANDED, 10);
     });
-
     table.dataset.displayedAmount = currentlyDisplayed + rowsToBeDisplayed.length;
 }
 function collapseRowsPaginated(tierContainer) {
     const table = tierContainer.querySelector("table.achievement-details-table");
     const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
 
-    const rowsToBeCollapsed = Array.from(table.querySelectorAll("tr"))
-        .slice(currentlyDisplayed - ACHIEVEMENT_BATCH_SIZE, currentlyDisplayed).reverse();
-    rowsToBeCollapsed.forEach(row => {
+    const allRows = Array.from(table.querySelectorAll("tr"));
+    let rowsToBeCollapsed = [];
+
+    const divisibleByBatchSize = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE === 0;
+    if (divisibleByBatchSize) {
+        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - ACHIEVEMENT_BATCH_SIZE, currentlyDisplayed);
+    } else {
+        const remainder = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE;
+        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - remainder, currentlyDisplayed);
+    }
+
+    rowsToBeCollapsed.reverse().forEach(row => {
         row.dataset.state = DropdownStates.COLLAPSED;
         setTimeout(() => row.style.display = "none", 150);
     });
-
     table.dataset.displayedAmount = currentlyDisplayed - rowsToBeCollapsed.length;
 }
 function collapseDropdownContainer(tierContainer) {
