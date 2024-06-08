@@ -347,7 +347,7 @@ hr {
     height: 2em;
     transition: transform 0.2s ease-out;
 }
-.tier-dropdown-container[data-state='expanded'] .dropdown-indicator {
+.tier-dropdown-container[data-state='collapsed'] .dropdown-indicator {
     transform: rotate(-180deg);
 }
 .tier-information:hover, .tier-dropdown-container[data-state='expanded'] .tier-information {

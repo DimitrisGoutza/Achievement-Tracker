@@ -4,15 +4,24 @@ const achievementContainers = achievementTierTable.querySelectorAll("div.achieve
 //region Carousel
 const carouselButtons = achievementTierTable.querySelectorAll("button.carousel-scroll-button");
 //endregion
+//region Achievement Tiers - Dropdown
+const tierDropdownContainers = document.querySelectorAll("div.tier-dropdown-container");
+//endregion
 /* ---------------------- Important Declarations ---------------------- */
 //region Carousel
 const ScrollBehavior = { SMOOTH: "smooth", INSTANT: "instant" };
 let continuousScrollInterval;
 let mousedownDurationInterval;
 //endregion
-//region Tier Achievements
+//region Achievement Tiers - Dropdown
 const DropdownStates = { EXPANDED : "expanded", COLLAPSED: "collapsed" };
+//endregion
+//region Achievement Tiers - Pagination
 const ACHIEVEMENT_BATCH_SIZE = 10;
+//endregion
+//region Achievement Tiers - Search
+let searchTimeout;
+let searchIsActive = false;
 //endregion
 /* ---------------------- DOMContentLoaded Actions ---------------------- */
 //region General
@@ -23,7 +32,7 @@ showMessageForEmptyTiers();
 makeCarouselScrollButtonsVisible();
 disableOrEnableCarouselButtons();
 //endregion
-//region Tier Achievements
+//region Achievement Tiers - Dropdown
 setAchievementCountPerTier();
 colorTableRowsAccordingToPercentage();
 //endregion
@@ -52,9 +61,11 @@ carouselButtons.forEach(button => {
 });
 achievementContainers.forEach(container => container.addEventListener("scroll", () => disableOrEnableCarouselButtons()));
 //endregion
-//region Tier Achievements
+//region Achievement Tiers - Dropdown
 const dropdownContainers = document.querySelectorAll("div.tier-information");
 dropdownContainers.forEach(container => container.addEventListener("click", () => toggleDropdownContainer(container.parentElement)));
+//endregion
+//region Achievement Tiers - Pagination
 const showMoreButtons = document.querySelectorAll("button.show-more-button");
 showMoreButtons.forEach(button => button.addEventListener("click", () => {
     displayRowsPaginated(button.parentElement);
@@ -65,6 +76,29 @@ showLessButtons.forEach(button => button.addEventListener("click", () => {
     collapseRowsPaginated(button.parentElement);
     showOrHidePaginationButton(button.parentElement);
 }));
+//endregion
+//region Achievement Tiers - Search
+const searchInput = document.querySelector("input#achievement-search");
+searchInput.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.trim();
+    // TODO: use async/await & Promises to wait for animations to complete
+    clearTimeout(searchTimeout);
+    const timeoutDuration = (searchTerm === "" ? 0 : 300);
+    searchTimeout = setTimeout(() => {
+        if (searchTerm === "") {
+            searchIsActive = false;
+            tierDropdownContainers.forEach(container => collapseDropdownContainer(container));
+            setAchievementCountPerTier();
+        } else {
+            searchIsActive = true;
+            searchAchievements(searchTerm);
+            tierDropdownContainers.forEach(container => {
+                displayRowsPaginated(container);
+                showOrHidePaginationButton(container);
+            });
+        }
+    }, timeoutDuration);
+});
 //endregion
 /* ---------------------- Function Declarations ---------------------- */
 //region General
@@ -145,27 +179,27 @@ function disableOrEnableCarouselButtons() {
     });
 }
 //endregion
-//region Tier Achievements
+//region Achievement Tiers - Dropdown
 function colorTableRowsAccordingToPercentage() {
     const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--active-element-color');
-    const backgroundColor = getComputedStyle(document.querySelector("table.achievement-details-table tr:not(.no-achievements-row)")).backgroundColor;
+    const backgroundColor = getComputedStyle(document.querySelector("table.achievement-details-table tr:not(tr.no-achievements-row)")).backgroundColor;
 
     const achievementTables = document.querySelectorAll("table.achievement-details-table");
     achievementTables.forEach(table => {
-        table.querySelectorAll("tr:not(.no-achievements-row)").forEach(row => {
+        table.querySelectorAll("tr:not(tr.no-achievements-row)").forEach(row => {
             const percentage = parseFloat(row.dataset.percentage);
             row.style.background = `linear-gradient(to right, ${activeColor} ${percentage}%, ${rgbToRgba(backgroundColor, 0.75)} ${percentage}%, ${rgbToRgba(backgroundColor, 0.75)} 100%)`;
         });
     });
 }
 function setAchievementCountPerTier() {
-    const dropdownContainer = document.querySelectorAll("div.tier-dropdown-container");
-    dropdownContainer.forEach(container => {
+    tierDropdownContainers.forEach(container => {
         const relatedTable = container.querySelector("table");
-        const achievementCount = relatedTable.querySelectorAll("tr:not(.no-achievements-row)").length;
+        const achievementCount = relatedTable.querySelectorAll("tr:not(tr.no-achievements-row)").length;
 
-        if (achievementCount !== 0)
-            relatedTable.querySelector(".no-achievements-row").remove();
+        const noAchievementsRow = relatedTable.querySelector("tr.no-achievements-row");
+        if (noAchievementsRow && achievementCount !== 0)
+            noAchievementsRow.remove();
 
         const countElement = container.querySelector("span[data-role='count']");
         countElement.textContent = achievementCount;
@@ -180,41 +214,6 @@ function toggleDropdownContainer(tierContainer) {
     else {
         collapseDropdownContainer(tierContainer);
     }
-}
-function displayRowsPaginated(tierContainer) {
-    const table = tierContainer.querySelector("table.achievement-details-table");
-    const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
-
-    const allRows = Array.from(table.querySelectorAll("tr"));
-    const rowsToBeDisplayed = allRows.slice(currentlyDisplayed, currentlyDisplayed + ACHIEVEMENT_BATCH_SIZE);
-
-    tierContainer.dataset.state = DropdownStates.EXPANDED;
-    rowsToBeDisplayed.forEach(row => {
-        row.style.display = "table-row";
-        setTimeout(() => row.dataset.state = DropdownStates.EXPANDED, 10);
-    });
-    table.dataset.displayedAmount = currentlyDisplayed + rowsToBeDisplayed.length;
-}
-function collapseRowsPaginated(tierContainer) {
-    const table = tierContainer.querySelector("table.achievement-details-table");
-    const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
-
-    const allRows = Array.from(table.querySelectorAll("tr"));
-    let rowsToBeCollapsed = [];
-
-    const divisibleByBatchSize = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE === 0;
-    if (divisibleByBatchSize) {
-        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - ACHIEVEMENT_BATCH_SIZE, currentlyDisplayed);
-    } else {
-        const remainder = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE;
-        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - remainder, currentlyDisplayed);
-    }
-
-    rowsToBeCollapsed.reverse().forEach(row => {
-        row.dataset.state = DropdownStates.COLLAPSED;
-        setTimeout(() => row.style.display = "none", 150);
-    });
-    table.dataset.displayedAmount = currentlyDisplayed - rowsToBeCollapsed.length;
 }
 function collapseDropdownContainer(tierContainer) {
     const table = tierContainer.querySelector("table.achievement-details-table");
@@ -231,6 +230,8 @@ function collapseDropdownContainer(tierContainer) {
     // finally update container state
     tierContainer.dataset.state = DropdownStates.COLLAPSED;
 }
+//endregion
+//region Achievement Tiers - Pagination
 function showOrHidePaginationButton(tierContainer) {
     const table = tierContainer.querySelector("table.achievement-details-table");
     const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
@@ -241,5 +242,63 @@ function showOrHidePaginationButton(tierContainer) {
 
     const showLessBtn = tierContainer.querySelector("button.show-less-button");
     showLessBtn.style.display = currentlyDisplayed > ACHIEVEMENT_BATCH_SIZE ? "flex" : "none";
+}
+function displayRowsPaginated(tierContainer) {
+    const table = tierContainer.querySelector("table.achievement-details-table");
+    const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
+
+    const allRows = Array.from(table.querySelectorAll(searchIsActive ? "tr[data-matches-search='true']" : "tr"));
+    const rowsToBeDisplayed = allRows.slice(currentlyDisplayed, currentlyDisplayed + ACHIEVEMENT_BATCH_SIZE);
+
+    tierContainer.dataset.state = (allRows.length === 0 ? DropdownStates.COLLAPSED : DropdownStates.EXPANDED);
+    rowsToBeDisplayed.forEach(row => {
+        row.style.display = "table-row";
+        setTimeout(() => row.dataset.state = DropdownStates.EXPANDED, 10);
+    });
+    table.dataset.displayedAmount = currentlyDisplayed + rowsToBeDisplayed.length;
+}
+function collapseRowsPaginated(tierContainer) {
+    const table = tierContainer.querySelector("table.achievement-details-table");
+    const currentlyDisplayed = parseInt(table.dataset.displayedAmount);
+
+    const allRows = Array.from(table.querySelectorAll(searchIsActive ? "tr[data-matches-search='true']" : "tr"));
+    let rowsToBeCollapsed = [];
+
+    const divisibleByBatchSize = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE === 0;
+    if (divisibleByBatchSize) {
+        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - ACHIEVEMENT_BATCH_SIZE, currentlyDisplayed);
+    } else {
+        const remainder = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE;
+        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - remainder, currentlyDisplayed);
+    }
+
+    rowsToBeCollapsed.reverse().forEach(row => {
+        row.dataset.state = DropdownStates.COLLAPSED;
+        setTimeout(() => row.style.display = "none", 150);
+    });
+    table.dataset.displayedAmount = currentlyDisplayed - rowsToBeCollapsed.length;
+}
+//endregion
+//region Achievement Tiers - Search
+function searchAchievements(term) {
+    const regex = new RegExp(term, 'i');
+
+    tierDropdownContainers.forEach(container => {
+        let matchingRows = 0;
+        container.querySelectorAll("table.achievement-details-table tr:not(tr.no-achievements-row)").forEach(row => {
+            const title = row.querySelector(".achievement-title").innerText;
+            const description = row.querySelector(".achievement-description").innerText;
+
+            if (regex.test(title) || regex.test(description)) {
+                row.dataset.matchesSearch = true;
+                matchingRows++;
+            } else {
+                row.dataset.matchesSearch = false;
+                row.dataset.state = DropdownStates.COLLAPSED;
+                setTimeout(() => row.style.display = "none", 150);
+            }
+        });
+        container.querySelector(".tier-information h2 span[data-role='count']").textContent = matchingRows;
+    });
 }
 //endregion
