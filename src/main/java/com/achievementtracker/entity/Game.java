@@ -179,6 +179,11 @@ public class Game {
                 .toList();
     }
 
+    public int getHiddenAchievementCount() {
+        List<Achievement> hiddenAchievements = achievements.stream().filter(Achievement::isHidden).toList();
+        return hiddenAchievements.size();
+    }
+
     public Set<CategorizedGame> getCategorizedGames() {
         return categorizedGames;
     }

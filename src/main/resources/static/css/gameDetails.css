@@ -152,6 +152,12 @@ td:has(.achievement-text-details) {
 .achievement-percentage {
     display: block;
 }
+#achievement-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
 
 /* Game Details */
 #game-information {
@@ -293,10 +299,28 @@ td:has(.achievement-text-details) {
 #achievement-details {
     margin: 1em 0;
 }
+input[type='checkbox'] {
+    margin: 0 0.3em 0 0;
+    accent-color: white;
+}
+label:has(#hidden-achievements-filter) {
+    display: flex;
+    font-size: 0.9em;
+    color: rgba(159,187,202,0.7);
+    transition: color 0.1s;
+}
+label:has(#hidden-achievements-filter):hover {
+    color: rgba(159,187,202,1);
+    cursor: pointer;
+    transition: color 0.2s ease-out;
+}
+label:has(#hidden-achievements-filter:checked) {
+    color: rgba(239,239,239,0.9);
+    transition: color 0.1s;
+}
 #achievement-search {
     display: block;
     width: 50%;
-    margin: auto;
     padding: 0.2em 1em;
     border-color: #445265;
     border-style: solid;

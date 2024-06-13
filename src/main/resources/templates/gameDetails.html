@@ -53,7 +53,10 @@
         </div>
     </div>
     <div id="achievement-details">
-        <input id="achievement-search" type="search" placeholder="Search achievements by name, description.." autocomplete="off">
+        <div id="achievement-filters">
+            <input id="achievement-search" type="search" placeholder="Search achievements by name, description.." autocomplete="off">
+            <label th:style="${game.hiddenAchievementCount != 0 ? '' : 'display: none' }" th:inline="text"><input id="hidden-achievements-filter" type="checkbox">HIDDEN ACHIEVEMENTS ([[${game.hiddenAchievementCount}]])</label>
+        </div>
         <th:block th:each="tier : ${tiers}">
             <div class="tier-dropdown-container" data-state="collapsed">
                 <div class="tier-information">
@@ -65,9 +68,8 @@
                     <tbody>
                         <tr class="no-achievements-row" style="display: none" data-state="collapsed"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
                         <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
-                            th:data-percentage="${achievement.percentage}" style="display: none" data-state="collapsed">
+                            th:data-percentage="${achievement.percentage}" th:data-hidden="${achievement.hidden ? true : null }" style="display: none" data-state="collapsed">
                             <!-- TODO: use a hash here to travel to sections (achievements) -->
-                            <!-- TODO: add a "show" button for hidden achievements to prevent spoilers -->
                             <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
                             <td>
                                 <div class="achievement-text-details">

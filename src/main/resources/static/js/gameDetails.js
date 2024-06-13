@@ -7,6 +7,9 @@ const carouselButtons = achievementTierTable.querySelectorAll("button.carousel-s
 //region Achievement Tiers - Dropdown
 const tierDropdownContainers = document.querySelectorAll("div.tier-dropdown-container");
 //endregion
+//region Achievement Tiers - Filters
+const hiddenAchievementsCheckbox = document.querySelector("input[type='checkbox']#hidden-achievements-filter");
+//endregion
 /* ---------------------- Important Declarations ---------------------- */
 //region Carousel
 const ScrollBehavior = { SMOOTH: "smooth", INSTANT: "instant" };
@@ -19,7 +22,7 @@ const DropdownStates = { EXPANDED : "expanded", COLLAPSED: "collapsed" };
 //region Achievement Tiers - Pagination
 const ACHIEVEMENT_BATCH_SIZE = 10;
 //endregion
-//region Achievement Tiers - Search
+//region Achievement Tiers - Filters
 let searchTimeout;
 let searchIsActive = false;
 //endregion
@@ -63,12 +66,21 @@ achievementContainers.forEach(container => container.addEventListener("scroll", 
 //endregion
 //region Achievement Tiers - Dropdown
 const dropdownContainers = document.querySelectorAll("div.tier-information");
-dropdownContainers.forEach(container => container.addEventListener("click", () => toggleDropdownContainer(container.parentElement)));
+dropdownContainers.forEach(container => container.addEventListener("click", function toggleDropdownContainer() {
+    const tierContainer = container.parentElement;
+    if (tierContainer.dataset.state === DropdownStates.COLLAPSED) {
+        expandRowsPaginated(tierContainer);
+        showOrHidePaginationButtons(tierContainer);
+    }
+    else {
+        collapseDropdownContainer(tierContainer);
+    }
+}));
 //endregion
 //region Achievement Tiers - Pagination
 const showMoreButtons = document.querySelectorAll("button.show-more-button");
 showMoreButtons.forEach(button => button.addEventListener("click", () => {
-    displayRowsPaginated(button.parentElement);
+    expandRowsPaginated(button.parentElement);
     showOrHidePaginationButtons(button.parentElement);
 }));
 const showLessButtons = document.querySelectorAll("button.show-less-button");
@@ -77,7 +89,7 @@ showLessButtons.forEach(button => button.addEventListener("click", () => {
     showOrHidePaginationButtons(button.parentElement);
 }));
 //endregion
-//region Achievement Tiers - Search
+//region Achievement Tiers - Filters
 const searchInput = document.querySelector("input#achievement-search");
 searchInput.addEventListener("input", (event) => {
     const searchTerm = event.target.value.trim();
@@ -95,12 +107,38 @@ searchInput.addEventListener("input", (event) => {
             searchIsActive = true;
             searchAchievements(searchTerm);
             tierDropdownContainers.forEach(container => {
-                displayRowsPaginated(container);
+                expandRowsPaginated(container);
                 setAchievementCountForContainer(container);
                 showOrHidePaginationButtons(container);
             });
         }
     }, timeoutDuration);
+});
+hiddenAchievementsCheckbox.addEventListener("change", () => {
+   tierDropdownContainers.forEach(container => {
+      setAchievementCountForContainer(container);
+
+      const achievementRows = container.querySelectorAll("table.achievement-details-table tr:not(.no-achievements-row)");
+      if (container.dataset.state === DropdownStates.EXPANDED) {
+          if (hiddenAchievementsCheckbox.checked) {
+              achievementRows.forEach(row => {
+                  if (row.dataset.hidden)
+                      expandRow(row);
+              });
+              showOrHidePaginationButtons(container);
+          } else {
+              achievementRows.forEach(row => {
+                  if (row.dataset.hidden)
+                      collapseRow(row);
+              });
+              showOrHidePaginationButtons(container);
+          }
+      }
+      if (searchIsActive) {
+          expandRowsPaginated(container);
+          showOrHidePaginationButtons(container);
+      }
+   });
 });
 //endregion
 /* ---------------------- Function Declarations ---------------------- */
@@ -183,6 +221,15 @@ function disableOrEnableCarouselButtons() {
 }
 //endregion
 //region Achievement Tiers - Dropdown
+function expandRow(row) {
+    row.style.display = "table-row";
+    row.offsetHeight;
+    row.dataset.state = DropdownStates.EXPANDED;
+}
+function collapseRow(row) {
+    row.dataset.state = DropdownStates.COLLAPSED;
+    setTimeout(() => row.style.display = "none", 150);
+}
 function colorTableRowsAccordingToPercentage() {
     const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--active-element-color');
     const backgroundColor = getComputedStyle(document.querySelector("table.achievement-details-table tr:not(tr.no-achievements-row)")).backgroundColor;
@@ -198,34 +245,32 @@ function colorTableRowsAccordingToPercentage() {
 function setAchievementCountForContainer(tierContainer) {
     const relatedTable = tierContainer.querySelector("table.achievement-details-table");
 
-    const achievementCount = relatedTable
-        .querySelectorAll(searchIsActive ? "tr[data-matches-search='true']" : "tr:not(tr.no-achievements-row)")
-        .length;
+    let achievementCount;
+    if (searchIsActive) {
+        achievementCount = relatedTable
+            .querySelectorAll(hiddenAchievementsCheckbox.checked
+                ? "tr[data-matches-search='true']:not(.no-achievements-row)"
+                : "tr[data-matches-search='true']:not([data-hidden='true'], .no-achievements-row)")
+            .length;
+    } else {
+        achievementCount = relatedTable
+            .querySelectorAll(hiddenAchievementsCheckbox.checked
+                ? "tr:not(.no-achievements-row)"
+                : "tr:not([data-hidden='true'], .no-achievements-row)")
+            .length;
+    }
+
+    const countElement = tierContainer.querySelector("span[data-role='count']");
+    countElement.textContent = achievementCount;
 
     const noAchievementsRow = relatedTable.querySelector("tr.no-achievements-row");
     if (noAchievementsRow && achievementCount !== 0)
         noAchievementsRow.remove();
-
-    const countElement = tierContainer.querySelector("span[data-role='count']");
-    countElement.textContent = achievementCount;
-}
-function toggleDropdownContainer(tierContainer) {
-    const containerIsCollapsed = tierContainer.dataset.state === DropdownStates.COLLAPSED;
-    if (containerIsCollapsed) {
-        displayRowsPaginated(tierContainer);
-        showOrHidePaginationButtons(tierContainer);
-    }
-    else {
-        collapseDropdownContainer(tierContainer);
-    }
 }
 function collapseDropdownContainer(tierContainer) {
     // hide rows
-    const displayedRows = tierContainer.querySelectorAll("table.achievement-details-table tr");
-    displayedRows.forEach(row => {
-        row.dataset.state = DropdownStates.COLLAPSED;
-        setTimeout(() => row.style.display = "none", 150);
-    });
+    const expandedRows = tierContainer.querySelectorAll("table.achievement-details-table tr");
+    expandedRows.forEach(row => collapseRow(row));
     // hide pagination button
     tierContainer.querySelector("button.show-more-button").style.display = "none";
     tierContainer.querySelector("button.show-less-button").style.display = "none";
@@ -239,49 +284,53 @@ function calculateExpandedRows(tierContainer) {
     return expandedRows.length;
 }
 function showOrHidePaginationButtons(tierContainer) {
-    const currentlyDisplayed = calculateExpandedRows(tierContainer);
+    const currentlyExpanded = calculateExpandedRows(tierContainer);
     const totalAchievements = parseInt(tierContainer.querySelector("span[data-role='count']").textContent);
 
     const showMoreBtn = tierContainer.querySelector("button.show-more-button");
-    showMoreBtn.style.display = totalAchievements > currentlyDisplayed ? "flex" : "none";
+    showMoreBtn.style.display = totalAchievements > currentlyExpanded ? "flex" : "none";
 
     const showLessBtn = tierContainer.querySelector("button.show-less-button");
-    showLessBtn.style.display = currentlyDisplayed > ACHIEVEMENT_BATCH_SIZE ? "flex" : "none";
+    showLessBtn.style.display = currentlyExpanded > ACHIEVEMENT_BATCH_SIZE ? "flex" : "none";
 }
-function displayRowsPaginated(tierContainer) {
-    const currentlyDisplayed = calculateExpandedRows(tierContainer);
+function expandRowsPaginated(tierContainer) {
+    const currentlyExpanded = calculateExpandedRows(tierContainer);
 
-    const allRows = Array.from(tierContainer.querySelectorAll(searchIsActive ? "tr[data-matches-search='true']" : "tr"));
-    const rowsToBeDisplayed = allRows.slice(currentlyDisplayed, currentlyDisplayed + ACHIEVEMENT_BATCH_SIZE);
+    let allRows = [];
+    if (searchIsActive) {
+        allRows = Array.from(tierContainer.querySelectorAll(hiddenAchievementsCheckbox.checked
+            ? "tr[data-matches-search='true']"
+            : "tr[data-matches-search='true']:not([data-hidden='true'])"
+        ));
+    } else {
+        allRows = Array.from(tierContainer.querySelectorAll(hiddenAchievementsCheckbox.checked
+        ? "tr"
+        : "tr:not([data-hidden='true'])"
+        ));
+    }
+    const rowsToBeExpanded = allRows.slice(currentlyExpanded, currentlyExpanded + ACHIEVEMENT_BATCH_SIZE);
 
     tierContainer.dataset.state = (allRows.length === 0 ? DropdownStates.COLLAPSED : DropdownStates.EXPANDED);
-    rowsToBeDisplayed.forEach(row => {
-        row.style.display = "table-row";
-        row.offsetHeight;
-        row.dataset.state = DropdownStates.EXPANDED;
-    });
+    rowsToBeExpanded.forEach(row => expandRow(row));
 }
 function collapseRowsPaginated(tierContainer) {
-    const currentlyDisplayed = calculateExpandedRows(tierContainer);
+    const currentlyExpanded = calculateExpandedRows(tierContainer);
 
-    const allRows = Array.from(tierContainer.querySelectorAll(searchIsActive ? "tr[data-matches-search='true']" : "tr"));
+    const allRows = Array.from(tierContainer.querySelectorAll("table.achievement-details-table tr[data-state='expanded']"));
+
     let rowsToBeCollapsed = [];
-
-    const divisibleByBatchSize = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE === 0;
+    const divisibleByBatchSize = currentlyExpanded % ACHIEVEMENT_BATCH_SIZE === 0;
     if (divisibleByBatchSize) {
-        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - ACHIEVEMENT_BATCH_SIZE, currentlyDisplayed);
+        rowsToBeCollapsed = allRows.slice(currentlyExpanded - ACHIEVEMENT_BATCH_SIZE, currentlyExpanded);
     } else {
-        const remainder = currentlyDisplayed % ACHIEVEMENT_BATCH_SIZE;
-        rowsToBeCollapsed = allRows.slice(currentlyDisplayed - remainder, currentlyDisplayed);
+        const remainder = currentlyExpanded % ACHIEVEMENT_BATCH_SIZE;
+        rowsToBeCollapsed = allRows.slice(currentlyExpanded - remainder, currentlyExpanded);
     }
 
-    rowsToBeCollapsed.reverse().forEach(row => {
-        row.dataset.state = DropdownStates.COLLAPSED;
-        setTimeout(() => row.style.display = "none", 150);
-    });
+    rowsToBeCollapsed.reverse().forEach(row => collapseRow(row));
 }
 //endregion
-//region Achievement Tiers - Search
+//region Achievement Tiers - Filters
 function searchAchievements(term) {
     const regex = new RegExp(term, 'i');
 
@@ -298,8 +347,7 @@ function searchAchievements(term) {
                 matchingRows++;
             } else {
                 row.dataset.matchesSearch = false;
-                row.dataset.state = DropdownStates.COLLAPSED;
-                setTimeout(() => row.style.display = "none", 150);
+                collapseRow(row);
             }
         });
     });
