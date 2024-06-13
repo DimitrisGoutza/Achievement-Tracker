@@ -68,7 +68,8 @@
                     <tbody>
                         <tr class="no-achievements-row" style="display: none" data-state="collapsed"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
                         <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
-                            th:data-percentage="${achievement.percentage}" th:data-hidden="${achievement.hidden ? true : null }" style="display: none" data-state="collapsed">
+                            th:data-percentage="${achievement.percentage}" th:data-hidden="${achievement.hidden ? true : null }"
+                            style="display: none" data-state="collapsed">
                             <!-- TODO: use a hash here to travel to sections (achievements) -->
                             <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
                             <td>

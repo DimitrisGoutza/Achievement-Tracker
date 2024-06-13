@@ -305,7 +305,7 @@ input[type='checkbox'] {
 }
 label:has(#hidden-achievements-filter) {
     display: flex;
-    font-size: 0.9em;
+    font-size: 0.8em;
     color: rgba(159,187,202,0.7);
     transition: color 0.1s;
 }

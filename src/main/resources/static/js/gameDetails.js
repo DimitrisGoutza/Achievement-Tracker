@@ -8,6 +8,7 @@ const carouselButtons = achievementTierTable.querySelectorAll("button.carousel-s
 const tierDropdownContainers = document.querySelectorAll("div.tier-dropdown-container");
 //endregion
 //region Achievement Tiers - Filters
+const searchInput = document.querySelector("input#achievement-search");
 const hiddenAchievementsCheckbox = document.querySelector("input[type='checkbox']#hidden-achievements-filter");
 //endregion
 /* ---------------------- Important Declarations ---------------------- */
@@ -24,7 +25,6 @@ const ACHIEVEMENT_BATCH_SIZE = 10;
 //endregion
 //region Achievement Tiers - Filters
 let searchTimeout;
-let searchIsActive = false;
 //endregion
 /* ---------------------- DOMContentLoaded Actions ---------------------- */
 //region General
@@ -36,7 +36,10 @@ makeCarouselScrollButtonsVisible();
 disableOrEnableCarouselButtons();
 //endregion
 //region Achievement Tiers - Dropdown
-tierDropdownContainers.forEach(container => setAchievementCountForContainer(container));
+tierDropdownContainers.forEach(container => {
+    highlightRowsMatchingFilters(container);
+    setAchievementCountForContainer(container);
+});
 colorTableRowsAccordingToPercentage();
 //endregion
 /* ---------------------- Event Listeners ---------------------- */
@@ -65,80 +68,56 @@ carouselButtons.forEach(button => {
 achievementContainers.forEach(container => container.addEventListener("scroll", () => disableOrEnableCarouselButtons()));
 //endregion
 //region Achievement Tiers - Dropdown
-const dropdownContainers = document.querySelectorAll("div.tier-information");
-dropdownContainers.forEach(container => container.addEventListener("click", function toggleDropdownContainer() {
+document.querySelectorAll("div.tier-information").forEach(container => container.addEventListener("click", function toggleDropdownContainer() {
     const tierContainer = container.parentElement;
     if (tierContainer.dataset.state === DropdownStates.COLLAPSED) {
-        expandRowsPaginated(tierContainer);
+        highlightRowsMatchingFilters(tierContainer);
+        expandHighlightedRowsAndCollapseOthers(tierContainer);
         showOrHidePaginationButtons(tierContainer);
     }
     else {
-        collapseDropdownContainer(tierContainer);
+        collapseExpandedRows(tierContainer, false);
     }
 }));
 //endregion
 //region Achievement Tiers - Pagination
-const showMoreButtons = document.querySelectorAll("button.show-more-button");
-showMoreButtons.forEach(button => button.addEventListener("click", () => {
-    expandRowsPaginated(button.parentElement);
+document.querySelectorAll("button.show-more-button").forEach(button => button.addEventListener("click", () => {
+    expandHighlightedRowsAndCollapseOthers(button.parentElement);
     showOrHidePaginationButtons(button.parentElement);
 }));
-const showLessButtons = document.querySelectorAll("button.show-less-button");
-showLessButtons.forEach(button => button.addEventListener("click", () => {
-    collapseRowsPaginated(button.parentElement);
+document.querySelectorAll("button.show-less-button").forEach(button => button.addEventListener("click", () => {
+    collapseExpandedRows(button.parentElement, true);
     showOrHidePaginationButtons(button.parentElement);
 }));
 //endregion
 //region Achievement Tiers - Filters
-const searchInput = document.querySelector("input#achievement-search");
 searchInput.addEventListener("input", (event) => {
     const searchTerm = event.target.value.trim();
     clearTimeout(searchTimeout);
     const timeoutDuration = (searchTerm === "" ? 0 : 100);
 
     searchTimeout = setTimeout(() => {
-        if (searchTerm === "") {
-            searchIsActive = false;
-            tierDropdownContainers.forEach(container => {
-                collapseDropdownContainer(container);
-                setAchievementCountForContainer(container);
-            });
-        } else {
-            searchIsActive = true;
-            searchAchievements(searchTerm);
-            tierDropdownContainers.forEach(container => {
-                expandRowsPaginated(container);
-                setAchievementCountForContainer(container);
-                showOrHidePaginationButtons(container);
-            });
-        }
+        tierDropdownContainers.forEach(container => {
+            highlightRowsMatchingFilters(container);
+            setAchievementCountForContainer(container);
+            if (searchTerm === "")
+                collapseExpandedRows(container, false);
+            else
+                expandHighlightedRowsAndCollapseOthers(container);
+            showOrHidePaginationButtons(container);
+        });
     }, timeoutDuration);
 });
 hiddenAchievementsCheckbox.addEventListener("change", () => {
-   tierDropdownContainers.forEach(container => {
-      setAchievementCountForContainer(container);
-
-      const achievementRows = container.querySelectorAll("table.achievement-details-table tr:not(.no-achievements-row)");
-      if (container.dataset.state === DropdownStates.EXPANDED) {
-          if (hiddenAchievementsCheckbox.checked) {
-              achievementRows.forEach(row => {
-                  if (row.dataset.hidden)
-                      expandRow(row);
-              });
-              showOrHidePaginationButtons(container);
-          } else {
-              achievementRows.forEach(row => {
-                  if (row.dataset.hidden)
-                      collapseRow(row);
-              });
-              showOrHidePaginationButtons(container);
-          }
-      }
-      if (searchIsActive) {
-          expandRowsPaginated(container);
-          showOrHidePaginationButtons(container);
-      }
-   });
+    const searchIsEmpty = (searchInput.value === "");
+    tierDropdownContainers.forEach(container => {
+        highlightRowsMatchingFilters(container);
+        setAchievementCountForContainer(container);
+        if (!searchIsEmpty || container.dataset.state === DropdownStates.EXPANDED) {
+            expandHighlightedRowsAndCollapseOthers(container);
+            showOrHidePaginationButtons(container);
+        }
+    });
 });
 //endregion
 /* ---------------------- Function Declarations ---------------------- */
@@ -245,111 +224,119 @@ function colorTableRowsAccordingToPercentage() {
 function setAchievementCountForContainer(tierContainer) {
     const relatedTable = tierContainer.querySelector("table.achievement-details-table");
 
-    let achievementCount;
-    if (searchIsActive) {
-        achievementCount = relatedTable
-            .querySelectorAll(hiddenAchievementsCheckbox.checked
-                ? "tr[data-matches-search='true']:not(.no-achievements-row)"
-                : "tr[data-matches-search='true']:not([data-hidden='true'], .no-achievements-row)")
-            .length;
-    } else {
-        achievementCount = relatedTable
-            .querySelectorAll(hiddenAchievementsCheckbox.checked
-                ? "tr:not(.no-achievements-row)"
-                : "tr:not([data-hidden='true'], .no-achievements-row)")
-            .length;
-    }
+    const highlightedRowCount = relatedTable.querySelectorAll("tr[data-highlighted='true']").length;
 
     const countElement = tierContainer.querySelector("span[data-role='count']");
-    countElement.textContent = achievementCount;
-
-    const noAchievementsRow = relatedTable.querySelector("tr.no-achievements-row");
-    if (noAchievementsRow && achievementCount !== 0)
-        noAchievementsRow.remove();
-}
-function collapseDropdownContainer(tierContainer) {
-    // hide rows
-    const expandedRows = tierContainer.querySelectorAll("table.achievement-details-table tr");
-    expandedRows.forEach(row => collapseRow(row));
-    // hide pagination button
-    tierContainer.querySelector("button.show-more-button").style.display = "none";
-    tierContainer.querySelector("button.show-less-button").style.display = "none";
-    // finally update container state
-    tierContainer.dataset.state = DropdownStates.COLLAPSED;
+    countElement.textContent = highlightedRowCount;
 }
 //endregion
 //region Achievement Tiers - Pagination
-function calculateExpandedRows(tierContainer) {
+function getExpandedRowsAsArray(tierContainer) {
     const expandedRows = tierContainer.querySelectorAll(`table.achievement-details-table tr[data-state=${DropdownStates.EXPANDED}]`);
-    return expandedRows.length;
+    return Array.from(expandedRows);
 }
 function showOrHidePaginationButtons(tierContainer) {
-    const currentlyExpanded = calculateExpandedRows(tierContainer);
-    const totalAchievements = parseInt(tierContainer.querySelector("span[data-role='count']").textContent);
+    if (tierContainer.dataset.state === DropdownStates.EXPANDED) {
+        const currentlyExpanded = getExpandedRowsAsArray(tierContainer).length;
+        const totalAchievements = parseInt(tierContainer.querySelector("span[data-role='count']").textContent);
 
-    const showMoreBtn = tierContainer.querySelector("button.show-more-button");
-    showMoreBtn.style.display = totalAchievements > currentlyExpanded ? "flex" : "none";
-
-    const showLessBtn = tierContainer.querySelector("button.show-less-button");
-    showLessBtn.style.display = currentlyExpanded > ACHIEVEMENT_BATCH_SIZE ? "flex" : "none";
-}
-function expandRowsPaginated(tierContainer) {
-    const currentlyExpanded = calculateExpandedRows(tierContainer);
-
-    let allRows = [];
-    if (searchIsActive) {
-        allRows = Array.from(tierContainer.querySelectorAll(hiddenAchievementsCheckbox.checked
-            ? "tr[data-matches-search='true']"
-            : "tr[data-matches-search='true']:not([data-hidden='true'])"
-        ));
+        const showMoreBtn = tierContainer.querySelector("button.show-more-button");
+        showMoreBtn.style.display = totalAchievements > currentlyExpanded ? "flex" : "none";
+        const showLessBtn = tierContainer.querySelector("button.show-less-button");
+        showLessBtn.style.display = currentlyExpanded > ACHIEVEMENT_BATCH_SIZE ? "flex" : "none";
     } else {
-        allRows = Array.from(tierContainer.querySelectorAll(hiddenAchievementsCheckbox.checked
-        ? "tr"
-        : "tr:not([data-hidden='true'])"
-        ));
+        // container is collapsed, so we also hide the buttons
+        const showMoreBtn = tierContainer.querySelector("button.show-more-button");
+        showMoreBtn.style.display = "none";
+        const showLessBtn = tierContainer.querySelector("button.show-less-button");
+        showLessBtn.style.display = "none";
     }
-    const rowsToBeExpanded = allRows.slice(currentlyExpanded, currentlyExpanded + ACHIEVEMENT_BATCH_SIZE);
-
-    tierContainer.dataset.state = (allRows.length === 0 ? DropdownStates.COLLAPSED : DropdownStates.EXPANDED);
-    rowsToBeExpanded.forEach(row => expandRow(row));
 }
-function collapseRowsPaginated(tierContainer) {
-    const currentlyExpanded = calculateExpandedRows(tierContainer);
+function expandHighlightedRowsAndCollapseOthers(tierContainer) {
+    const highlightedRows = Array.from(tierContainer.querySelectorAll("tr[data-highlighted='true']"));
 
-    const allRows = Array.from(tierContainer.querySelectorAll("table.achievement-details-table tr[data-state='expanded']"));
+    const allRows = tierContainer.querySelectorAll("table.achievement-details-table tr:not(.no-achievements-row)");
+    const noResultsRow = tierContainer.querySelector("table.achievement-details-table tr.no-achievements-row");
+    if (highlightedRows.length !== 0) {
+        collapseRow(noResultsRow);
+        tierContainer.dataset.state = DropdownStates.EXPANDED;
 
-    let rowsToBeCollapsed = [];
-    const divisibleByBatchSize = currentlyExpanded % ACHIEVEMENT_BATCH_SIZE === 0;
-    if (divisibleByBatchSize) {
-        rowsToBeCollapsed = allRows.slice(currentlyExpanded - ACHIEVEMENT_BATCH_SIZE, currentlyExpanded);
+        const pendingRowsToExpand = determineRowsToExpand(tierContainer, highlightedRows);
+        allRows.forEach(row => {
+            if (pendingRowsToExpand.includes(row))
+                expandRow(row);
+            if (!highlightedRows.includes(row))
+                collapseRow(row);
+        });
     } else {
-        const remainder = currentlyExpanded % ACHIEVEMENT_BATCH_SIZE;
-        rowsToBeCollapsed = allRows.slice(currentlyExpanded - remainder, currentlyExpanded);
+        allRows.forEach(row => collapseRow(row));
+        tierContainer.dataset.state = DropdownStates.EXPANDED;
+        expandRow(noResultsRow);
     }
+}
+function determineRowsToExpand(tierContainer, highlightedRows) {
+    const currentlyExpandedRows = getExpandedRowsAsArray(tierContainer);
+    const rowsNotYetExpanded = highlightedRows.filter(row => !currentlyExpandedRows.includes(row));
 
-    rowsToBeCollapsed.reverse().forEach(row => collapseRow(row));
+    return rowsNotYetExpanded.slice(0, ACHIEVEMENT_BATCH_SIZE);
+}
+function collapseExpandedRows(tierContainer, paginated) {
+    const expandedRows = getExpandedRowsAsArray(tierContainer);
+    if (paginated === true) {
+        const currentlyExpanded = expandedRows.length;
+        // Collapse as many needed in order for the remaining rows to be divisible by batch size
+        let rowsToBeCollapsed = [];
+        const divisibleByBatchSize = (currentlyExpanded % ACHIEVEMENT_BATCH_SIZE === 0);
+        if (divisibleByBatchSize) {
+            rowsToBeCollapsed = expandedRows.slice(currentlyExpanded - ACHIEVEMENT_BATCH_SIZE, currentlyExpanded);
+        } else {
+            const remainder = currentlyExpanded % ACHIEVEMENT_BATCH_SIZE;
+            rowsToBeCollapsed = expandedRows.slice(currentlyExpanded - remainder, currentlyExpanded);
+        }
+        // Reverse before collapsing to ensure they collapse from bottom to top
+        rowsToBeCollapsed.reverse().forEach(row => collapseRow(row));
+    } else {
+        // Collapse everything
+        expandedRows.forEach(row => collapseRow(row));
+        tierContainer.querySelector("button.show-more-button").style.display = "none";
+        tierContainer.querySelector("button.show-less-button").style.display = "none";
+        tierContainer.dataset.state = DropdownStates.COLLAPSED;
+    }
 }
 //endregion
 //region Achievement Tiers - Filters
-function searchAchievements(term) {
-    const regex = new RegExp(term, 'i');
+function highlightRowsMatchingFilters(tierContainer) {
+    // clear previously marked rows
+    clearHighlightedRows(tierContainer);
 
-    tierDropdownContainers.forEach(container => {
-        let matchingRows = 0;
-        container.querySelectorAll("table.achievement-details-table tr:not(tr.no-achievements-row)").forEach(row => {
-            row.dataset.state = DropdownStates.COLLAPSED; // clear previous search states
+    const includeHidden = hiddenAchievementsCheckbox.checked;
+    const searchTerm = searchInput.value;
+    if (searchTerm !== "") {
+        const regex = new RegExp(searchTerm, 'i');
 
+        const highlightedRows = tierContainer.querySelectorAll(includeHidden ?
+            "table.achievement-details-table tr:not(.no-achievements-row)" :    // include rows with hidden achievements
+            "table.achievement-details-table tr:not(.no-achievements-row, [data-hidden='true'])");  // exclude rows with hidden achievements
+        // In both cases we exclude the ".no-achievements-row" for obvious reasons
+        highlightedRows.forEach(row => {
             const title = row.querySelector(".achievement-title").innerText;
             const description = row.querySelector(".achievement-description").innerText;
-
-            if (regex.test(title) || regex.test(description)) {
-                row.dataset.matchesSearch = true;
-                matchingRows++;
-            } else {
-                row.dataset.matchesSearch = false;
-                collapseRow(row);
-            }
+            // Check against search term
+            if (regex.test(title) || regex.test(description))
+                row.dataset.highlighted = true;
         });
-    });
+    } else {
+        const highlightedRows = tierContainer.querySelectorAll(includeHidden ?
+            "table.achievement-details-table tr:not(.no-achievements-row)" :    // include rows with hidden achievements
+            "table.achievement-details-table tr:not(.no-achievements-row, [data-hidden='true'])");  // exclude rows with hidden achievements
+        // In both cases we exclude the ".no-achievements-row" for obvious reasons
+
+        highlightedRows.forEach(row => row.dataset.highlighted = true);   // no search input so everything is highlighted
+    }
+
+}
+function clearHighlightedRows(tierContainer) {
+    tierContainer.querySelectorAll("table.achievement-details-table tr")
+        .forEach(row => row.removeAttribute("data-highlighted"));
 }
 //endregion
