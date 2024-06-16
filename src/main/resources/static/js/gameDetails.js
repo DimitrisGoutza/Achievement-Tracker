@@ -12,6 +12,10 @@ const searchInput = document.querySelector("input#achievement-search");
 const hiddenAchievementsCheckbox = document.querySelector("input[type='checkbox']#hidden-achievements-filter");
 //endregion
 /* ---------------------- Important Declarations ---------------------- */
+//region Progress Bar
+const PROGRESS_INTERVAL = 20; // milliseconds
+const TIME_TO_FINISH = 500; // milliseconds
+//endregion
 //region Carousel
 const ScrollBehavior = { SMOOTH: "smooth", INSTANT: "instant" };
 let continuousScrollInterval;
@@ -30,6 +34,10 @@ let searchTimeout;
 //region General
 replacePlaceholderImages();
 showMessageForEmptyTiers();
+initializePointsCounter();
+//endregion
+//region Progress Bar
+document.querySelectorAll("div.circular-progress:not(.circular-progress:has(span#challenge-rating-points))").forEach(progressBar => initializeProgressBar(progressBar));
 //endregion
 //region Carousel
 makeCarouselScrollButtonsVisible();
@@ -142,20 +150,44 @@ function showMessageForEmptyTiers() {
         }
     })
 }
-function rgbToRgba(rgb, alpha) {
-    // Extract the numbers from the rgb string using a regular expression
-    const result = rgb.match(/\d+/g);
+function initializePointsCounter() {
+    const pointsElement = document.getElementById("challenge-rating-points");
+    const targetValue = parseInt(pointsElement.dataset.points);
 
-    // Check if the regex successfully found the numbers
-    if (result && result.length === 3) {
-        // Convert the numbers to integers
-        const r = parseInt(result[0], 10);
-        const g = parseInt(result[1], 10);
-        const b = parseInt(result[2], 10);
+    // ensure it finishes on time
+    const increment = (targetValue * PROGRESS_INTERVAL) / TIME_TO_FINISH;
 
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
-    return "rgba(0, 0, 0, 1)";
+
+    let counter = 0;
+    const progress = setInterval(() => {
+        counter = Math.min(counter + increment, targetValue);  // make sure to not step over the final value
+
+        pointsElement.textContent = `${counter.toFixed(0)} points`;  // increment visible counter
+
+        if (counter >= targetValue)
+            clearInterval(progress);
+    }, PROGRESS_INTERVAL);
+}
+//endregion
+//region Progress Bar
+function initializeProgressBar(bar) {
+    const progressValueElement = bar.querySelector(".progress-value");
+    const targetValue = parseFloat(progressValueElement.dataset.percent);
+
+    // ensure it finishes on time
+    const increment = (targetValue * PROGRESS_INTERVAL) / TIME_TO_FINISH;
+
+    let counter = 0.0;
+    const progress = setInterval(() => {
+        counter = Math.min(counter + increment, targetValue);  // make sure to not step over the final value
+
+        progressValueElement.textContent = `${counter.toFixed(1)}%`;  // increment visible percentage
+
+        bar.style.setProperty('--current-angle', `${counter.toFixed(1) * 3.6}deg`);  // increment bar
+
+        if (counter >= targetValue)
+            clearInterval(progress);
+    }, PROGRESS_INTERVAL);
 }
 //endregion
 //region Carousel
@@ -210,15 +242,9 @@ function collapseRow(row) {
     setTimeout(() => row.style.display = "none", 150);
 }
 function colorTableRowsAccordingToPercentage() {
-    const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--active-element-color');
-    const backgroundColor = getComputedStyle(document.querySelector("table.achievement-details-table tr:not(tr.no-achievements-row)")).backgroundColor;
-
-    const achievementTables = document.querySelectorAll("table.achievement-details-table");
-    achievementTables.forEach(table => {
-        table.querySelectorAll("tr:not(tr.no-achievements-row)").forEach(row => {
-            const percentage = parseFloat(row.dataset.percentage);
-            row.style.background = `linear-gradient(to right, ${activeColor} ${percentage}%, ${rgbToRgba(backgroundColor, 0.75)} ${percentage}%, ${rgbToRgba(backgroundColor, 0.75)} 100%)`;
-        });
+    document.querySelectorAll("table.achievement-details-table tr:not(tr.no-achievements-row)").forEach(row => {
+        const percentage = parseFloat(row.dataset.percentage);
+        row.style.setProperty('--achievement-percentage', `${percentage}%`);
     });
 }
 function setAchievementCountForContainer(tierContainer) {

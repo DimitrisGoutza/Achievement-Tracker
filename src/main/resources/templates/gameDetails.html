@@ -31,9 +31,27 @@
                     <a th:text="${category.name}" target="_blank" th:href=" '/games?categories=' + ${category.id}"/>
                 </li>
             </ul>
-            <div id="game-description" th:utext="${game.shortDescription}"></div>
+            <p id="game-description" th:utext="${game.shortDescription}"></p>
         </div>
+        <hr>
+        <div id="game-stats">
+            <h2>Rating &amp; Statistics</h2>
+            <div class="circular-progress">
+                <span id="challenge-rating-points" class="progress-value" th:data-points="${game.challengeRating}">0 points</span>
+            </div>
+            <span class="stat-title">Challenge Rating</span>
+            <div class="circular-progress">
+                <span class="progress-value" th:data-percent="${game.difficultySpread}">0.0%</span>
+            </div>
+            <span class="stat-title">Difficulty Spread</span>
+            <div class="circular-progress">
+                <span class="progress-value" th:data-percent="${game.averageCompletion}">0.0%</span>
+            </div>
+            <span class="stat-title">Average Completion</span>
+        </div>
+        <hr>
         <div id="achievement-tier-table">
+            <h2>Achievements</h2>
             <th:block th:each="tier : ${tiers}">
                 <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
                     <span th:text="${tier.name()}"></span>
