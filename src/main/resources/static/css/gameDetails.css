@@ -53,7 +53,7 @@ body {
     grid-row: 2/3;
     align-self: flex-start;
 }
-#reviews-release-container > span:nth-of-type(2), #reviews-release-container > span:nth-of-type(4) {
+#reviews-release-container > a, #reviews-release-container > span:nth-of-type(3) {
     grid-column: 2;
     text-align: end;
 }
@@ -237,7 +237,7 @@ td:has(.achievement-text-details) {
     height: auto;
 }
 #game-categories > li > a {
-    font-size: 0.85em;
+    font-size: 0.80em;
     text-decoration: none;
     color: var(--alt-font-color);
     border-radius: 2px;
@@ -252,16 +252,14 @@ td:has(.achievement-text-details) {
 #reviews-release-container {
     color: var(--alt-font-color);
 }
-#reviews-release-container > span:first-of-type, #reviews-release-container > span:nth-of-type(3) {
+#reviews-release-container > span:first-of-type, #reviews-release-container > span:nth-of-type(2) {
     font-size: 0.75em;
 }
-#reviews-release-container > span:nth-of-type(2) {
+#reviews-release-container > a {
     color: var(--active-element-color);
+    text-decoration: none;
 }
-#reviews-release-container > span:nth-of-type(2):hover {
-    cursor: pointer;
-}
-#reviews-release-container > span:nth-of-type(4) {
+#reviews-release-container > span:nth-of-type(3) {
     color: #8F9896;
 }
 #game-information hr {
@@ -312,7 +310,7 @@ td:has(.achievement-text-details) {
 .tier-container {
     color: var(--main-font-color);
     border-bottom: solid thin var(--main-background-color);
-    background: linear-gradient(to right, rgba(27,40,54,1) -60%, rgba(0,0,0,0));
+    background-color: rgba(var(--tier-color), 0.8);
 }
 .achievements-carousel-wrapper:nth-of-type(2) {
     border-top: solid thin rgba(159,187,202,0.5);
@@ -343,7 +341,7 @@ td:has(.achievement-text-details) {
 }
 .carousel-scroll-button {
     position: absolute;
-    top: 23%;
+    top: 22.5%;
     z-index: 1;
     background-image: url("../img/carousel-scroll-right.png");
     background-color: rgba(50, 62, 75, 0.4); /* --highlight-element-color: #323E4B */
@@ -351,23 +349,27 @@ td:has(.achievement-text-details) {
     background-position: center;
     background-origin: content-box;
     border: 0;
-    border-radius: 50%;
+    border-radius: 5px;
     height: 3em;
-    width: 3em;
-    transition: opacity 0.3s ease-out;
+    width: 2em;
+    transition: opacity 0.3s ease-out, background-color 0.1s;
     opacity: 1;
+    padding: 0;
 }
 .carousel-scroll-button[data-direction='left'] {
     transform: scaleX(-1);
-    left: 0.3%;
+    left: 1%;
 }
 .carousel-scroll-button[data-direction='right'] {
-    right: 0.3%;
+    right: 1%;
 }
 .carousel-scroll-button:hover {
-    background-color: rgba(50, 62, 75, 0.7); /* --highlight-element-color: #323E4B */
+    background-color: rgba(50, 62, 75, 0.8); /* --highlight-element-color: #323E4B */
+    transition: background-color 0.2s ease-out;
+    cursor: pointer;
 }
 .carousel-scroll-button:disabled {
+    pointer-events: none;
     transition: opacity 0.3s ease-out;
     opacity: 0;
 }
@@ -375,11 +377,18 @@ td:has(.achievement-text-details) {
     transform: scaleX(-1);
 }
 .achievement-icon {
-    height: 40px;
-    width: 40px;
+    height: 48px;
+    width: 48px;
+    border-color: rgb(var(--tier-color));
     border-radius: 5px;
     border-style: solid;
     border-width: 2px;
+}
+.achievement-icon:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    box-shadow: 2px 2px 12px rgba(var(--tier-color), 0.8);
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
 }
 .empty-tier-message {
     text-align: center;
@@ -412,16 +421,17 @@ label:has(#hidden-achievements-filter:checked) {
     display: block;
     width: 45%;
     min-width: 23.5em;
-    padding: 0.2em 1em;
+    padding: 0.2em 1em 0.2em 2em;
     border-color: #445265;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
     background-color: rgba(24,40,55, 0.4);
-    background-position: right center;
+    background-image: url("../img/search-icon.png");
+    background-position: 2% center;
     background-repeat: no-repeat;
-    background-size: 24px auto;
-    background-origin: content-box;
+    background-size: 20px auto;
+    background-origin: padding-box;
     color: var(--main-font-color);
     font-family: inherit;
     font-size: 1.25em;
@@ -433,7 +443,6 @@ label:has(#hidden-achievements-filter:checked) {
     outline: none;
     border-color: var(--active-element-color);
     background-color: rgba(24,40,55, 0.8);
-    background-image: url("../img/search-icon.png");
 }
 #achievement-search::placeholder {
     transition: color 0.1s ease-out;

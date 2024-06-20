@@ -17,7 +17,7 @@
     <div id="game-information">
         <img id="game-header" src="/img/game-header-placeholder.png" th:data-actual-src="${game.images.headerImageURL}" alt="header-image">
         <div id="reviews-release-container">
-            <span>POSITIVE REVIEWS:</span><span th:text="${game.rating} + ' %'" th:title="${#numbers.formatInteger(game.reviews, 3, 'COMMA')} + ' Reviews'"/>
+            <span>POSITIVE REVIEWS:</span><a th:text="${game.rating} + ' %'" th:title="${#numbers.formatInteger(game.reviews, 3, 'COMMA')} + ' Reviews'" target="_blank" th:href="@{'https://store.steampowered.com/app/' + ${game.storeId} + '/#app_reviews_hash'}"/>
             <span>RELEASE DATE:</span><span th:text="${#temporals.format(game.releaseDate, 'dd MMM, yyyy')}"/>
         </div>
         <div id="game-information-right">
@@ -51,21 +51,22 @@
         </div>
         <hr>
         <div id="achievement-tier-table">
-            <h2>Achievements</h2>
+            <h2 th:inline="text">Achievements ([[${game.achievements.size()}]])</h2>
             <th:block th:each="tier : ${tiers}">
-                <div class="tier-container" th:style="'background-color:' + ${tier.colorHex}">
+                <div class="tier-container" th:style="'--tier-color:' + ${tier.color}">
                     <span th:text="${tier.name()}"></span>
                     <span th:inline="text">[[${tier.maxPercentage}]]% - [[${tier.minPercentage}]]%</span>
                 </div>
                 <div class="achievements-carousel-wrapper">
-                    <button data-direction="left" class="carousel-scroll-button" style="display: none"></button>
+                    <button data-direction="left" class="carousel-scroll-button"></button>
                     <div class="achievements-container" th:inline="text">
                         <span class="empty-tier-message" th:inline="text" style="display: none">-- no [[${tier.name().toLowerCase()}]] achievements --</span>
                         <img class="achievement-icon" th:each="achievement : ${game.achievementsAsList}" th:if="${achievement.tier.equals(tier)}"
-                             th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" th:style="'border-color:' + ${tier.colorHex}" src="/img/achievement-icon-placeholder.png"
-                             th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}" alt="achievement-icon"/>
+                             th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png"
+                             th:title="${(achievement.hidden ? 'Hidden Achievement' : achievement.displayName) + ' - ' + achievement.percentage + '%'}" th:data-id="${achievement.name}"
+                             th:data-hidden="${achievement.hidden ? true : null}" th:style="'--tier-color:' + ${tier.color}" alt="achievement-icon"/>
                     </div>
-                    <button data-direction="right" class="carousel-scroll-button" style="display: none"></button>
+                    <button data-direction="right" class="carousel-scroll-button"></button>
                 </div>
             </th:block>
         </div>
@@ -82,13 +83,11 @@
                     <span class="dropdown-indicator"></span>
                 </div>
                 <hr>
-                <table class="achievement-details-table" data-displayed-amount="0">
+                <table class="achievement-details-table">
                     <tbody>
                         <tr class="no-achievements-row" style="display: none" data-state="collapsed"><td colspan="3">-- no [[${tier.name().toLowerCase()}]] achievements --</td></tr>
-                        <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}"
-                            th:data-percentage="${achievement.percentage}" th:data-hidden="${achievement.hidden ? true : null }"
-                            style="display: none" data-state="collapsed">
-                            <!-- TODO: use a hash here to travel to sections (achievements) -->
+                        <tr th:each="achievement : ${game.achievementsAsList.reversed()}" th:if="${achievement.tier.equals(tier)}" th:data-hidden="${achievement.hidden ? true : null }"
+                            th:data-id="${achievement.name}" th:style="'display: none; --achievement-percentage:' + ${achievement.percentage} + '%'" data-state="collapsed">
                             <td><img class="achievement-icon-big" th:data-actual-src="${achievement.hidden ? achievement.iconGrayURL : achievement.iconURL}" src="/img/achievement-icon-placeholder.png" alt="icon"></td>
                             <td>
                                 <div class="achievement-text-details">
@@ -104,6 +103,7 @@
                 <button class="show-more-button" style="display: none"><span>SHOW MORE</span><img src="/img/arrow-up.png"></button>
             </div>
         </th:block>
+        <!-- TODO: add a sticky positioned button for users to be able to scroll back to the tier list -->
     </div>
 </body>
 </html>

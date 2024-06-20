@@ -1,23 +1,25 @@
 package com.achievementtracker.entity;
 
+import java.awt.*;
+
 public enum AchievementTier {
-    COMMON(100, 50, 1, "#A8A8A8"),
-    UNCOMMON(50, 25, 2, "#0C9321"),
-    RARE(25, 10, 5, "#0091FA"),
-    EPIC(10, 5, 10, "#B233C3"),
-    LEGENDARY(5, 1, 50, "#DAB842"),
-    MYTHIC(1, 0, 100, "#FF3246");
+    COMMON(100, 50, 1, new Color(168,168,168)),
+    UNCOMMON(50, 25, 2, new Color(12,147,33)),
+    RARE(25, 10, 5, new Color(0,145,200)),
+    EPIC(10, 5, 10, new Color(178,51,195)),
+    LEGENDARY(5, 1, 50, new Color(218,184,66)),
+    MYTHIC(1, 0, 100, new Color(255,50,70));
 
     private final double maxPercentage;
     private final double minPercentage;
     private final int weight;
-    private final String colorHex;
+    private final Color color;
 
-    AchievementTier(double maxPercentage, double minPercentage, int weight, String colorHex) {
+    AchievementTier(double maxPercentage, double minPercentage, int weight, Color color) {
         this.maxPercentage = maxPercentage;
         this.minPercentage = minPercentage;
         this.weight = weight;
-        this.colorHex = colorHex;
+        this.color = color;
     }
 
     public double getMaxPercentage() {
@@ -32,8 +34,8 @@ public enum AchievementTier {
         return weight;
     }
 
-    public String getColorHex() {
-        return colorHex;
+    public String getColor() {
+        return color.getRed() + "," + color.getGreen() + "," + color.getBlue();
     }
 
     public static AchievementTier fromPercentage(double percentage) {
