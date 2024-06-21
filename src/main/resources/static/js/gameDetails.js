@@ -13,6 +13,7 @@ const carouselButtons = document.querySelectorAll("div#achievement-tier-table bu
 //region Achievement Tiers - Dropdown
 const tierDropdownContainers = document.querySelectorAll("div.tier-dropdown-container");
 const tierDropdownInformation = document.querySelectorAll("div.tier-dropdown-container div.tier-information");
+const scrollToTopButton = document.getElementById("scroll-to-top");
 //endregion
 //region Achievement Tiers - Pagination
 const showMoreButtons = document.querySelectorAll("button.show-more-button");
@@ -55,6 +56,15 @@ tierDropdownContainers.forEach(container => {
     setAchievementCountForContainer(container);
 });
 /* ---------------------- Event Listeners ---------------------- */
+//region Achievement Tier List
+tierListTierContainers.forEach(container => container.addEventListener("click", function goToTierDropdown() {
+    const tier = container.dataset.tier;
+    const targetDropdown = document.querySelector(`div.tier-dropdown-container[data-tier=${tier}]`);
+    highlightRowsMatchingFilters(targetDropdown);
+    expandHighlightedRowsAndCollapseOthers(targetDropdown);
+    setTimeout(() => scrollToElement(targetDropdown, false, SCROLL_BEHAVIOR.INSTANT), 150);
+}));
+//endregion
 //region Achievement Tier List - Carousel
 carouselButtons.forEach(button => {
     button.addEventListener("mousedown", (event) => {
@@ -80,7 +90,11 @@ carouselButtons.forEach(button => {
 tierListAchievementContainers.forEach(container => container.addEventListener("scroll", () => updateCarouselButtons(container)));
 //endregion
 //region Achievement Tiers - Dropdown
-// TODO : add similar functionality for the tiers themselves
+scrollToTopButton.addEventListener("click", () => {
+    const achievementTierList = document.querySelector("#achievement-tier-table");
+    scrollToElement(achievementTierList, false, SCROLL_BEHAVIOR.SMOOTH);
+});
+window.addEventListener("scroll", () => updateScrollToTopButton());
 tierListAchievementIcons.forEach(icon => icon.addEventListener("click", function goToAchievementDetails() {
     const targetID = icon.dataset.id;
     const targetContainer = document.querySelector(`div.tier-dropdown-container:has(tr[data-id='${targetID}'])`);
@@ -89,7 +103,8 @@ tierListAchievementIcons.forEach(icon => icon.addEventListener("click", function
     expandHighlightedRowsUpToTarget(targetContainer, targetID);
     updatePaginationButtons(targetContainer);
     if (targetRow.dataset.state === DROPDOWN_STATES.EXPANDED)
-        setTimeout(() => scrollToRow(targetRow), 150);
+        scrollToElement(targetRow, true, SCROLL_BEHAVIOR.INSTANT);   // instantly scroll to element since rows expand without animations
+        setTimeout(() => flashRow(targetRow), 100);
 }));
 tierDropdownInformation.forEach(container => container.addEventListener("click", function toggleDropdownContainer() {
     const tierContainer = container.parentElement;
@@ -276,6 +291,10 @@ function collapseRow(row, animated) {
         row.dataset.state = DROPDOWN_STATES.COLLAPSED;  // Then trigger animation
     }
 }
+function flashRow(row) {
+    row.dataset.flash = true;
+    setTimeout(() => row.removeAttribute("data-flash"), 300);
+}
 function setAchievementCountForContainer(tierContainer) {
     // Query for highlighted rows
     const highlightedRowCount = tierContainer.querySelectorAll("table.achievement-details-table tr[data-highlighted='true']").length;
@@ -338,16 +357,21 @@ function expandHighlightedRowsUpToTarget(targetContainer, targetRowID) {
         expandRow(noResultsRow, true);
     }
 }
-function scrollToRow(row) {
-    // TODO : add a css transition for highlighting the target row for a split second
-    const topOffset = row.getBoundingClientRect().top + window.scrollY;
+function scrollToElement(element, centered, scrollBehavior) {
+    const topOffset = element.getBoundingClientRect().top + window.scrollY;
     const windowHeight = window.innerHeight;
     const targetScrollTop = topOffset - (windowHeight / 2);
 
     window.scrollTo({
-        top: targetScrollTop,
-        behavior: "instant"
+        top: centered ? targetScrollTop : topOffset,
+        behavior: scrollBehavior
     });
+}
+function updateScrollToTopButton() {
+    const button = document.getElementById("scroll-to-top");
+    const breakpointElement = document.querySelector("#achievement-tier-table");
+
+    button.disabled = window.scrollY < breakpointElement.getBoundingClientRect().bottom;
 }
 //endregion
 //region Achievement Tiers - Pagination
