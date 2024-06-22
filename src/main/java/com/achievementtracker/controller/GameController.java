@@ -54,9 +54,11 @@ public class GameController {
     public String getGameDetails(@PathVariable("gameId") Long gameId, Model model) {
 
         Game game = gameProcessingService.findGameByIdWithAchievements(gameId);
+        int challengeRatingPercentile = gameProcessingService.getChallengeRatingPercentileRounded(gameId);
         List<Category> categories = gameProcessingService.getCategoriesForGame(game.getStoreId());
 
         model.addAttribute("game", game);
+        model.addAttribute("challengePercentile", challengeRatingPercentile);
         model.addAttribute("tiers", AchievementTier.values());
         model.addAttribute("categories", categories);
 

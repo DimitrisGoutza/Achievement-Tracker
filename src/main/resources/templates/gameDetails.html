@@ -38,6 +38,7 @@
             <h2>Rating &amp; Statistics</h2>
             <div class="circular-progress">
                 <span id="challenge-rating-points" class="progress-value" th:data-points="${game.challengeRating}">0 points</span>
+                <span id="challenge-rating-percentile" class="progress-value" th:if="${game.challengeRating != 0}" th:inline="text">[[${challengePercentile}]]th percentile</span>
             </div>
             <span class="stat-title">Challenge Rating</span>
             <div class="circular-progress">

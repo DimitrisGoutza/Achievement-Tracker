@@ -269,6 +269,7 @@ td:has(.achievement-text-details) {
 /* Achievement Stats */
 .circular-progress {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -288,12 +289,15 @@ td:has(.achievement-text-details) {
     border-radius: 50%;
     background-color: var(--main-background-color);
 }
-.progress-value, #challenge-rating-points {
+.circular-progress .progress-value {
     position: relative;
     color: var(--alt-font-color);
     font-weight: bold;
     text-align: center;
     width: 90%;
+}
+#challenge-rating-percentile {
+    font-size: 0.8em;
 }
 #challenge-rating-points {
     color: rgba(239,239,239,0.8);

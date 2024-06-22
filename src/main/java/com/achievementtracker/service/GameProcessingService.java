@@ -17,4 +17,5 @@ public interface GameProcessingService {
     Game findGameByIdWithAchievements(Long gameId);
     UsefulFilterData getUsefulFilterData();
     List<Category> getCategoriesForGame(Long gameId);
+    int getChallengeRatingPercentileRounded(Long gameId);
 }

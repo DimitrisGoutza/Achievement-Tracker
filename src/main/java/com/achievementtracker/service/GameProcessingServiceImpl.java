@@ -120,4 +120,10 @@ public class GameProcessingServiceImpl implements GameProcessingService {
     public List<Category> getCategoriesForGame(Long gameId) {
         return categoryDAO.findAllForGame(gameId);
     }
+
+    @Override
+    public int getChallengeRatingPercentileRounded(Long gameId) {
+        double result = gameDAO.calculateChallengeRatingPercentile(gameId);
+        return (int) Math.floor(result * 100.0);
+    }
 }

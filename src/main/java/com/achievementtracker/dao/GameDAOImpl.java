@@ -69,6 +69,16 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
+    public Double calculateChallengeRatingPercentile(Long gameId) {
+        TypedQuery<Double> query = em.createQuery(
+                "SELECT (CAST((SELECT COUNT(g2.storeId) FROM Game g2 WHERE g2.challengeRating <> 0 AND g2.challengeRating <= g.challengeRating) AS DOUBLE) / " +
+                        "CAST((SELECT COUNT(g2.storeId) FROM Game g2 WHERE g2.challengeRating <> 0)  AS DOUBLE)) " +
+                        "FROM Game g WHERE g.storeId = :gameId", Double.class);
+        query.setParameter("gameId", gameId);
+        return query.getSingleResult();
+    }
+
+    @Override
     public List<GameDTO> findAllGames(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
 

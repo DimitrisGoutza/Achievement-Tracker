@@ -62,6 +62,7 @@ tierListTierContainers.forEach(container => container.addEventListener("click", 
     const targetDropdown = document.querySelector(`div.tier-dropdown-container[data-tier=${tier}]`);
     highlightRowsMatchingFilters(targetDropdown);
     expandHighlightedRowsAndCollapseOthers(targetDropdown);
+    updatePaginationButtons(targetDropdown);
     setTimeout(() => scrollToElement(targetDropdown, false, SCROLL_BEHAVIOR.INSTANT), 150);
 }));
 //endregion

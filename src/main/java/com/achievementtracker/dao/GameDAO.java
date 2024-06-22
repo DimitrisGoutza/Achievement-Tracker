@@ -11,6 +11,7 @@ public interface GameDAO extends GenericDAO<Game, Long> {
     List<Game> findAllWithCollections(Page page);
     Integer findMaxReviews();
     LocalDate findMinimumReleaseDate();
+    Double calculateChallengeRatingPercentile(Long gameId);
     List<GameDTO> findAllGames(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findOnlyGamesWithAchievements(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findAllGamesByCategoryId(List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
