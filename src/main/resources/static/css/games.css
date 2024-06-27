@@ -2,6 +2,7 @@ body {
     background-color: var(--main-background-color);
     color: var(--main-font-color);
     font-family: var(--font-family);
+    margin: 0;
 }
 
 /* Layout Containers - Main */
@@ -95,7 +96,7 @@ label[for='max-release-date'] {
 /* Table */
 table {
     border-collapse: separate;
-    border-spacing: 0 0.3em;
+    border-spacing: 0 0.4em;
 }
 table:has(tr.no-results) {
     min-height: 100%;
@@ -173,22 +174,22 @@ td:has(img.game-capsule) {
 td:has(.title-achievements-container) {
     padding-left: 1em;
 }
-tbody td {
-    border-top: solid thin var(--main-background-color);
-    border-bottom: solid thin var(--main-background-color);
-}
-tbody td:first-of-type {
-    border-left: solid thin var(--main-background-color);
-}
-tbody td:last-of-type {
-    border-right: solid thin var(--main-background-color);
-}
 tbody > tr:not(.no-results) {
-    background-color: var(--table-content-color);
+    background-color: var(--background-color-darker);
 }
 tbody > tr:not(.no-results):hover {
-    background-color: var(--dark-color-accent);
+    background-color: var(--background-color-darkest);
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.5);
+}
+tbody td {
+    border-top: solid thin transparent;
+    border-bottom: solid thin transparent;
+}
+tbody td:first-of-type {
+    border-left: solid thin transparent;
+}
+tbody td:last-of-type {
+    border-right: solid thin transparent;
 }
 tbody > tr:not(.no-results):hover td {
     border-top: solid thin var(--highlight-element-color);
@@ -236,6 +237,10 @@ tbody > tr:not(.no-results):hover td:last-of-type {
     font-family: inherit;
     font-size: inherit;
     padding: 0 0.8em;
+    background-color: var(--main-background-color);
+    border-width: 1px;
+    color: rgba(239,239,239,0.8);
+    width: 20%;
 }
 
 /* Table-Data elements */
@@ -245,7 +250,7 @@ tbody > tr:not(.no-results):hover td:last-of-type {
 }
 .game-capsule {
     max-width: 200px;
-    background-color: var(--dark-color-accent);
+    background-color: var(--background-color-darkest);
 }
 .game-title {
     display: -webkit-box;
@@ -264,7 +269,7 @@ tbody > tr:not(.no-results):hover td:last-of-type {
     width: 35px;
     border-radius: 2px;
     border: solid thin #DAB842;
-    background-color: var(--dark-color-accent);
+    background-color: var(--background-color-darkest);
 }
 .hidden-achievement-icon {
     border-color: grey;
@@ -318,6 +323,9 @@ tbody > tr:not(.no-results):hover td:last-of-type {
     border-radius: 15px;
     border: solid thin var(--highlight-element-color);
     padding: 1em;
+}
+#category-filter, #reviews-filter, #release-date-filter {
+    background-color: var(--background-color-darker);
 }
 #achievements-filter {
     border: 0;

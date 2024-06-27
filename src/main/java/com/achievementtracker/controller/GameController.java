@@ -4,8 +4,8 @@ import com.achievementtracker.dao.OffsetPage;
 import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
+import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.*;
-import com.achievementtracker.service.AchievementAnalyticsService;
 import com.achievementtracker.service.GameProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,10 @@ import java.util.Map;
 @Controller
 public class GameController {
     private final GameProcessingService gameProcessingService;
-    private final AchievementAnalyticsService achievementAnalyticsService;
 
     @Autowired
-    public GameController(GameProcessingService gameProcessingService, AchievementAnalyticsService achievementAnalyticsService) {
+    public GameController(GameProcessingService gameProcessingService) {
         this.gameProcessingService = gameProcessingService;
-        this.achievementAnalyticsService = achievementAnalyticsService;
     }
 
     @GetMapping("/games")
@@ -47,7 +46,7 @@ public class GameController {
         model.addAttribute("prevRequestParams", params);
         model.addAttribute("page", page);
 
-        return "games";
+        return "/pages/games";
     }
 
     @GetMapping("/games/{gameId}")
@@ -62,6 +61,19 @@ public class GameController {
         model.addAttribute("tiers", AchievementTier.values());
         model.addAttribute("categories", categories);
 
-        return "gameDetails";
+        return "/pages/game-details";
+    }
+
+    @GetMapping("/search")
+    public String getSearchResults(@RequestParam(name = "term") String searchTerm,
+                                   @RequestParam(name = "size", required = false, defaultValue = "20") String size,
+                                   Model model) {
+        int sizeAsInt = Integer.parseInt(size);
+        List<MinimalGameDTO> games = gameProcessingService.searchAllGames(searchTerm, sizeAsInt);
+
+        model.addAttribute("games", games);
+        model.addAttribute("searchTerm", searchTerm);
+
+        return "search-result-list";
     }
 }

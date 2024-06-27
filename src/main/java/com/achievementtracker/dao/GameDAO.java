@@ -1,6 +1,7 @@
 package com.achievementtracker.dao;
 
 import com.achievementtracker.dto.games_endpoint.GameDTO;
+import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.Game;
 
 import java.time.LocalDate;
@@ -21,6 +22,8 @@ public interface GameDAO extends GenericDAO<Game, Long> {
     Game findByIdWithAchievements(Long gameId);
 
     /* -------------------------- Native Full-Text search queries -------------------------- */
+    List<MinimalGameDTO> searchAllGames(String searchTerm);
+    List<MinimalGameDTO> searchAllGames(String searchTerm, int size);
     List<GameDTO> searchAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page);
     List<GameDTO> searchOnlyGamesWithAchievements(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page);
     List<GameDTO> searchAllGamesByCategoryId(String searchTerm, List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page);

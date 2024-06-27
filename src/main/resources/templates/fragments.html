@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf Fragments</title>
+</head>
+<body>
+
+    <header th:fragment="header">
+        <nav>
+            <a target="_blank" href="#" id="nav-home"><h1>ACHIEVEMENT TRACKER</h1></a>
+            <div id="nav-game-search-container">
+                <input id="nav-game-search" type="search" placeholder="Search any game" autocomplete="off">
+                <ul id="nav-game-search-results">
+                    <!-- /search endpoint response goes here -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <footer th:fragment="footer">
+        <span id="footer-disclaimer">This site uses data from the Steam Web API (& others) but is not endorsed or certified by &copy;Valve Corporation.</span>
+        <ul id="api-list">
+            <li><a href="https://partner.steamgames.com/doc/webapi" target="_blank">Steam Web API</a></li>
+            <li><a href="https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI" target="_blank">Steam Store API</a></li>
+            <li><a href="https://steamspy.com/api.php" target="_blank">Steam Spy API</a></li>
+        </ul>
+    </footer>
+
+</body>
+</html>

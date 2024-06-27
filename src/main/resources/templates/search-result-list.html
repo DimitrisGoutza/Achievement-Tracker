@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+</head>
+<body>
+    <ul id="nav-game-search-results">
+        <li id="appropriate-message" th:if="${!searchTerm.isEmpty() && games.isEmpty()}" th:inline="text">No Results Found for "[[${searchTerm}]]"</li>
+        <li th:each="game : ${games}">
+            <a target="_blank" th:href="@{ '/games/' + ${game.storeId} }">
+                <img class="game-capsule-small" th:data-actual-src="${game.capsuleSmallImageURL}" src="/img/game-capsule-placeholder.png">
+                <h4 th:text="${game.title}" th:title="${game.title}"></h4>
+            </a>
+        </li>
+    </ul>
+</body>
+</html>

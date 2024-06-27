@@ -1,0 +1,176 @@
+/* ------------------- Nav ------------------- */
+header {
+    background: linear-gradient(to right, #171D25, var(--background-color-darker));
+    margin-bottom: 2em;
+}
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 5em;
+}
+#nav-home {
+    text-decoration: none;
+    color: rgba(239,239,239,0.9);
+    padding: 1.5em 0;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: transparent;
+    transition: border-bottom-color 0.2s ease-out, color 0.2s ease-out;
+}
+#nav-home h1 {
+    margin: 0;
+}
+#nav-home:hover {
+    border-bottom-color: var(--active-element-color);
+}
+#nav-home:hover h1 {
+    color: rgba(239,239,239,1);
+}
+
+/* ------------------- Nav - Search ------------------- */
+#nav-game-search-container {
+    position: relative;
+    width: 25%;
+    transition: width 0.2s ease-in-out;
+}
+#nav-game-search-container:focus-within {
+    width: 30%;
+}
+#nav-game-search {
+    display: block;
+    width: 100%;
+    padding: 0.2em 1em 0.2em 2em;
+    border-color: #445265;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: transparent;
+    background-image: url("../img/search-icon-main-font-color.png");
+    background-position: 2% center;
+    background-repeat: no-repeat;
+    background-size: 20px auto;
+    background-origin: padding-box;
+    color: var(--main-font-color);
+    font-family: inherit;
+    font-size: 1.1em;
+    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+#nav-game-search-container:focus-within #nav-game-search {
+    outline: none;
+    border-color: var(--active-element-color);
+    background-color: #171D25;
+}
+#nav-game-search::placeholder {
+    color: rgba(239,239,239,0.5);
+    font-style: italic;
+    font-family: inherit;
+    font-size: inherit;
+    transition: color 0.2s ease-in-out;
+}
+#nav-game-search-container:focus-within #nav-game-search::placeholder {
+    color: rgba(239,239,239,0.8);
+}
+
+/* ------------------- Nav - Search Results ------------------- */
+.game-capsule-small {
+    width: 25%;
+    aspect-ratio: 2.66666666667;
+}
+#nav-game-search-results {
+    display: none;
+    position: absolute;
+    overflow-y: auto;
+    z-index: 1000;
+    max-height: 24.5em;
+    width: 100%;
+    list-style-type: none;
+    padding: 0;
+    margin: 0.1em 0 0 0;
+    background-color: var(--background-color-darkest);
+}
+#nav-game-search-container:focus-within #nav-game-search-results {
+    display: block;
+}
+#nav-game-search-container:focus-within #nav-game-search-results:has(li) {
+    border: solid thin var(--highlight-element-color);
+}
+#nav-game-search-results li {
+    background-color: var(--background-color-darkest);
+    border-bottom: solid thin var(--highlight-element-color);
+    border-right: solid thin var(--highlight-element-color);
+    transition: background-color 0.2s ease-out;
+}
+#nav-game-search-results li:last-of-type {
+    border-bottom: 0;
+}
+#nav-game-search-results li:not(#appropriate-message):hover {
+    background-color: var(--active-element-color);
+}
+#nav-game-search-results li h4 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    font-size: 0.85em;
+    margin: 0 auto;
+    padding: 0 0.5em;
+    text-align: center;
+}
+#nav-game-search-results li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(239,239,239,0.9);
+    transition: color 0.2s ease-out;
+}
+#nav-game-search-results li a:hover {
+    color: rgba(239,239,239,1);
+}
+#appropriate-message {
+    padding: 0.5em 0;
+    text-align: center;
+}
+#nav-game-search-results::-webkit-scrollbar {
+    width: 0.25em;
+}
+#nav-game-search-results::-webkit-scrollbar-thumb {
+    background-color: var(--active-element-color);
+}
+#nav-game-search-results::-webkit-scrollbar-thumb:hover {
+    background-color: var(--active-element-color);
+}
+
+/* ------------------- Footer ------------------- */
+footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background-color-darkest);
+    margin-top: 2em;
+    font-size: 0.9em;
+    height: 10em;
+}
+footer #footer-disclaimer {
+    color: #8F9896;
+}
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+footer ul {
+    list-style-type: square;
+    margin: 0.5em 0;
+    padding: 0 0 0 1.1em;
+    color: #8F9896;
+}
+footer ul a {
+    color: var(--active-element-color);
+    text-decoration: none;
+}
+footer ul a:hover {
+    text-decoration: underline;
+}

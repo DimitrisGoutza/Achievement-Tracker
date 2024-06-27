@@ -9,12 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <!-- JS scripts -->
     <script type="text/javascript" src="/js/games.js" defer></script>
+    <script type="text/javascript" src="/js/fragments.js" defer></script>
     <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/games.css">
+    <link rel="stylesheet" href="/css/fragments.css">
 </head>
 <body>
-    <div id="main-container">
+    <th:block th:insert="~{fragments :: header}"></th:block>
+    <main id="main-container">
         <div id="main-container-header">
             <label>Entries per Page <select id="page-entries-select">
                 <option value="25" th:attr="selected=${page.size == 25}">25</option>
@@ -24,7 +27,7 @@
                 <option value="500" th:attr="selected=${page.size == 500}">500</option>
                 <option value="1000" th:attr="selected=${page.size == 1000}">1K</option>
             </select></label>
-            <input id="game-search" type="search" placeholder="Search any game" autocomplete="off">
+            <input id="game-search" type="search" placeholder="Search entries" autocomplete="off">
         </div>
         <table>
             <thead>
@@ -168,6 +171,7 @@
                 <button type="reset">Clear Filters</button>
             </div>
         </form>
-    </div>
+    </main>
+    <th:block th:insert="~{/fragments :: footer}"></th:block>
 </body>
 </html>

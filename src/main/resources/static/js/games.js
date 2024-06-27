@@ -120,14 +120,14 @@ filterForm.addEventListener("reset", () => clearFilters());
 /* ---------------------- Function Declarations ---------------------- */
 //region General
 function replacePlaceholderImages() {
-    const imageElements = document.querySelectorAll('img.game-capsule, img.achievement-icon');
+    const imageElements = document.querySelectorAll('img.game-capsule, img.achievement-icon, img.game-capsule-small');
     imageElements.forEach(image => {
         const actualSrc = image.dataset.actualSrc;
 
         const img = new Image();
         img.onload = () => image.setAttribute('src', actualSrc);
         img.src = actualSrc;
-    })
+    });
 }
 
 function scrollToTop() {

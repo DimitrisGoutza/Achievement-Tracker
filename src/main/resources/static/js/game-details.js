@@ -171,14 +171,14 @@ hiddenAchievementsCheckbox.addEventListener("change", () => {
 /* ---------------------- Function Declarations ---------------------- */
 //region General
 function replacePlaceholderImages() {
-    const imageElements = document.querySelectorAll("img#game-header ,img.achievement-icon, img.achievement-icon-big");
+    const imageElements = document.querySelectorAll("img#game-header ,img.achievement-icon, img.achievement-icon-big, img.game-capsule-small");
     imageElements.forEach(image => {
         const actualSrc = image.dataset.actualSrc;
 
         const img = new Image();
         img.onload = () => image.setAttribute('src', actualSrc);
         img.src = actualSrc;
-    })
+    });
 }
 //endregion
 //region Stats & Progress Bars

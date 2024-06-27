@@ -1,6 +1,7 @@
 package com.achievementtracker.dao;
 
 import com.achievementtracker.dto.games_endpoint.GameDTO;
+import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.*;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
@@ -401,6 +402,50 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     /* ------------------------------------- Native Full-Text search queries ------------------------------------- */
+
+    @Override
+    public List<MinimalGameDTO> searchAllGames(String searchTerm) {
+        Query query = em.createNativeQuery("SELECT g.STORE_ID, g.TITLE, g.RELEASE_DATE, g.CAPSULE_SMALL_IMAGE " +
+                "FROM GAME g WHERE MATCH(g.TITLE) AGAINST(:searchTerm IN BOOLEAN MODE)");
+        query.setParameter("searchTerm", searchTerm);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MinimalGameDTO> games = new LinkedList<>();
+        for (Object[] row : resultList) {
+            Long storeId = (Long) row[0];
+            String title = (String) row[1];
+            String capsuleSmallImageURL = (String) row[2];
+
+            MinimalGameDTO minimalGameDTO = new MinimalGameDTO(
+                    storeId, title, capsuleSmallImageURL
+            );
+            games.add(minimalGameDTO);
+        }
+        return games;
+    }
+
+    @Override
+    public List<MinimalGameDTO> searchAllGames(String searchTerm, int size) {
+        Query query = em.createNativeQuery("SELECT g.STORE_ID, g.TITLE, g.CAPSULE_SMALL_IMAGE " +
+                "FROM GAME g WHERE MATCH(g.TITLE) AGAINST(:searchTerm IN BOOLEAN MODE) LIMIT :size" );
+        query.setParameter("searchTerm", searchTerm);
+        query.setParameter("size", size);
+
+        List<Object[]> resultList = query.getResultList();
+        List<MinimalGameDTO> games = new LinkedList<>();
+        for (Object[] row : resultList) {
+            Long storeId = (Long) row[0];
+            String title = (String) row[1];
+            String capsuleSmallImageURL = (String) row[2];
+
+            MinimalGameDTO minimalGameDTO = new MinimalGameDTO(
+                    storeId, title, capsuleSmallImageURL
+            );
+            games.add(minimalGameDTO);
+        }
+        return games;
+    }
+
     @Override
     public List<GameDTO> searchAllGames(String searchTerm, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page) {
         /* Count query */

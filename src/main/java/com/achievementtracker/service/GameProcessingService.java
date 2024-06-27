@@ -4,6 +4,7 @@ import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
+import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
@@ -18,4 +19,5 @@ public interface GameProcessingService {
     UsefulFilterData getUsefulFilterData();
     List<Category> getCategoriesForGame(Long gameId);
     int getChallengeRatingPercentileRounded(Long gameId);
+    List<MinimalGameDTO> searchAllGames(String searchTerm, int resultSize);
 }

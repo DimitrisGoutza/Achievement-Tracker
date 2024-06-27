@@ -9,19 +9,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/fragments.css">
     <style>
         body {
             background-color: var(--main-background-color);
             color: var(--main-font-color);
             font-family: var(--font-family);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         h1 {
             text-align: center;
-            margin: 5em 0;
+            margin: auto;
+        }
+        footer {
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
+    <th:block th:insert="~{fragments :: header}"></th:block>
     <h1>Oops! Something went wrong..</h1>
+    <th:block th:insert="~{fragments :: footer}"></th:block>
 </body>
 </html>

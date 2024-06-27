@@ -7,6 +7,7 @@ import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
+import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Category;
 import com.achievementtracker.entity.Game;
@@ -125,5 +126,13 @@ public class GameProcessingServiceImpl implements GameProcessingService {
     public int getChallengeRatingPercentileRounded(Long gameId) {
         double result = gameDAO.calculateChallengeRatingPercentile(gameId);
         return (int) Math.floor(result * 100.0);
+    }
+
+    @Override
+    public List<MinimalGameDTO> searchAllGames(String searchTerm, int resultSize) {
+        if (resultSize == 0)
+            return gameDAO.searchAllGames(searchTerm);
+
+        return gameDAO.searchAllGames(searchTerm, resultSize);
     }
 }
