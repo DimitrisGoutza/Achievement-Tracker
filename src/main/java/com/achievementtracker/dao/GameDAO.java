@@ -1,6 +1,8 @@
 package com.achievementtracker.dao;
 
 import com.achievementtracker.dto.games_endpoint.GameDTO;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO1;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2;
 import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.Game;
 
@@ -13,6 +15,8 @@ public interface GameDAO extends GenericDAO<Game, Long> {
     Integer findMaxReviews();
     LocalDate findMinimumReleaseDate();
     Double calculateChallengeRatingPercentile(Long gameId);
+    List<LeaderboardGameDTO1> findTopXGamesByChallengeRating(int amount);
+    List<LeaderboardGameDTO2> findTopXGamesByAchievementCount(int amount);
     List<GameDTO> findAllGames(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findOnlyGamesWithAchievements(Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);
     List<GameDTO> findAllGamesByCategoryId(List<Long> categoryIds, Integer minReviews, Integer maxReviews, LocalDate minRelease, LocalDate maxRelease, Page page, boolean countQuery);

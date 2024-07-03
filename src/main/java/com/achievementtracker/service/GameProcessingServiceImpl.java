@@ -7,6 +7,8 @@ import com.achievementtracker.dao.Page;
 import com.achievementtracker.dto.games_endpoint.GameDTO;
 import com.achievementtracker.dto.games_endpoint.GameRequestParams;
 import com.achievementtracker.dto.games_endpoint.UsefulFilterData;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO1;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2;
 import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.Achievement;
 import com.achievementtracker.entity.Category;
@@ -134,5 +136,15 @@ public class GameProcessingServiceImpl implements GameProcessingService {
             return gameDAO.searchAllGames(searchTerm);
 
         return gameDAO.searchAllGames(searchTerm, resultSize);
+    }
+
+    @Override
+    public List<LeaderboardGameDTO1> getTopChallengingGames(int topAmount) {
+        return gameDAO.findTopXGamesByChallengeRating(topAmount);
+    }
+
+    @Override
+    public List<LeaderboardGameDTO2> getTopGamesByAchievementCount(int topAmount) {
+        return gameDAO.findTopXGamesByAchievementCount(topAmount);
     }
 }

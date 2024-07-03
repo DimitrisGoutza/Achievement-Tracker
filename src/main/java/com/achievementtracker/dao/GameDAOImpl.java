@@ -1,6 +1,8 @@
 package com.achievementtracker.dao;
 
 import com.achievementtracker.dto.games_endpoint.GameDTO;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO1;
+import com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2;
 import com.achievementtracker.dto.search_endpoint.MinimalGameDTO;
 import com.achievementtracker.entity.*;
 import jakarta.persistence.NoResultException;
@@ -77,6 +79,25 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
                         "FROM Game g WHERE g.storeId = :gameId", Double.class);
         query.setParameter("gameId", gameId);
         return query.getSingleResult();
+    }
+
+    @Override
+    public List<LeaderboardGameDTO1> findTopXGamesByChallengeRating(int amount) {
+        TypedQuery<LeaderboardGameDTO1> query = em.createQuery("SELECT new " +
+                "com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO1(g.storeId, g.title, g.images.capsuleSmallImageURL, g.challengeRating) " +
+                "FROM Game g ORDER BY g.challengeRating DESC", LeaderboardGameDTO1.class);
+        query.setMaxResults(amount);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<LeaderboardGameDTO2> findTopXGamesByAchievementCount(int amount) {
+        TypedQuery<LeaderboardGameDTO2> query = em.createQuery("SELECT new " +
+                "com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2(g.storeId, g.title, g.images.capsuleSmallImageURL, COUNT(a.id)) " +
+                "FROM Game g JOIN Achievement a on a.game.storeId = g.storeId " +
+                "GROUP BY g.storeId ORDER BY COUNT(a.id) DESC", LeaderboardGameDTO2.class);
+        query.setMaxResults(amount);
+        return query.getResultList();
     }
 
     @Override
@@ -672,4 +693,5 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
             default -> "CHALLENGE_RATING"; // will never get here, but is here as a safeguard
         };
     }
+
 }

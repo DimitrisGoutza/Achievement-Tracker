@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Achievement-Tracker | Games</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- JS scripts -->
+    <script type="text/javascript" src="/js/fragments.js" defer></script>
+    <script type="text/javascript" src="/js/home.js" defer></script>
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/fragments.css">
+</head>
+<body>
+    <th:block th:insert="~{fragments :: header}"></th:block>
+    <main>
+        <div>
+            <h2>Most Challenging Games</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td></td>
+                        <td>Title</td>
+                        <td>Points</td>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="game, i : ${challengingGames}">
+                    <td th:text="${i.count}"></td>
+                    <td><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></td>
+                    <td th:text="${game.title}"></td>
+                    <td th:text="${game.challengeRating}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2>Games with Most Achievements</h2>
+            <table>
+                <thead>
+                <tr>
+                    <td>#</td>
+                    <td></td>
+                    <td>Title</td>
+                    <td>Count</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="game, i : ${gamesWithMostAchievements}">
+                    <td th:text="${i.count}"></td>
+                    <td><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></td>
+                    <td th:text="${game.title}"></td>
+                    <td th:text="${game.achievementCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <th:block th:insert="~{fragments :: footer}"></th:block>
+</body>
+</html>

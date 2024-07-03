@@ -1,0 +1,11 @@
+body {
+    background-color: var(--main-background-color);
+    color: var(--main-font-color);
+    font-family: var(--font-family);
+    margin: 0;
+}
+
+.game-capsule {
+    width: 140px;
+    aspect-ratio: 2.66666666667;
+}

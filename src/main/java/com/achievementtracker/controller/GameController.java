@@ -63,17 +63,4 @@ public class GameController {
 
         return "/pages/game-details";
     }
-
-    @GetMapping("/search")
-    public String getSearchResults(@RequestParam(name = "term") String searchTerm,
-                                   @RequestParam(name = "size", required = false, defaultValue = "20") String size,
-                                   Model model) {
-        int sizeAsInt = Integer.parseInt(size);
-        List<MinimalGameDTO> games = gameProcessingService.searchAllGames(searchTerm, sizeAsInt);
-
-        model.addAttribute("games", games);
-        model.addAttribute("searchTerm", searchTerm);
-
-        return "search-result-list";
-    }
 }
