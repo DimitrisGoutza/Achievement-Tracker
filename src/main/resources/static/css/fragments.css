@@ -31,11 +31,11 @@ nav {
 /* ------------------- Nav - Search ------------------- */
 #nav-game-search-container {
     position: relative;
-    width: 25%;
+    width: 20%;
     transition: width 0.2s ease-in-out;
 }
 #nav-game-search-container:focus-within {
-    width: 30%;
+    width: 25%;
 }
 #nav-game-search {
     display: block;
@@ -43,7 +43,7 @@ nav {
     padding: 0.2em 1em 0.2em 2em;
     border-color: #445265;
     border-style: solid;
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 5px;
     background-color: transparent;
     background-image: url("../img/search-icon-main-font-color.png");
@@ -63,9 +63,8 @@ nav {
 }
 #nav-game-search::placeholder {
     color: rgba(239,239,239,0.5);
-    font-style: italic;
     font-family: inherit;
-    font-size: inherit;
+    font-size: 0.9em;
     transition: color 0.2s ease-in-out;
 }
 #nav-game-search-container:focus-within #nav-game-search::placeholder {

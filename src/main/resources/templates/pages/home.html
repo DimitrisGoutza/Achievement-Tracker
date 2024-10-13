@@ -12,12 +12,15 @@
     <script type="text/javascript" src="/js/home.js" defer></script>
     <!-- CSS stylesheet -->
     <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/fragments.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
     <th:block th:insert="~{fragments :: header}"></th:block>
     <main>
+        <div id="website-banner-section">
+            <button id="view-games-btn"><a target="_self" href="/games">VIEW ALL GAMES</a></button>
+        </div>
         <div id="leaderboards-section">
             <div class="leaderboard-container">
                 <h3 class="leaderboard-title">Most Challenging Games</h3>

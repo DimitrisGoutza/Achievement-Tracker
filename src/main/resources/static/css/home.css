@@ -1,3 +1,7 @@
+header {
+    margin-bottom: 0;
+}
+
 body {
     background-color: var(--main-background-color);
     color: var(--main-font-color);
@@ -5,12 +9,50 @@ body {
     margin: 0;
 }
 
+#website-banner-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 0 6em 0;
+    width: 100%;
+    height: 45em;
+    background-image: url("../img/homepage-banner.jpg");
+    background-attachment: scroll;
+    background-position: center;
+    background-size: cover;
+    background-origin: padding-box;
+    border-bottom: solid 2px var(--highlight-element-color);
+}
+#view-games-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: linear-gradient(to top, rgba(27, 40, 54, 1) -150%, rgba(84, 159, 200, 1));
+    box-shadow: 2px 2px 12px rgba(0,0,0, 0.1);
+    border: 0;
+    border-radius: 2px;
+    transition: box-shadow 0.1s;
+}
+#view-games-btn a {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 0.9em 1.5em;
+    color: rgba(239,239,239, 1);
+}
+#view-games-btn:hover {
+    box-shadow: 2px 2px 12px rgba(0,0,0, 0.3);
+}
+
 #leaderboards-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 1em;
     width: 80%;
-    margin: auto;
+    margin: 2em auto 0 auto;
 }
 .leaderboard-container {
     display: flex;
