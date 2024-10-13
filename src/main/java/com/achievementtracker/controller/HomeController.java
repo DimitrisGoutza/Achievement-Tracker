@@ -21,15 +21,15 @@ public class HomeController {
         this.gameProcessingService = gameProcessingService;
     }
 
-    @GetMapping("/home")
+    @GetMapping({"/", "/home"})
     public String getHomePage(Model model) {
         final int TOP_AMOUNT = 10;
 
         List<LeaderboardGameDTO1> topChallengingGames = gameProcessingService.getTopChallengingGames(TOP_AMOUNT);
-        List<LeaderboardGameDTO2> topGamesByCount = gameProcessingService.getTopGamesByAchievementCount(TOP_AMOUNT);
+        List<LeaderboardGameDTO2> mostRecentGames = gameProcessingService.getMostRecentGames(TOP_AMOUNT);
 
         model.addAttribute("challengingGames", topChallengingGames);
-        model.addAttribute("gamesWithMostAchievements", topGamesByCount);
+        model.addAttribute("recentGames", mostRecentGames);
 
         return "/pages/home";
     }

@@ -23,5 +23,5 @@ public interface GameProcessingService {
     int getChallengeRatingPercentileRounded(Long gameId);
     List<MinimalGameDTO> searchAllGames(String searchTerm, int resultSize);
     List<LeaderboardGameDTO1> getTopChallengingGames(int topAmount);
-    List<LeaderboardGameDTO2> getTopGamesByAchievementCount(int topAmount);
+    List<LeaderboardGameDTO2> getMostRecentGames(int amount);
 }

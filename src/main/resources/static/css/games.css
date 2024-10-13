@@ -239,6 +239,7 @@ tbody > tr:not(.no-results):hover td:last-of-type {
     padding: 0 0.8em;
     background-color: var(--main-background-color);
     border-width: 1px;
+    border-radius: 2px;
     color: rgba(239,239,239,0.8);
     width: 20%;
 }

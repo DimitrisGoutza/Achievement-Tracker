@@ -18,47 +18,49 @@
 <body>
     <th:block th:insert="~{fragments :: header}"></th:block>
     <main>
-        <div>
-            <h2>Most Challenging Games</h2>
-            <table>
-                <thead>
+        <div id="leaderboards-section">
+            <div class="leaderboard-container">
+                <h3 class="leaderboard-title">Most Challenging Games</h3>
+                <table class="leaderboard">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th></th>
+                            <th>NAME</th>
+                            <th>POINTS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="game, i : ${challengingGames}">
+                            <td th:inline="text">[[${i.count}]].</td>
+                            <td><a target="_blank" th:href="@{'/games/' + ${game.storeId}}"><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></a></td>
+                            <td><a class="leaderboard-game-title" target="_blank" th:href="@{'/games/' + ${game.storeId}}" th:text="${game.title}"></a></td>
+                            <td th:text="${game.challengeRating}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="leaderboard-container">
+                <h3 class="leaderboard-title">Latest Games</h3>
+                <table class="leaderboard">
+                    <thead>
                     <tr>
-                        <td>#</td>
-                        <td></td>
-                        <td>Title</td>
-                        <td>Points</td>
+                        <th>#</th>
+                        <th></th>
+                        <th>NAME</th>
+                        <th>RELEASE</th>
                     </tr>
-                </thead>
-                <tbody>
-                <tr th:each="game, i : ${challengingGames}">
-                    <td th:text="${i.count}"></td>
-                    <td><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></td>
-                    <td th:text="${game.title}"></td>
-                    <td th:text="${game.challengeRating}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <h2>Games with Most Achievements</h2>
-            <table>
-                <thead>
-                <tr>
-                    <td>#</td>
-                    <td></td>
-                    <td>Title</td>
-                    <td>Count</td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="game, i : ${gamesWithMostAchievements}">
-                    <td th:text="${i.count}"></td>
-                    <td><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></td>
-                    <td th:text="${game.title}"></td>
-                    <td th:text="${game.achievementCount}"></td>
-                </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    <tr th:each="game, i : ${recentGames}">
+                        <td th:inline="text">[[${i.count}]].</td>
+                        <td><a target="_blank" th:href="@{'/games/' + ${game.storeId}}"><img class="game-capsule" src="/img/game-capsule-placeholder.png" th:data-actual-src="${game.capsuleSmallImageURL}"></a></td>
+                        <td><a class="leaderboard-game-title" target="_blank" th:href="@{'/games/' + ${game.storeId}}" th:text="${game.title}"></a></td>
+                        <td th:text="${#temporals.format(game.releaseDate, 'MM/dd/yyyy')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
     <th:block th:insert="~{fragments :: footer}"></th:block>

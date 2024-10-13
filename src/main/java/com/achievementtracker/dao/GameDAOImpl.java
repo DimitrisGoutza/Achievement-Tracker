@@ -91,11 +91,15 @@ public class GameDAOImpl extends GenericDAOImpl<Game, Long> implements GameDAO {
     }
 
     @Override
-    public List<LeaderboardGameDTO2> findTopXGamesByAchievementCount(int amount) {
+    public List<LeaderboardGameDTO2> findRecentlyReleasedGames(int amount) {
+        LocalDate dateOfToday = LocalDate.now();
+
         TypedQuery<LeaderboardGameDTO2> query = em.createQuery("SELECT new " +
-                "com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2(g.storeId, g.title, g.images.capsuleSmallImageURL, COUNT(a.id)) " +
-                "FROM Game g JOIN Achievement a on a.game.storeId = g.storeId " +
-                "GROUP BY g.storeId ORDER BY COUNT(a.id) DESC", LeaderboardGameDTO2.class);
+                "com.achievementtracker.dto.home_endpoint.LeaderboardGameDTO2(g.storeId, g.title, g.images.capsuleSmallImageURL, g.releaseDate) " +
+                "FROM Game g WHERE g.releaseDate IS NOT NULL " +
+                "AND g.comingSoon = false AND g.releaseDate <= :dateOfToday " +
+                "ORDER BY g.releaseDate DESC", LeaderboardGameDTO2.class);
+        query.setParameter("dateOfToday", dateOfToday);
         query.setMaxResults(amount);
         return query.getResultList();
     }

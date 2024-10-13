@@ -1,16 +1,18 @@
 package com.achievementtracker.dto.home_endpoint;
 
+import java.time.LocalDate;
+
 public class LeaderboardGameDTO2 {
     private Long storeId;
     private String title;
     private String capsuleSmallImageURL;
-    private long achievementCount;
+    private LocalDate releaseDate;
 
-    public LeaderboardGameDTO2(Long storeId, String title, String capsuleSmallImageURL, long achievementCount) {
+    public LeaderboardGameDTO2(Long storeId, String title, String capsuleSmallImageURL, LocalDate achievementCount) {
         this.storeId = storeId;
         this.title = title;
         this.capsuleSmallImageURL = capsuleSmallImageURL;
-        this.achievementCount = achievementCount;
+        this.releaseDate = achievementCount;
     }
 
     public Long getStoreId() {
@@ -37,12 +39,12 @@ public class LeaderboardGameDTO2 {
         this.capsuleSmallImageURL = capsuleSmallImageURL;
     }
 
-    public long getAchievementCount() {
-        return achievementCount;
+    public LocalDate getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setAchievementCount(long achievementCount) {
-        this.achievementCount = achievementCount;
+    public void setReleaseDate(LocalDate releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class LeaderboardGameDTO2 {
                 "storeId=" + storeId +
                 ", title='" + title + '\'' +
                 ", capsuleSmallImageURL='" + capsuleSmallImageURL + '\'' +
-                ", achievementCount=" + achievementCount +
+                ", achievementCount=" + releaseDate +
                 '}';
     }
 }

@@ -144,7 +144,7 @@ public class GameProcessingServiceImpl implements GameProcessingService {
     }
 
     @Override
-    public List<LeaderboardGameDTO2> getTopGamesByAchievementCount(int topAmount) {
-        return gameDAO.findTopXGamesByAchievementCount(topAmount);
+    public List<LeaderboardGameDTO2> getMostRecentGames(int amount) {
+        return gameDAO.findRecentlyReleasedGames(amount);
     }
 }
