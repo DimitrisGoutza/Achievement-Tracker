@@ -68,7 +68,7 @@ nav {
     transition: color 0.2s ease-in-out;
 }
 #nav-game-search-container:focus-within #nav-game-search::placeholder {
-    color: rgba(239,239,239,0.8);
+    color: rgba(239,239,239,0.5);
 }
 
 /* ------------------- Nav - Search Results ------------------- */
