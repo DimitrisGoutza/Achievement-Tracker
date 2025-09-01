@@ -30,7 +30,7 @@ public class AchievementStatListDeserializer extends JsonDeserializer<Achievemen
         JsonNode achievementsNode = parentNode.get("achievementpercentages").get("achievements");
         for (JsonNode achievement : achievementsNode) {
             String name = achievement.get("name").textValue();
-            Double percentage = achievement.get("percent").doubleValue();
+            Double percentage = Double.valueOf(achievement.get("percent").textValue());
 
             achievements.put(name, percentage);
         }
